@@ -1580,9 +1580,14 @@ function setActiveNav(el) {
 
 
 const SUPABASE_URL = 'https://mcvkfzsdgmfcishamjtp.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJtY3ZrZnpzZGdtZmNpc2hhbWp0cCIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNzc1NzMzNjM4LCJleHAiOjIwOTEzMDk2Mzh9.GiY_LuOKHUcPQ5x_HEGONLdpKTpLD_hla9oZkmltEuU';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1jdmtmenNkZ21mY2lzaGFtanRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU3MzM2MzgsImV4cCI6MjA5MTMwOTYzOH0.GiY_LuOKHUcPQ5x_HEGONLdpKTpLD_hla9oZkmltEuU';
 const supabaseClient = window.supabase && window.supabase.createClient
-  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true
+      }
+    })
   : null;
 
 function openAuthModal(){
