@@ -1814,5 +1814,71 @@ document.getElementById('cartTriggerBtn')?.addEventListener('click', viewCart);
 document.getElementById('authTriggerBtn')?.addEventListener('click', (e) => { e.preventDefault(); handleAuthButton(); });
 refreshAuthUi();
 </script>
+
+<!-- ── DUYURU POPUP ── -->
+<style>
+#announceOverlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.45);
+  z-index:9999;display:flex;align-items:center;justify-content:center;
+  backdrop-filter:blur(4px);animation:aoFadeIn .3s ease;
+}
+@keyframes aoFadeIn{from{opacity:0}to{opacity:1}}
+#announceBox{
+  background:rgba(255,255,255,.82);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  border:1.5px solid rgba(255,255,255,.65);
+  border-radius:18px;
+  width:min(520px,92vw);
+  padding:38px 36px 32px;
+  box-shadow:0 12px 48px rgba(0,0,0,.22);
+  position:relative;
+  animation:aoSlideUp .32s ease;
+}
+@keyframes aoSlideUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+#announceBox .ao-logo{
+  font-family:'Nunito',sans-serif;font-weight:900;font-size:15px;
+  color:var(--teal-dark);letter-spacing:.5px;margin-bottom:18px;
+  text-transform:uppercase;
+}
+#announceBox p{
+  font-family:'Nunito',sans-serif;font-size:13.5px;line-height:1.75;
+  color:#2d3a4a;margin-bottom:0;
+}
+#announceBox p strong{display:block;font-size:15px;font-weight:800;margin-bottom:10px;color:var(--gray-800)}
+#announceClose{
+  position:absolute;top:14px;right:14px;
+  width:30px;height:30px;border-radius:50%;
+  background:rgba(0,0,0,.07);border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:.2s;
+}
+#announceClose:hover{background:rgba(0,0,0,.15)}
+#announceClose svg{width:14px;height:14px;stroke:#555;stroke-width:2.2;fill:none}
+#announceCta{
+  display:block;width:100%;margin-top:22px;
+  background:var(--teal);color:#fff;border:none;border-radius:50px;
+  padding:11px 0;font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;
+  cursor:pointer;transition:.2s;
+}
+#announceCta:hover{background:var(--teal-dark)}
+</style>
+
+<div id="announceOverlay">
+  <div id="announceBox">
+    <button id="announceClose" onclick="document.getElementById('announceOverlay').remove()">
+      <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="ao-logo">B485 Mağazacılık</div>
+    <p>
+      <strong>Değerli Müşterimiz,</strong>
+      Kampanyalı ürünlerimize gösterdiğiniz yoğun ilgi için teşekkür ederiz. Sizlere daha adil bir alışveriş deneyimi sunabilmek ve tüm moda severlerin bu fırsatlardan eşit şekilde yararlanmasını sağlamak amacıyla, sepetinizdeki ürünler tarafınıza rezerve edilmemektedir.<br><br>
+      Stoklarımızın hızla tükendiğini ve sepetinizde bekleyen ürünlerin diğer müşterilerimiz tarafından satın alınabileceğini hatırlatmak isteriz. Seçtiğiniz ürünleri kaçırmamanız ve herhangi bir stok sorunuyla karşılaşmamanız adına, alışverişinizi vakit kaybetmeden tamamlamanızı öneririz.<br><br>
+      Anlayışınız için teşekkür eder, keyifli alışverişler dileriz.
+    </p>
+    <button id="announceCta" onclick="document.getElementById('announceOverlay').remove()">Anladım, Alışverişe Devam Et</button>
+  </div>
+</div>
+
 </body>
 </html>
