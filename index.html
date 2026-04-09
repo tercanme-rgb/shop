@@ -1631,13 +1631,61 @@ function buildProfilePayload(user, meta = {}){
     address: meta.address || user.user_metadata?.address || ''
   };
 }
+const PENDING_PROFILE_KEY = 'pendingProfileByEmail';
+function readPendingProfiles(){
+  try { return JSON.parse(localStorage.getItem(PENDING_PROFILE_KEY) || '{}') || {}; }
+  catch { return {}; }
+}
+function writePendingProfiles(map){
+  localStorage.setItem(PENDING_PROFILE_KEY, JSON.stringify(map || {}));
+}
+function savePendingProfile(email, meta){
+  if (!email) return;
+  const map = readPendingProfiles();
+  map[email.toLowerCase()] = meta;
+  writePendingProfiles(map);
+}
+function consumePendingProfile(email){
+  if (!email) return null;
+  const key = email.toLowerCase();
+  const map = readPendingProfiles();
+  const meta = map[key] || null;
+  if (meta) {
+    delete map[key];
+    writePendingProfiles(map);
+  }
+  return meta;
+}
 async function syncProfileRow(user, meta = {}){
   if (!supabaseClient || !user) return;
   const { data: sessionData } = await supabaseClient.auth.getSession();
   if (!sessionData?.session) return;
-  const payload = buildProfilePayload(user, meta);
+  const cleanMeta = {
+    first_name: meta.first_name || '',
+    last_name: meta.last_name || '',
+    phone: meta.phone || '',
+    birth_date: meta.birth_date || '',
+    gender: meta.gender || '',
+    address: meta.address || '',
+    email: user.email || meta.email || ''
+  };
+  const payload = buildProfilePayload(user, cleanMeta);
   const { error } = await supabaseClient.from('profiles').upsert(payload);
   if (error) console.warn('profiles upsert warning', error);
+  const hasMeta = Object.values(cleanMeta).some(Boolean);
+  if (hasMeta) {
+    const { error: updateError } = await supabaseClient.auth.updateUser({
+      data: {
+        first_name: cleanMeta.first_name,
+        last_name: cleanMeta.last_name,
+        phone: cleanMeta.phone,
+        birth_date: cleanMeta.birth_date,
+        gender: cleanMeta.gender,
+        address: cleanMeta.address
+      }
+    });
+    if (updateError) console.warn('user metadata update warning', updateError);
+  }
 }
 async function handleRegister(event){
   event.preventDefault();
@@ -1650,15 +1698,19 @@ async function handleRegister(event){
   const birth_date = document.getElementById('regBirthDate').value;
   const address = document.getElementById('regAddress').value.trim();
   const gender = document.querySelector('input[name="gender"]:checked')?.value || '';
-  const meta = { first_name, last_name, phone, birth_date, gender, address };
+  const meta = { first_name, last_name, phone, birth_date, gender, address, email };
+  savePendingProfile(email, meta);
   const { data, error } = await supabaseClient.auth.signUp({
     email,
-    password,
-    options: { data: meta }
+    password
   });
-  if (error) { showToast(error.message); return; }
+  if (error) {
+    showToast(error.message);
+    return;
+  }
   if (data?.session && data?.user) {
     await syncProfileRow(data.user, meta);
+    consumePendingProfile(email);
   }
   showToast('Kayıt oluşturuldu. E-posta doğrulaması açıksa maili onaylayıp giriş yapın.');
   await refreshAuthUi();
@@ -1671,7 +1723,10 @@ async function handleLogin(event){
   const password = document.getElementById('loginPassword').value;
   const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
   if (error) { showToast(error.message); return; }
-  if (data?.user) await syncProfileRow(data.user);
+  if (data?.user) {
+    const pendingMeta = consumePendingProfile(email) || {};
+    await syncProfileRow(data.user, pendingMeta);
+  }
   showToast('Giriş başarılı.');
   await refreshAuthUi();
   forceCloseAuthModal();
