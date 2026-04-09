@@ -1,0 +1,1782 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cep Telefonu - Elektronik</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --teal:#00bcd4;--teal-dark:#0097a7;--teal-light:#e0f7fa;
+  --purple:#6c3ce1;--white:#fff;--red:#ef4444;--green:#22c55e;
+  --gray-50:#f8fafc;--gray-100:#f1f5f9;--gray-200:#e2e8f0;
+  --gray-400:#94a3b8;--gray-500:#64748b;--gray-600:#475569;--gray-800:#1e293b;
+  --shadow:0 2px 12px rgba(0,0,0,.08);--shadow-hover:0 8px 32px rgba(0,0,0,.15);
+  --radius:14px;
+}
+body{font-family:'Nunito',sans-serif;background:var(--gray-50);color:var(--gray-800);font-size:14px}
+
+/* HEADER */
+.header-top{background:linear-gradient(135deg,#00d4e8 0%,#00bcd4 45%,#0097c8 100%);padding:14px 40px;display:flex;align-items:center;justify-content:space-between}
+.logo-area{display:flex;gap:14px;align-items:center}
+.logo-input{background:rgba(255,255,255,.28);border:1.5px solid rgba(255,255,255,.55);border-radius:10px;color:#fff;font-family:'Nunito',sans-serif;font-weight:700;font-size:14px;padding:8px 16px;outline:none;transition:.2s;backdrop-filter:blur(6px)}
+.logo-input::placeholder{color:rgba(255,255,255,.8)}
+.logo-input:focus{background:rgba(255,255,255,.42);border-color:#fff;box-shadow:0 0 0 3px rgba(255,255,255,.2)}
+.logo-input.main{width:148px}.logo-input.sub{width:108px}.logo-input.sm{width:128px}
+.header-actions{display:flex;gap:12px}
+.btn-header{display:flex;align-items:center;gap:8px;padding:9px 20px;border-radius:50px;border:2px solid rgba(255,255,255,.65);background:rgba(255,255,255,.18);color:#fff;font-family:'Nunito',sans-serif;font-weight:700;font-size:14px;cursor:pointer;transition:.2s}
+.btn-header:hover{background:rgba(255,255,255,.34);transform:translateY(-1px)}
+.btn-header svg{width:17px;height:17px}
+
+/* SEARCH */
+.search-bar-wrap{background:#fff;padding:12px 40px;display:flex;align-items:center;gap:16px;box-shadow:0 2px 8px rgba(0,0,0,.06);position:sticky;top:0;z-index:200}
+.search-box{flex:1;display:flex;align-items:center;border:1.5px solid var(--gray-200);border-radius:50px;padding:0 18px;gap:10px;height:46px;background:var(--gray-50);transition:.2s}
+.search-box:focus-within{border-color:var(--teal);box-shadow:0 0 0 3px rgba(0,188,212,.12);background:#fff}
+.search-box svg{color:var(--gray-400);width:17px;height:17px;flex-shrink:0}
+.search-box input{border:none;background:transparent;font-family:'Nunito',sans-serif;font-size:14px;color:var(--gray-800);width:100%;outline:none}
+.search-box input::placeholder{color:var(--gray-400)}
+.btn-cart{display:flex;align-items:center;gap:10px;background:var(--teal);color:#fff;border:none;border-radius:50px;padding:10px 24px;font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;cursor:pointer;transition:.2s;white-space:nowrap}
+.btn-cart:hover{background:var(--teal-dark);transform:translateY(-1px)}
+.cart-icon-wrap{position:relative;display:flex}
+.cart-badge{position:absolute;top:-8px;right:-8px;background:#fff;color:var(--teal-dark);border-radius:50%;width:18px;height:18px;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;border:2px solid var(--teal);transition:.25s}
+
+/* NAV */
+.nav-categories{background:#fff;border-bottom:1px solid var(--gray-200);padding:0 40px;display:flex;gap:2px;overflow-x:auto}
+.nav-categories::-webkit-scrollbar{display:none}
+.nav-cat-item{padding:13px 15px;font-weight:600;color:var(--gray-600);cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;transition:.2s;font-size:13.5px}
+.nav-cat-item:hover{color:var(--teal)}
+.nav-cat-item.active{color:var(--teal-dark);border-bottom-color:var(--teal-dark);font-weight:700}
+
+/* BREADCRUMB */
+.breadcrumb{padding:12px 40px;display:flex;align-items:center;gap:6px;font-size:13px}
+.breadcrumb a{color:var(--gray-600);text-decoration:none;font-weight:600}
+.breadcrumb a:hover{color:var(--teal)}
+.breadcrumb .sep{color:var(--gray-400)}
+.breadcrumb .current{color:var(--teal-dark);font-weight:700}
+
+/* BRAND TABS */
+.brand-tabs{padding:0 40px 0;display:flex;gap:10px;margin-bottom:0}
+.brand-tab{padding:9px 22px;border-radius:50px;border:2px solid var(--gray-200);background:#fff;font-family:'Nunito',sans-serif;font-weight:700;font-size:13.5px;color:var(--gray-600);cursor:pointer;transition:.2s;display:flex;align-items:center;gap:8px}
+.brand-tab:hover{border-color:var(--teal);color:var(--teal)}
+.brand-tab.active{background:var(--teal);border-color:var(--teal);color:#fff}
+.brand-tab svg{width:16px;height:16px}
+
+/* MAIN */
+.main-layout{display:flex;padding:14px 40px 40px;gap:26px;max-width:1400px;margin:0 auto}
+
+/* SIDEBAR */
+.sidebar{width:220px;flex-shrink:0}
+.sidebar-title{font-size:17px;font-weight:800;color:var(--gray-800);margin-bottom:10px;padding-bottom:10px;border-bottom:2px solid var(--gray-200)}
+.filter-group{border-bottom:1px solid var(--gray-100)}
+.filter-group-header{display:flex;justify-content:space-between;align-items:center;padding:11px 0;cursor:pointer;font-weight:700;color:var(--gray-800);font-size:13px;transition:.15s;user-select:none}
+.filter-group-header:hover{color:var(--teal)}
+.filter-group-header svg{width:14px;height:14px;color:var(--gray-400);transition:.2s}
+.filter-group-header.open svg{transform:rotate(180deg)}
+.filter-body{display:none;padding:4px 0 10px;flex-direction:column;gap:7px}
+.filter-body.show{display:flex}
+.filter-check{display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--gray-600)}
+.filter-check input{accent-color:var(--teal);width:14px;height:14px}
+.filter-check:hover{color:var(--teal)}
+
+/* CONTENT */
+.content{flex:1;min-width:0}
+.content-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.result-text{font-size:14px;color:var(--gray-600)}
+.result-text strong{color:var(--gray-800);font-weight:800}
+.toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.sort-wrapper{position:relative}
+.sort-btn{display:flex;align-items:center;gap:8px;padding:9px 18px;border:1.5px solid var(--gray-200);border-radius:50px;background:#fff;font-family:'Nunito',sans-serif;font-weight:600;font-size:13px;color:var(--gray-600);cursor:pointer;transition:.2s}
+.sort-btn:hover,.sort-btn.open{border-color:var(--teal);color:var(--teal)}
+.sort-dropdown{display:none;position:absolute;top:calc(100% + 8px);left:0;background:#fff;border:1.5px solid var(--gray-200);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.12);min-width:240px;z-index:300;overflow:hidden}
+.sort-dropdown.show{display:block;animation:dropDown .18s ease}
+@keyframes dropDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+.sort-option{padding:10px 18px;cursor:pointer;font-weight:600;font-size:13px;color:var(--gray-700);transition:.15s;display:flex;align-items:center;gap:10px}
+.sort-option:hover{background:var(--teal-light);color:var(--teal-dark)}
+.sort-option.selected{color:var(--teal-dark);font-weight:800}
+.sort-option .chk{margin-left:auto;color:var(--teal);display:none}
+.sort-option.selected .chk{display:block}
+.share-btn{display:flex;align-items:center;gap:6px;color:var(--gray-500);font-weight:600;font-size:13px;cursor:pointer;background:none;border:none;font-family:'Nunito',sans-serif;transition:.15s;padding:8px 12px;border-radius:50px}
+.share-btn:hover{background:var(--gray-100);color:var(--teal)}
+
+/* PRODUCT GRID */
+.product-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.product-card{background:#fff;border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);transition:box-shadow .25s,transform .25s;cursor:pointer;display:flex;flex-direction:column;animation:fadeUp .35s ease both}
+.product-card:hover{box-shadow:var(--shadow-hover);transform:translateY(-4px)}
+.product-img-wrap{position:relative;background:linear-gradient(145deg,#f8fafc,#eef2f7);padding:20px;display:flex;justify-content:center;align-items:center;height:200px;overflow:hidden}
+.product-img-wrap img{width:100%;height:100%;object-fit:contain;transition:.35s}
+.product-card:hover .product-img-wrap img{transform:scale(1.06)}
+.fav-btn{position:absolute;top:10px;right:10px;width:30px;height:30px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.1);border:none;cursor:pointer;transition:.2s;z-index:2}
+.fav-btn:hover{transform:scale(1.18)}
+.fav-btn svg{width:14px;height:14px;stroke:var(--gray-400);fill:none}
+.fav-btn.active svg{stroke:#ef4444;fill:#ef4444}
+.color-dots{position:absolute;bottom:8px;right:8px;display:flex;align-items:center;gap:2px;background:#fff;border-radius:50px;padding:3px 6px;box-shadow:0 1px 6px rgba(0,0,0,.1);font-size:10.5px;font-weight:700;color:var(--gray-600)}
+.color-dot{width:10px;height:10px;border-radius:50%;border:1.5px solid rgba(255,255,255,.7)}
+
+/* Discount badge */
+.discount-badge{position:absolute;top:10px;left:10px;background:#ef4444;color:#fff;font-size:10px;font-weight:800;padding:3px 7px;border-radius:6px}
+/* New badge */
+.new-badge-img{position:absolute;top:10px;left:10px;background:var(--teal);color:#fff;font-size:10px;font-weight:800;padding:3px 7px;border-radius:6px}
+
+.product-info{padding:10px 12px 4px;flex:1;display:flex;flex-direction:column;gap:4px}
+.product-series{font-size:10.5px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.5px}
+.product-name{font-size:12px;font-weight:700;color:var(--gray-800);line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.price-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.product-price{font-size:15px;font-weight:900;color:var(--teal-dark)}
+.product-price-old{font-size:11px;color:var(--gray-400);text-decoration:line-through;font-weight:600}
+.discount-pct{font-size:10px;font-weight:800;color:#ef4444;background:#fef2f2;padding:2px 5px;border-radius:4px}
+
+.btn-add-card{display:block;width:calc(100% - 24px);margin:8px 12px 12px;background:var(--teal);color:#fff;border:none;border-radius:50px;padding:8px 0;font-family:'Nunito',sans-serif;font-weight:800;font-size:12.5px;cursor:pointer;transition:.2s;text-align:center}
+.btn-add-card:hover{background:var(--teal-dark)}
+.btn-add-card:active{transform:scale(.97)}
+
+/* EMPTY STATE */
+.empty-state{grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--gray-400)}
+.empty-state svg{width:48px;height:48px;margin-bottom:12px;opacity:.4}
+.empty-state p{font-weight:700;font-size:15px}
+
+/* OVERLAY */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;align-items:flex-start;justify-content:center;padding:20px 16px;overflow-y:auto;backdrop-filter:blur(3px)}
+.overlay.show{display:flex;animation:fadeIn .2s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.detail-panel{background:#fff;border-radius:18px;width:100%;max-width:940px;overflow:hidden;animation:slideUp .28s ease;position:relative;margin:auto}
+@keyframes slideUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+.detail-close{position:absolute;top:12px;right:14px;width:32px;height:32px;background:var(--gray-100);border:none;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--gray-600);transition:.2s;z-index:10;font-family:'Nunito',sans-serif}
+.detail-close:hover{background:var(--gray-200)}
+.detail-breadcrumb{padding:12px 22px;display:flex;gap:5px;font-size:12px;color:var(--gray-400);border-bottom:1px solid var(--gray-100);flex-wrap:wrap}
+.detail-breadcrumb a{color:var(--gray-600);text-decoration:none;font-weight:600}
+.detail-breadcrumb a:hover{color:var(--teal)}
+.detail-breadcrumb .current{color:var(--teal-dark);font-weight:700}
+.detail-body{display:grid;grid-template-columns:1fr 1fr}
+.detail-images{padding:24px 20px;background:#fff;border-right:1px solid var(--gray-100)}
+.detail-main-img{width:100%;height:280px;object-fit:contain;border-radius:12px;background:linear-gradient(145deg,#f8fafc,#eef2f7);padding:16px;display:block;transition:opacity .15s}
+.detail-thumbs{display:flex;gap:7px;margin-top:12px;justify-content:center;flex-wrap:wrap}
+.detail-thumb{width:48px;height:48px;border:1.5px solid var(--gray-200);border-radius:8px;overflow:hidden;cursor:pointer;transition:.2s;background:var(--gray-50);padding:3px;display:flex;align-items:center;justify-content:center}
+.detail-thumb:hover,.detail-thumb.active{border-color:var(--teal);box-shadow:0 0 0 2px rgba(0,188,212,.2)}
+.detail-thumb img{width:100%;height:100%;object-fit:contain}
+.detail-info{padding:20px 24px;display:flex;flex-direction:column;gap:12px;overflow-y:auto;max-height:70vh}
+.detail-series-badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:800;padding:3px 10px;border-radius:50px;background:var(--teal-light);color:var(--teal-dark)}
+.detail-product-name{font-size:16px;font-weight:800;color:var(--gray-800);line-height:1.35}
+.detail-sku{font-size:11px;color:var(--gray-400);font-weight:600}
+.detail-price-group{display:flex;flex-direction:column;gap:4px}
+.detail-orig-price{font-size:12px;color:var(--gray-400);text-decoration:line-through;font-weight:600}
+.detail-disc-row{display:flex;align-items:center;gap:8px}
+.detail-price-big{font-size:24px;font-weight:900;color:var(--gray-800)}
+.detail-disc-badge{background:#fef2f2;color:#ef4444;font-size:11px;font-weight:800;padding:3px 8px;border-radius:6px}
+.detail-brand-row{font-size:13px;color:var(--gray-600);font-weight:600}
+.detail-brand-row a{color:var(--teal-dark);text-decoration:none;font-weight:700}
+.detail-section-label{font-size:12.5px;font-weight:700;color:var(--gray-800);margin-bottom:6px}
+.detail-section-label span{font-weight:600;color:var(--gray-500);margin-left:4px;font-size:12px}
+.detail-color-swatches{display:flex;gap:7px;flex-wrap:wrap}
+.color-swatch{width:46px;height:46px;border:2px solid var(--gray-200);border-radius:8px;overflow:hidden;cursor:pointer;transition:.2s;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3px;gap:2px;background:#fff}
+.color-swatch img{width:100%;height:74%;object-fit:contain}
+.color-swatch span{font-size:8px;font-weight:700;color:var(--gray-600);text-align:center;line-height:1.1}
+.color-swatch:hover,.color-swatch.active{border-color:var(--teal);box-shadow:0 0 0 2px rgba(0,188,212,.22)}
+.insurance-scroll{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px}
+.insurance-scroll::-webkit-scrollbar{height:3px}
+.insurance-scroll::-webkit-scrollbar-thumb{background:var(--gray-200);border-radius:2px}
+.insurance-card{flex-shrink:0;width:160px;border:1.5px solid var(--gray-200);border-radius:10px;padding:10px 11px;cursor:pointer;transition:.2s}
+.insurance-card:hover{border-color:var(--teal)}
+.insurance-card.sel{border-color:var(--teal);background:var(--teal-light)}
+.ic-title{font-size:11.5px;font-weight:700;color:var(--gray-800);margin-bottom:3px}
+.ic-sub{font-size:9.5px;color:var(--gray-500);line-height:1.4;margin-bottom:5px}
+.ic-price{font-size:12.5px;font-weight:800;color:var(--teal-dark)}
+.a101-badge{background:var(--teal-light);border:1px solid rgba(0,188,212,.3);border-radius:6px;padding:5px 10px;font-size:11px;font-weight:700;color:var(--teal-dark);display:inline-flex;align-items:center;gap:6px}
+.btn-add-big{width:100%;background:var(--teal);color:#fff;border:none;border-radius:50px;padding:13px;font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;cursor:pointer;transition:.2s}
+.btn-add-big:hover{background:var(--teal-dark)}
+.btn-add-big.added{background:#22c55e}
+
+/* TABS */
+.detail-tabs-section{border-top:1px solid var(--gray-100)}
+.detail-tabs-nav{display:flex;border-bottom:1px solid var(--gray-200);padding:0 22px;overflow-x:auto}
+.detail-tabs-nav::-webkit-scrollbar{display:none}
+.detail-tab{padding:11px 16px;font-weight:700;font-size:13px;color:var(--gray-500);cursor:pointer;border-bottom:2px solid transparent;transition:.2s;white-space:nowrap}
+.detail-tab:hover{color:var(--teal)}
+.detail-tab.active{color:var(--teal-dark);border-bottom-color:var(--teal-dark)}
+.detail-tab-content{display:none;padding:18px 24px}
+.detail-tab-content.active{display:block}
+.specs-table{width:100%;border-collapse:collapse}
+.specs-caption{font-size:12.5px;font-weight:700;color:var(--gray-800);padding:0 0 8px;margin-bottom:6px;display:block;border-bottom:1px solid var(--gray-200)}
+.specs-table tr:nth-child(even) td{background:var(--gray-50)}
+.specs-table td{padding:8px 12px;font-size:12.5px;border-bottom:1px solid var(--gray-100)}
+.specs-table td:first-child{font-weight:700;color:var(--gray-600);width:40%}
+
+/* TAB TEXT */
+.tab-text{color:var(--gray-600);font-size:13px;line-height:1.8}
+.tab-text p{margin-bottom:6px}
+.tab-text ul{margin:6px 0 6px 18px;display:flex;flex-direction:column;gap:5px}
+.tab-text li{list-style:disc}
+
+/* TOAST */
+.toast{position:fixed;bottom:26px;right:26px;background:var(--gray-800);color:#fff;padding:10px 18px;border-radius:50px;font-weight:700;font-size:13px;box-shadow:0 4px 20px rgba(0,0,0,.2);z-index:9999;display:flex;align-items:center;gap:8px;transform:translateY(80px);opacity:0;transition:.3s;max-width:360px}
+.toast.show{transform:translateY(0);opacity:1}
+.toast svg{width:15px;height:15px;stroke:#22c55e;fill:none;flex-shrink:0}
+
+
+
+/* PAGE VIEW TOGGLE */
+.page-view{display:block}
+.page-view.hidden{display:none}
+
+/* CART PAGE */
+.cart-page{max-width:1400px;margin:0 auto;padding:18px 40px 48px}
+.cart-page-top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:16px}
+.cart-page-title{font-size:26px;font-weight:900;color:var(--gray-800)}
+.cart-page-sub{font-size:13px;color:var(--gray-500);margin-top:4px}
+.cart-back-btn{display:inline-flex;align-items:center;gap:8px;border:none;background:#fff;padding:10px 16px;border-radius:50px;box-shadow:var(--shadow);font-family:'Nunito',sans-serif;font-weight:800;color:var(--gray-700);cursor:pointer;transition:.2s}
+.cart-back-btn:hover{transform:translateY(-1px);color:var(--teal-dark)}
+.cart-layout{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:22px;align-items:start}
+.cart-main,.cart-sidebar{min-width:0}
+.cart-card,.cart-summary-card{background:#fff;border-radius:22px;box-shadow:var(--shadow)}
+.cart-head{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--gray-100)}
+.cart-head-title{font-size:18px;font-weight:900;color:var(--gray-800)}
+.cart-head-meta{font-size:13px;color:var(--gray-500);font-weight:700}
+.cart-head-action{border:none;background:none;color:var(--gray-500);font-family:'Nunito',sans-serif;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.cart-head-action:hover{color:var(--red)}
+.cart-list{padding:18px;display:flex;flex-direction:column;gap:16px}
+.cart-item{border:1px solid var(--gray-100);border-radius:20px;padding:16px;background:#fff}
+.cart-item-top{display:grid;grid-template-columns:96px minmax(0,1fr) auto;gap:16px;align-items:center}
+.cart-item-img{width:96px;height:96px;border-radius:16px;background:linear-gradient(145deg,#f8fafc,#eef2f7);padding:10px;display:flex;align-items:center;justify-content:center}
+.cart-item-img img{width:100%;height:100%;object-fit:contain}
+.cart-item-name{font-size:18px;font-weight:800;line-height:1.35;color:var(--gray-800);margin-bottom:6px}
+.cart-item-meta{display:flex;flex-wrap:wrap;gap:10px;font-size:12px;color:var(--gray-500);font-weight:700}
+.cart-item-price{font-size:14px;font-weight:900;color:var(--teal-dark);margin-top:6px}
+.cart-item-actions{display:flex;flex-direction:column;align-items:flex-end;gap:14px}
+.cart-remove-btn{border:none;background:none;color:var(--gray-500);font-family:'Nunito',sans-serif;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.cart-remove-btn:hover{color:var(--red)}
+.cart-qty{display:inline-flex;align-items:center;background:#f7fbfc;border:1px solid var(--gray-200);border-radius:999px;padding:4px;gap:6px}
+.cart-qty button{width:30px;height:30px;border:none;border-radius:50%;background:var(--teal);color:#fff;font-size:18px;line-height:1;cursor:pointer;font-family:'Nunito',sans-serif}
+.cart-qty button:hover{background:var(--teal-dark)}
+.cart-qty span{min-width:24px;text-align:center;font-weight:900;color:var(--gray-800)}
+.cart-services{margin-top:16px;background:#eef8fb;border-radius:18px;padding:14px;overflow:hidden}
+.cart-services-title{font-size:14px;font-weight:800;color:var(--gray-700);margin-bottom:10px}
+.cart-service-row{display:grid;grid-template-columns:repeat(3,minmax(170px,1fr));gap:10px;overflow-x:auto}
+.cart-service-card{background:#fff;border:1px solid var(--gray-200);border-radius:16px;padding:14px;min-width:170px;cursor:pointer;transition:.2s}
+.cart-service-card:hover,.cart-service-card.active{border-color:var(--teal);box-shadow:0 0 0 3px rgba(0,188,212,.08)}
+.cart-service-top{display:flex;align-items:flex-start;gap:8px;margin-bottom:8px}
+.cart-service-plus{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--teal);color:#fff;font-weight:900;font-size:16px;line-height:1;flex-shrink:0}
+.cart-service-name{font-size:13px;font-weight:800;color:var(--gray-800);line-height:1.25}
+.cart-service-desc{font-size:11px;line-height:1.45;color:var(--gray-500)}
+.cart-service-price{margin-top:8px;font-size:12px;font-weight:900;color:var(--red)}
+.cart-summary-card{padding:22px;position:sticky;top:92px}
+.cart-summary-title{font-size:22px;font-weight:900;color:var(--gray-800);margin-bottom:8px}
+.cart-summary-pill{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:800;color:var(--green);margin-bottom:18px}
+.cart-summary-pill svg{width:16px;height:16px}
+.cart-summary-lines{border:1px solid var(--gray-100);border-radius:18px;overflow:hidden;background:#fff}
+.cart-line{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;font-size:14px;color:var(--gray-700);border-bottom:1px solid var(--gray-100)}
+.cart-line:last-child{border-bottom:none}
+.cart-line strong{font-size:20px;color:var(--gray-800)}
+.cart-line .muted{color:var(--gray-400)}
+.cart-checkout-btn{margin-top:18px;width:100%;border:none;border-radius:999px;background:var(--teal);color:#fff;font-family:'Nunito',sans-serif;font-weight:900;font-size:18px;padding:15px 20px;cursor:pointer;transition:.2s}
+.cart-checkout-btn:hover{background:var(--teal-dark)}
+.cart-empty{padding:42px 24px;text-align:center;color:var(--gray-500)}
+.cart-empty svg{width:52px;height:52px;margin-bottom:12px;opacity:.45}
+.cart-empty h3{font-size:20px;color:var(--gray-800);margin-bottom:8px}
+.cart-empty p{font-size:14px;margin-bottom:18px}
+.cart-empty button{border:none;background:var(--teal);color:#fff;padding:12px 20px;border-radius:999px;font-family:'Nunito',sans-serif;font-weight:900;cursor:pointer}
+
+
+/* CHECKOUT PAGE */
+.checkout-page{max-width:1400px;margin:0 auto;padding:18px 40px 48px}
+.checkout-top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:14px}
+.checkout-title{font-size:24px;font-weight:900;color:var(--gray-800)}
+.checkout-layout{display:grid;grid-template-columns:minmax(0,1fr) 370px;gap:28px;align-items:start}
+.checkout-main,.checkout-side{min-width:0}
+.checkout-card,.checkout-summary-card{background:#fff;border-radius:22px;box-shadow:var(--shadow)}
+.checkout-card{padding:22px}
+.checkout-section{padding-bottom:18px;margin-bottom:18px;border-bottom:1px solid var(--gray-200)}
+.checkout-section:last-child{padding-bottom:0;margin-bottom:0;border-bottom:none}
+.checkout-section-title{font-size:18px;font-weight:900;color:var(--gray-800);margin-bottom:14px}
+.address-select{display:flex;align-items:center;justify-content:space-between;gap:14px;background:#edf7fa;border:1px solid var(--gray-200);border-radius:16px;padding:14px 16px;font-weight:700;color:var(--gray-700)}
+.address-select-left{display:flex;align-items:center;gap:10px}
+.checkout-check{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--gray-600);font-weight:600;cursor:pointer;margin-top:12px}
+.checkout-check input,.payment-option input{accent-color:var(--teal);width:18px;height:18px;flex-shrink:0;margin-top:1px}
+.payment-options{display:flex;flex-direction:column;gap:12px}
+.payment-option{display:flex;align-items:center;gap:10px;font-size:16px;font-weight:700;color:var(--gray-700);cursor:pointer}
+.card-form-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.card-form-title{font-size:16px;font-weight:900;color:var(--gray-800)}
+.card-form{border:1px solid var(--gray-200);border-radius:16px;overflow:hidden;background:#fff}
+.card-input{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--gray-200)}
+.card-input:last-child{border-bottom:none}
+.card-input svg{width:16px;height:16px;color:var(--gray-400);flex-shrink:0}
+.card-input input{border:none;outline:none;background:transparent;width:100%;font-family:'Nunito',sans-serif;font-size:15px;color:var(--gray-800)}
+.card-input-grid{display:grid;grid-template-columns:1fr 200px}
+.card-input-grid .card-input{border-bottom:none}
+.card-input-grid .card-input:first-child{border-right:1px solid var(--gray-200)}
+.checkout-summary-card{padding:0;background:transparent;box-shadow:none}
+.checkout-summary-title{font-size:22px;font-weight:900;color:var(--gray-800);margin-bottom:8px}
+.checkout-summary-pill{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:800;color:var(--green);margin-bottom:16px}
+.checkout-summary-pill svg{width:16px;height:16px}
+.checkout-summary-box{background:#fff;border-radius:22px;box-shadow:var(--shadow);padding:18px}
+.checkout-summary-lines{border:1px solid var(--gray-100);border-radius:18px;overflow:hidden;background:#fff;margin-bottom:14px}
+.checkout-line{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;font-size:14px;color:var(--gray-700);border-bottom:1px solid var(--gray-100)}
+.checkout-line:last-child{border-bottom:none}
+.checkout-line strong{font-size:20px;color:var(--gray-800)}
+.checkout-line .muted{color:var(--gray-400)}
+.checkout-line .accent{color:var(--teal-dark);font-weight:800}
+.checkout-submit{width:100%;border:none;border-radius:999px;background:#9ca3af;color:#fff;font-family:'Nunito',sans-serif;font-weight:900;font-size:18px;padding:15px 20px;cursor:not-allowed;transition:.2s}
+.checkout-submit.enabled{background:var(--teal);cursor:pointer}
+.checkout-submit.enabled:hover{background:var(--teal-dark)}
+.checkout-link{color:var(--teal);text-decoration:none}
+.checkout-link:hover{text-decoration:underline}
+.masterpass-logo{height:26px;object-fit:contain}
+
+
+
+/* AUTH MODAL */
+.auth-overlay{position:fixed;inset:0;background:rgba(15,23,42,.42);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;z-index:1200;padding:20px}
+.auth-overlay.show{display:flex;animation:fadeIn .18s ease}
+.auth-modal{width:100%;max-width:720px;background:rgba(255,255,255,.94);border:1px solid rgba(255,255,255,.6);box-shadow:0 24px 80px rgba(15,23,42,.22);border-radius:24px;position:relative;overflow:hidden}
+.auth-close{position:absolute;top:14px;right:14px;width:38px;height:38px;border:none;border-radius:50%;background:rgba(255,255,255,.9);color:var(--gray-600);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(15,23,42,.12);z-index:2}
+.auth-close:hover{background:#fff;color:var(--gray-800)}
+.auth-shell{padding:34px}
+.auth-start{display:flex;flex-direction:column;gap:16px}
+.auth-kicker{display:inline-flex;align-items:center;gap:8px;width:max-content;padding:7px 12px;border-radius:999px;background:var(--teal-light);color:var(--teal-dark);font-weight:800;font-size:12px}
+.auth-title{font-size:28px;line-height:1.2;font-weight:900;color:var(--gray-800);max-width:520px}
+.auth-desc{font-size:14px;line-height:1.75;color:var(--gray-600);max-width:560px}
+.auth-switches{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:4px}
+.auth-big-btn{height:54px;border-radius:16px;font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;cursor:pointer;border:1.5px solid transparent;transition:.2s}
+.auth-big-btn.primary{background:var(--teal);color:#fff}
+.auth-big-btn.primary:hover{background:var(--teal-dark)}
+.auth-big-btn.secondary{background:#fff;color:var(--gray-800);border-color:var(--gray-200)}
+.auth-big-btn.secondary:hover{border-color:var(--teal);color:var(--teal-dark)}
+.auth-back-link{display:inline-flex;align-items:center;gap:6px;background:none;border:none;color:var(--gray-500);font-weight:800;font-family:'Nunito',sans-serif;cursor:pointer;margin-bottom:14px}
+.auth-back-link:hover{color:var(--teal-dark)}
+.auth-form-title{font-size:26px;font-weight:900;color:var(--gray-800);margin-bottom:4px}
+.auth-form-sub{font-size:13px;line-height:1.7;color:var(--gray-500);margin-bottom:16px}
+.auth-status{display:none;padding:11px 14px;border-radius:12px;font-size:13px;font-weight:700;margin-bottom:14px}
+.auth-status.show{display:block}
+.auth-status.error{background:#fef2f2;color:#b91c1c;border:1px solid #fecaca}
+.auth-status.success{background:#ecfdf5;color:#166534;border:1px solid #bbf7d0}
+.auth-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.auth-field{display:flex;flex-direction:column;gap:7px}
+.auth-field.full{grid-column:1/-1}
+.auth-field label{font-size:12px;font-weight:800;color:var(--gray-600)}
+.auth-field input,.auth-field textarea,.auth-field select{width:100%;border:1.5px solid var(--gray-200);background:#fff;border-radius:18px;padding:14px 16px;font-family:'Nunito',sans-serif;font-size:14px;color:var(--gray-800);outline:none;transition:.2s}
+.auth-field textarea{min-height:90px;resize:vertical}
+.auth-field input:focus,.auth-field textarea:focus,.auth-field select:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(0,188,212,.12)}
+.auth-gender{display:flex;gap:24px;align-items:center;min-height:46px;padding:6px 2px}
+.auth-radio{display:inline-flex;align-items:center;gap:8px;font-size:15px;font-weight:700;color:var(--gray-700);cursor:pointer}
+.auth-radio input{accent-color:var(--teal);width:18px;height:18px}
+.auth-submit{margin-top:14px;width:100%;height:56px;border:none;border-radius:18px;background:#8e97a3;color:#fff;font-family:'Nunito',sans-serif;font-size:16px;font-weight:900;cursor:pointer;transition:.2s}
+.auth-submit:hover{background:#7d8794}
+.auth-submit:disabled{opacity:.7;cursor:not-allowed}
+.auth-footnote{font-size:12.5px;color:var(--gray-500);line-height:1.7;margin-top:12px}
+
+
+.auth-register-form{display:flex;flex-direction:column;gap:14px;margin-top:10px}
+.auth-form-grid.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.auth-form-group{display:flex;flex-direction:column;gap:8px}
+.auth-form-group label{font-size:13px;font-weight:800;color:var(--gray-700)}
+.auth-form-group input,.auth-form-group textarea,.auth-form-group select{width:100%;border:1.5px solid var(--gray-200);border-radius:999px;padding:14px 16px;font:inherit;color:var(--gray-800);background:#fff;outline:none;transition:.2s}
+.auth-form-group textarea{border-radius:22px;resize:vertical;min-height:92px}
+.auth-form-group input:focus,.auth-form-group textarea:focus,.auth-form-group select:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(0,188,212,.12)}
+.auth-form-actions{display:flex;align-items:center;gap:12px;justify-content:space-between;margin-top:6px}
+.auth-primary-btn,.auth-secondary-btn,.auth-link-btn{border:none;border-radius:999px;padding:14px 18px;font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;cursor:pointer;transition:.2s}
+.auth-primary-btn{background:#8e97a3;color:#fff;flex:1}
+.auth-primary-btn:hover{background:#7d8794}
+.auth-secondary-btn{background:var(--gray-100);color:var(--gray-800);flex:1}
+.auth-secondary-btn:hover{background:var(--gray-200)}
+.auth-link-btn{background:transparent;color:var(--gray-500);padding-left:8px;padding-right:8px}
+.auth-link-btn:hover{color:var(--teal-dark)}
+.auth-radio-row{display:flex;gap:24px;align-items:center;padding:6px 0}
+.auth-badge{font-size:14px;font-weight:700;color:var(--gray-600);margin-bottom:4px}
+
+@media(max-width:900px){
+  .sidebar{display:none}
+  .main-layout,.search-bar-wrap,.header-top,.nav-categories,.breadcrumb,.brand-tabs,.cart-page{padding-left:16px;padding-right:16px}
+  .detail-body{grid-template-columns:1fr}
+  .detail-info{max-height:none}
+  .cart-layout{grid-template-columns:1fr}
+  .cart-page-top{flex-direction:column;align-items:flex-start}
+  .cart-item-top{grid-template-columns:76px minmax(0,1fr)}
+  .cart-item-actions{grid-column:1/-1;flex-direction:row;justify-content:space-between;align-items:center}
+  .cart-service-row{grid-template-columns:repeat(3,170px)}
+  .cart-summary-card{position:static}
+  .checkout-page{padding-left:16px;padding-right:16px}
+  .checkout-layout{grid-template-columns:1fr}
+  .card-input-grid{grid-template-columns:1fr}
+  .card-input-grid .card-input:first-child{border-right:none;border-bottom:1px solid var(--gray-200)}
+  .checkout-top{flex-direction:column;align-items:flex-start}
+  .auth-shell{padding:24px 18px}
+  .auth-switches,.auth-form-grid,.auth-form-grid.two{grid-template-columns:1fr}
+  
+
+  .auth-title{font-size:22px}
+}
+
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header-top">
+  <div class="logo-area">
+    <input class="logo-input main" type="text" placeholder="Marka Adınız..." />
+    <input class="logo-input sub"  type="text" placeholder="Alt Kategori..." />
+    <input class="logo-input sm"   type="text" placeholder="Sloganınız..." />
+  </div>
+  <div class="header-actions">
+    <button class="btn-header" onclick="showToast('Kampanyalar sayfası açılıyor...')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+      Kampanyalar
+    </button>
+    <button class="btn-header" id="authTriggerBtn" type="button" onclick="handleAuthButton()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      <span id="authTriggerLabel">Giriş Yap</span>
+    </button>
+  </div>
+</header>
+
+<!-- SEARCH -->
+<div class="search-bar-wrap">
+  <div class="search-box">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="22" y2="22"/></svg>
+    <input type="text" id="searchInput" placeholder="Aramak istediğin ürünü yaz..." oninput="applyFilters()">
+  </div>
+  <button class="btn-cart" id="cartTriggerBtn" type="button" onclick="viewCart()">
+    <div class="cart-icon-wrap">
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+      <span class="cart-badge" id="cartBadge">0</span>
+    </div>
+    Sepetim
+  </button>
+</div>
+
+<!-- NAV -->
+<nav class="nav-categories">
+  <div class="nav-cat-item active" onclick="setActiveNav(this)">Elektronik</div>
+  <div class="nav-cat-item" onclick="setActiveNav(this)">Ev &amp; Yaşam</div>
+  <div class="nav-cat-item" onclick="setActiveNav(this)">Giyim &amp; Aksesuar</div>
+  <div class="nav-cat-item" onclick="setActiveNav(this)">Oto &amp; Bahçe &amp; Yapı</div>
+  <div class="nav-cat-item" onclick="setActiveNav(this)">Anne &amp; Bebek &amp; Oyuncak</div>
+  <div class="nav-cat-item" onclick="setActiveNav(this)">Kozmetik &amp; Kişisel Bakım</div>
+  <div class="nav-cat-item" onclick="setActiveNav(this)">Kitap &amp; Kırtasiye</div>
+  <div class="nav-cat-item" onclick="setActiveNav(this)">Market</div>
+</nav>
+
+<div id="shopView" class="page-view">
+
+<!-- BREADCRUMB -->
+<div class="breadcrumb">
+  <a href="#">Ana Sayfa</a><span class="sep">›</span>
+  <a href="#">Elektronik</a><span class="sep">›</span>
+  <a href="#">Telefon &amp; Aksesuar</a><span class="sep">›</span>
+  <span class="current">Cep Telefonu</span>
+</div>
+
+<!-- BRAND TABS -->
+<div class="brand-tabs" style="padding:0 40px 14px">
+  <button class="brand-tab active" onclick="setBrand('all',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="7" height="7" rx="1"/><rect x="15" y="3" width="7" height="7" rx="1"/><rect x="2" y="14" width="7" height="7" rx="1"/><rect x="15" y="14" width="7" height="7" rx="1"/></svg>
+    Tümü
+  </button>
+  <button class="brand-tab" onclick="setBrand('Apple',this)">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+    Apple iPhone
+  </button>
+  <button class="brand-tab" onclick="setBrand('Samsung',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18.01"/></svg>
+    Samsung Galaxy
+  </button>
+</div>
+
+<!-- MAIN LAYOUT -->
+<div class="main-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-title">Filtreler</div>
+
+    <div class="filter-group">
+      <div class="filter-group-header open" onclick="toggleFilter(this)">iPhone Serisi <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div>
+      <div class="filter-body show" id="filterIphone">
+        <label class="filter-check"><input type="checkbox" data-series="iPhone 17 Pro" onchange="applyFilters()"> iPhone 17 Pro</label>
+        <label class="filter-check"><input type="checkbox" data-series="iPhone Air" onchange="applyFilters()"> iPhone Air</label>
+        <label class="filter-check"><input type="checkbox" data-series="iPhone 17" onchange="applyFilters()"> iPhone 17</label>
+        <label class="filter-check"><input type="checkbox" data-series="iPhone 17e" onchange="applyFilters()"> iPhone 17e</label>
+        <label class="filter-check"><input type="checkbox" data-series="iPhone 16" onchange="applyFilters()"> iPhone 16</label>
+      </div>
+    </div>
+    <div class="filter-group">
+      <div class="filter-group-header open" onclick="toggleFilter(this)">Samsung Serisi <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div>
+      <div class="filter-body show" id="filterSamsung">
+        <label class="filter-check"><input type="checkbox" data-series="Galaxy S" onchange="applyFilters()"> Galaxy S</label>
+        <label class="filter-check"><input type="checkbox" data-series="Galaxy Z" onchange="applyFilters()"> Galaxy Z</label>
+      </div>
+    </div>
+    <div class="filter-group">
+      <div class="filter-group-header" onclick="toggleFilter(this)">Depolama <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div>
+      <div class="filter-body">
+        <label class="filter-check"><input type="checkbox" data-storage="128" onchange="applyFilters()"> 128 GB</label>
+        <label class="filter-check"><input type="checkbox" data-storage="256" onchange="applyFilters()"> 256 GB</label>
+        <label class="filter-check"><input type="checkbox" data-storage="512" onchange="applyFilters()"> 512 GB</label>
+        <label class="filter-check"><input type="checkbox" data-storage="1000" onchange="applyFilters()"> 1 TB</label>
+        <label class="filter-check"><input type="checkbox" data-storage="2000" onchange="applyFilters()"> 2 TB</label>
+      </div>
+    </div>
+    <div class="filter-group">
+      <div class="filter-group-header" onclick="toggleFilter(this)">Fiyat Aralığı <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div>
+      <div class="filter-body">
+        <label class="filter-check"><input type="checkbox" data-price="0-50000" onchange="applyFilters()"> 0 – 50.000 TL</label>
+        <label class="filter-check"><input type="checkbox" data-price="50000-80000" onchange="applyFilters()"> 50.000 – 80.000 TL</label>
+        <label class="filter-check"><input type="checkbox" data-price="80000-120000" onchange="applyFilters()"> 80.000 – 120.000 TL</label>
+        <label class="filter-check"><input type="checkbox" data-price="120000-999999" onchange="applyFilters()"> 120.000 TL +</label>
+      </div>
+    </div>
+    <div class="filter-group">
+      <div class="filter-group-header" onclick="toggleFilter(this)">Yüz Tanıma <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div>
+      <div class="filter-body">
+        <label class="filter-check"><input type="checkbox"> Var</label>
+        <label class="filter-check"><input type="checkbox"> Yok</label>
+      </div>
+    </div>
+    <div class="filter-group">
+      <div class="filter-group-header" onclick="toggleFilter(this)">Çift Sim <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div>
+      <div class="filter-body">
+        <label class="filter-check"><input type="checkbox"> Var</label>
+        <label class="filter-check"><input type="checkbox"> Yok</label>
+      </div>
+    </div>
+  </aside>
+
+  <!-- CONTENT -->
+  <div class="content">
+    <div class="content-top">
+      <p class="result-text">"Cep Telefonu" için <strong id="resultCount">29 ürün</strong> bulundu.</p>
+    </div>
+    <div class="toolbar">
+      <div class="sort-wrapper">
+        <button class="sort-btn" id="sortBtn" onclick="toggleSort(event)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="20" y2="12"/><line x1="12" y1="18" x2="20" y2="18"/></svg>
+          <span id="sortLabel">Önerilen</span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="sort-dropdown" id="sortDropdown">
+          <div class="sort-option selected" onclick="applySort('recommended','Önerilen',this)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> Önerilen <span class="chk">✓</span></div>
+          <div class="sort-option" onclick="applySort('priceLow','Fiyat: Düşükten Yükseğe',this)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg> Fiyat: Düşükten Yükseğe <span class="chk">✓</span></div>
+          <div class="sort-option" onclick="applySort('priceHigh','Fiyat: Yüksekten Düşüğe',this)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg> Fiyat: Yüksekten Düşüğe <span class="chk">✓</span></div>
+          <div class="sort-option" onclick="applySort('newest','En Yeni',this)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> En Yeni <span class="chk">✓</span></div>
+          <div class="sort-option" onclick="applySort('popular','En Çok Satan',this)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> En Çok Satan <span class="chk">✓</span></div>
+        </div>
+      </div>
+      <button class="share-btn" onclick="shareAction()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        Paylaş
+      </button>
+    </div>
+    <div class="product-grid" id="productGrid"></div>
+  </div>
+</div>
+
+</div>
+
+<section id="cartView" class="page-view hidden cart-page">
+  <div class="cart-page-top">
+    <div>
+      <div class="cart-page-title">Sepetim</div>
+      <div class="cart-page-sub" id="cartPageMeta">0 ürün eklendi</div>
+    </div>
+    <button class="cart-back-btn" onclick="showShopView()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="15 18 9 12 15 6"/></svg>
+      Alışverişe Dön
+    </button>
+  </div>
+  <div class="cart-layout">
+    <div class="cart-main">
+      <div class="cart-card">
+        <div class="cart-head">
+          <div>
+            <div class="cart-head-title">Sepetim <span id="cartHeaderCount" style="font-weight:700;color:var(--gray-500);font-size:13px;margin-left:6px">0 ürün eklendi</span></div>
+          </div>
+          <button class="cart-head-action" onclick="clearCart()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg>
+            Sepeti Temizle
+          </button>
+        </div>
+        <div class="cart-list" id="cartList"></div>
+      </div>
+    </div>
+    <aside class="cart-sidebar">
+      <div class="cart-summary-card">
+        <div class="cart-summary-title">Sepet Özeti</div>
+        <div class="cart-summary-pill">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path d="M8 12l2.5 2.5L16 9"/></svg>
+          Ücretsiz Kargo
+        </div>
+        <div class="cart-summary-lines">
+          <div class="cart-line"><span>Sepet Tutarı</span><span id="cartSubtotal">₺0,00</span></div>
+          <div class="cart-line"><span>Ek Hizmetler</span><span id="cartServicesTotal" style="color:var(--teal-dark);font-weight:800">₺0,00</span></div>
+          <div class="cart-line"><span>Kargo Ücreti</span><span id="cartShippingFull">₺99,00</span></div>
+          <div class="cart-line"><span class="muted">Ücretsiz Kargo</span><span id="cartShippingDiscount" class="muted">- ₺99,00</span></div>
+          <div class="cart-line"><span>Toplam</span><strong id="cartTotal">₺0,00</strong></div>
+        </div>
+        <button class="cart-checkout-btn" onclick="showCheckoutView()">Ödeme Yap</button>
+      </div>
+    </aside>
+  </div>
+
+</section>
+
+<section id="checkoutView" class="page-view hidden checkout-page">
+  <div class="checkout-top">
+    <div class="checkout-title">Güvenli Öde</div>
+    <button class="cart-back-btn" onclick="showCartView()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="15 18 9 12 15 6"/></svg>
+      Sepete Dön
+    </button>
+  </div>
+  <div class="checkout-layout">
+    <div class="checkout-main">
+      <div class="checkout-card">
+        <div class="checkout-section">
+          <div class="checkout-section-title">Teslimat Adresi</div>
+          <div class="address-select">
+            <div class="address-select-left">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10.5L12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9 21v-6h6v6"/></svg>
+              <span>Ev Adresim;</span>
+            </div>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <label class="checkout-check">
+            <input type="checkbox" id="billingDifferent">
+            <span>Farklı bir fatura adresi kullanılsın.</span>
+          </label>
+        </div>
+        <div class="checkout-section">
+          <div class="checkout-section-title">Ödeme Seçenekleri</div>
+          <div class="payment-options">
+            <label class="payment-option"><input type="radio" name="paymentMethod"> <span>Kayıtlı Kart ile Öde</span></label>
+            <label class="payment-option"><input type="radio" name="paymentMethod" checked> <span>Kredi/Banka Kartı ile Öde</span></label>
+          </div>
+        </div>
+        <div class="checkout-section">
+          <div class="card-form-head">
+            <div class="card-form-title">Kart Bilgilerim</div>
+            <img class="masterpass-logo" src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Masterpass">
+          </div>
+          <div class="card-form">
+            <div class="card-input">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+              <input type="text" placeholder="Kart Üzerindeki Ad Soyad">
+            </div>
+            <div class="card-input">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              <input type="text" placeholder="Kart Numarası">
+            </div>
+            <div class="card-input-grid">
+              <div class="card-input">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                <input type="text" placeholder="Ay / Yıl">
+              </div>
+              <div class="card-input">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l7 4v6c0 5-3.5 8-7 10-3.5-2-7-5-7-10V6l7-4z"/><circle cx="12" cy="11" r="1"/></svg>
+                <input type="text" placeholder="CVC">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <aside class="checkout-side">
+      <div class="checkout-summary-title">Sepet Özeti</div>
+      <div class="checkout-summary-pill">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path d="M8 12l2.5 2.5L16 9"/></svg>
+        Ücretsiz Kargo
+      </div>
+      <div class="checkout-summary-box">
+        <div class="checkout-summary-lines">
+          <div class="checkout-line"><span>Sepet Tutarı</span><span id="checkoutSubtotal">₺0,00</span></div>
+          <div class="checkout-line"><span>Ek Hizmetler</span><span id="checkoutServices" class="accent">₺0,00</span></div>
+          <div class="checkout-line"><span>Kargo Ücreti</span><span id="checkoutShippingFull">₺99,00</span></div>
+          <div class="checkout-line"><span class="muted">Ücretsiz Kargo</span><span id="checkoutShippingDiscount" class="muted">- ₺99,00</span></div>
+          <div class="checkout-line"><span>Toplam</span><strong id="checkoutTotal">₺0,00</strong></div>
+        </div>
+        <label class="checkout-check" style="margin:0 0 14px">
+          <input type="checkbox" id="checkoutTerms" onchange="updateCheckoutButtonState()">
+          <span><a class="checkout-link" href="#">Cayma Hakkı'nı</a>, <a class="checkout-link" href="#">Ön Bilgilendirme Formu'nu</a> ve <a class="checkout-link" href="#">Mesafeli Satış Sözleşmesi'ni</a> okudum ve kabul ediyorum.</span>
+        </label>
+        <button id="checkoutSubmitBtn" class="checkout-submit" onclick="submitPayment()">Ödeme Yap</button>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- DETAIL OVERLAY -->
+<div class="overlay" id="overlay" onclick="overlayClick(event)">
+  <div class="detail-panel" id="detailPanel">
+    <button class="detail-close" onclick="closeDetail()">✕</button>
+    <div class="detail-breadcrumb">
+      <a href="#">Ana Sayfa</a><span class="sep">›</span>
+      <a href="#">Elektronik</a><span class="sep">›</span>
+      <a href="#">Cep Telefonu</a><span class="sep">›</span>
+      <span class="current" id="dCrumb"></span>
+    </div>
+    <div class="detail-body">
+      <div class="detail-images">
+        <img id="dMainImg" class="detail-main-img" src="" alt="">
+        <div class="detail-thumbs" id="dThumbs"></div>
+      </div>
+      <div class="detail-info">
+        <div class="detail-series-badge" id="dSeriesBadge"></div>
+        <div>
+          <div class="detail-product-name" id="dName"></div>
+          <div class="detail-sku" id="dSku"></div>
+        </div>
+        <div class="detail-price-group">
+          <div class="detail-orig-price" id="dOrigPrice"></div>
+          <div class="detail-disc-row">
+            <div class="detail-price-big" id="dPrice"></div>
+            <div class="detail-disc-badge">%20 İndirim</div>
+          </div>
+        </div>
+        <div class="detail-brand-row">Marka: <a href="#" id="dBrand"></a></div>
+        <div>
+          <div class="detail-section-label">Renk: <span id="dColorName"></span></div>
+          <div class="detail-color-swatches" id="dSwatches"></div>
+        </div>
+        <div>
+          <div class="detail-section-label" style="margin-bottom:7px">Sigorta Fırsatları</div>
+          <div class="insurance-scroll" id="dInsurance"></div>
+        </div>
+        <div class="a101-badge"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> A101 Bankası'na Özel</div>
+        <button class="btn-add-big" id="dAddBtn" onclick="addToCartDetail()">Sepete Ekle</button>
+      </div>
+    </div>
+    <div class="detail-tabs-section">
+      <div class="detail-tabs-nav">
+        <div class="detail-tab active" onclick="switchTab(this,'tabSpecs')">Ürün Özellikleri</div>
+        <div class="detail-tab" onclick="switchTab(this,'tabCredit')">Alışveriş Kredisi</div>
+        <div class="detail-tab" onclick="switchTab(this,'tabReturn')">İade Koşulları</div>
+        <div class="detail-tab" onclick="switchTab(this,'tabDelivery')">Teslimat</div>
+      </div>
+      <div class="detail-tab-content active" id="tabSpecs"><table class="specs-table" id="dSpecs"></table></div>
+      <div class="detail-tab-content" id="tabCredit">
+        <div class="tab-text">
+          <p>Bu kampanya kapsamındaki ürünler için <strong>Alışveriş Kredisi geçerli değildir.</strong></p>
+          <p>Kampanyalı fiyatlardan yararlanmak için ödemenizi nakit veya kredi kartı ile gerçekleştirebilirsiniz.</p>
+        </div>
+      </div>
+      <div class="detail-tab-content" id="tabReturn">
+        <div class="tab-text">
+          <p>İade süresi, siparişinizde yer alan ürünlerin teslimat tarihinden itibaren <strong>14 gündür.</strong></p>
+          <ul>
+            <li>İade edilecek ürün, kullanılmamış, hasar görmemiş ve yeniden satılabilir durumda olmalıdır.</li>
+            <li>Garanti kapsamında arızalanan ürünlerin iadesi, yetkili servis tarafından düzenlenen servis raporu veya iade raporu ile birlikte gerçekleştirilebilmektedir.</li>
+            <li>Set halinde satılan ürünlerin iadesi için, set içeriğinde yer alan tüm ürünlerin eksiksiz olarak iade edilmesi gerekmektedir.</li>
+            <li>Teslimat sırasında oluşan hasarların tespiti için ürün teslim alınırken tutanak tutulması zorunludur. Tutanaksız hasar bildirimlerinde iade işlemi gerçekleştirilememektedir.</li>
+            <li>Ürün ya da kargo paketinde hasar tespit etmeniz durumunda, kargo görevlisine mutlaka hasar tespit tutanağı düzenletmeniz gerekmektedir. Görevli tutanak düzenlemiyorsa, ürünü teslim almadan iade edebilirsiniz.</li>
+            <li>İade işleminizin sorunsuz gerçekleşebilmesi için, her ürünün sistem üzerinden oluşturulan iade koduyla ve faturasıyla birlikte gönderilmesi gerekmektedir. Aynı iade koduna sahip ürünler tek bir paketle, farklı iade koduna sahip ürünler ise ayrı paketlerle gönderilmelidir. İade kodunuza, üyelik hesabınıza giriş yaptıktan sonra "Profilim > Siparişlerim > Sipariş Detayı" adımlarını izleyerek ulaşabilirsiniz.</li>
+            <li>Bayi veya yetkili servis aracılığıyla teslim edilen ürünlerin iade işlemleri için <strong>0850 808 2 101</strong> numaralı müşteri hizmetlerimizle iletişime geçebilirsiniz.</li>
+            <li>Üye olmadan alışveriş yaptıysanız, iade işleminizi gerçekleştirmek için A101 Ekstra sayfasındaki "Sipariş Takip" bölümüne girerek, sipariş sırasında kullandığınız telefon numarasıyla şifre alabilir ve iade talebinde bulunabilirsiniz. Detaylı bilgi için <strong>0850 808 2 101</strong> numaralı müşteri hizmetlerimizle iletişime geçebilirsiniz.</li>
+            <li>Ürün firmamıza ulaştıktan sonra inceleme süreci başlatılacak olup, iade işlemleri <strong>7 iş günü</strong> içerisinde sonuçlandırılacaktır.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="detail-tab-content" id="tabDelivery">
+        <div class="tab-text">
+          <p>Ürün afişinde belirtilen sürelerde kargolama ve teslimatlar gerçekleştirilir. Ürün afişinde, ürüne özel bir teslim tarihi belirtilmemişse mevzuattaki teslimat süreleri geçerlidir.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- AUTH MODAL -->
+<div class="auth-overlay" id="authModal" onclick="handleAuthOverlay(event)">
+  <div class="auth-shell">
+    <button class="auth-close" type="button" onclick="forceCloseAuthModal()">✕</button>
+
+    <div class="auth-view" id="authHomeView">
+      <div class="auth-badge">Hesabım</div>
+      <h2 class="auth-title">Hesabına giriş yap veya yeni üyelik oluştur</h2>
+      <p class="auth-subtitle">Tüm akış aynı sayfa içinde çalışır. Sepet ve ödeme alanlarına daha hızlı geçiş için üyelik kullanabilirsin.</p>
+      <div class="auth-switches">
+        <button class="auth-primary-btn" type="button" onclick="showLoginView()">Giriş Yap</button>
+        <button class="auth-secondary-btn" type="button" onclick="showRegisterView()">Üye Ol</button>
+      </div>
+    </div>
+
+    <div class="auth-view" id="authLoginView" style="display:none;">
+      <div class="auth-badge">Giriş Yap</div>
+      <h2 class="auth-title">Hesabına giriş yap</h2>
+      <p class="auth-subtitle">Kayıtlı e-posta adresin ve şifren ile giriş yap.</p>
+      <form class="auth-form-stack" onsubmit="handleLogin(event)">
+        <div class="auth-form-group">
+          <label>E-Posta</label>
+          <input id="loginEmail" type="email" placeholder="ornek@email.com" required>
+        </div>
+        <div class="auth-form-group">
+          <label>Şifre</label>
+          <input id="loginPassword" type="password" placeholder="Şifren" required>
+        </div>
+        <div class="auth-form-actions">
+          <button class="auth-primary-btn" type="submit">Giriş Yap</button>
+          <button class="auth-link-btn" type="button" onclick="showHomeView()">Geri</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="auth-view" id="authRegisterView" style="display:none;">
+      <div class="auth-badge">Üye Ol</div>
+      <h2 class="auth-title" style="max-width:none;margin-bottom:10px;">Kişisel Bilgilerim</h2>
+      <form class="auth-register-form" onsubmit="handleRegister(event)">
+        <div class="auth-form-grid two">
+          <div class="auth-form-group">
+            <label>Ad</label>
+            <input id="regFirstName" type="text" placeholder="Ad" required>
+          </div>
+          <div class="auth-form-group">
+            <label>Soyad</label>
+            <input id="regLastName" type="text" placeholder="Soyad" required>
+          </div>
+        </div>
+        <div class="auth-form-group">
+          <label>Telefon Numarası</label>
+          <input id="regPhone" type="tel" placeholder="Telefon Numaranız" required>
+        </div>
+        <div class="auth-form-group">
+          <label>E-Posta</label>
+          <input id="regEmail" type="email" placeholder="E-Posta" required>
+        </div>
+        <div class="auth-form-grid two">
+          <div class="auth-form-group">
+            <label>Şifre</label>
+            <input id="regPassword" type="password" minlength="6" placeholder="Şifre" required>
+          </div>
+          <div class="auth-form-group">
+            <label>Doğum Tarihi</label>
+            <input id="regBirthDate" type="date" required>
+          </div>
+        </div>
+        <div class="auth-form-group">
+          <label>Cinsiyet</label>
+          <div class="auth-radio-row">
+            <label class="auth-radio"><input type="radio" name="gender" value="Kadın" required><span>Kadın</span></label>
+            <label class="auth-radio"><input type="radio" name="gender" value="Erkek" checked><span>Erkek</span></label>
+          </div>
+        </div>
+        <div class="auth-form-group">
+          <label>Adres</label>
+          <textarea id="regAddress" rows="3" placeholder="Adres" required></textarea>
+        </div>
+        <div class="auth-form-actions">
+          <button class="auth-primary-btn" type="submit">Kayıt Ol</button>
+          <button class="auth-link-btn" type="button" onclick="showHomeView()">Geri</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <svg viewBox="0 0 24 24" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+  <span id="toastMsg"></span>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// ── CDN BASES ──
+const AC = 'https://store.storeimages.cdn-apple.com/4668/as-images.apple.com/is/';
+const SC = 'https://images.samsung.com/is/image/samsung/p6pim/';
+const FB_APPLE = AC + 'iphone-16-pro-finish-select-202409-6-9inch-naturaltitanium?wid=800&hei=800&fmt=p-jpg&qlt=80';
+const FB_SAMSUNG = 'https://images.samsung.com/is/image/samsung/assets/global/smartphones/galaxy-s25/galaxy-s25_highlights_kv_d.jpg';
+
+function ai(path){ return AC + path + '?wid=800&hei=800&fmt=p-jpg&qlt=80'; }
+function ai2(path){ return AC + path + '?wid=200&hei=200&fmt=p-jpg&qlt=80'; }
+function si(path){ return 'https://images.samsung.com/is/image/samsung/' + path + '?$730_730_PNG$'; }
+
+// ── PRODUCT DATA ──
+const PRODUCTS = [
+  // ─ iPhone 17 Pro Series ─
+  { id:1,  brand:'Apple', series:'iPhone 17 Pro', storage:256,  name:'Apple iPhone 17 Pro 256 GB Kozmik Turuncu', colorName:'Kozmik Turuncu', origPrice:107999, price:86399,
+    img: ai('iphone-17-pro-finish-select-202509-6-3inch-cosmicorange'), sku:'IP17P256CO', isNew:false,
+    colors:[{n:'Kozmik Turuncu',img:ai2('iphone-17-pro-finish-select-202509-6-3inch-cosmicorange')},{n:'Deep Blue',img:ai2('iphone-16-pro-finish-select-202409-6-9inch-blacktitanium')},{n:'Natural',img:ai2('iphone-16-pro-finish-select-202409-6-9inch-naturaltitanium')}],
+    dots:['#e3550f','#1a2a4a','#d4bfa0'], dc:3, fallback:FB_APPLE,
+    specs:[['Depolama','256 GB'],['RAM','12 GB'],['Ekran','6.3" Super Retina XDR'],['İşlemci','A19 Pro'],['İşletim Sistemi','iOS 18'],['Kamera','48 MP Pro Fusion'],['Pil','~3.274 mAh'],['5G','Evet']] },
+
+  { id:2,  brand:'Apple', series:'iPhone 17 Pro', storage:512,  name:'Apple iPhone 17 Pro 512 GB Deep Blue', colorName:'Deep Blue', origPrice:125999, price:100799,
+    img: ai('iphone-16-pro-finish-select-202409-6-9inch-blacktitanium'), sku:'IP17P512DB', isNew:false,
+    colors:[{n:'Deep Blue',img:ai2('iphone-16-pro-finish-select-202409-6-9inch-blacktitanium')},{n:'Kozmik Turuncu',img:ai2('iphone-17-pro-finish-select-202509-6-3inch-cosmicorange')},{n:'Beyaz',img:ai2('iphone-16-pro-finish-select-202409-6-3inch-whitetitanium')}],
+    dots:['#1a2a4a','#e3550f','#e8e8e0'], dc:3, fallback:FB_APPLE,
+    specs:[['Depolama','512 GB'],['RAM','12 GB'],['Ekran','6.3" Super Retina XDR'],['İşlemci','A19 Pro'],['İşletim Sistemi','iOS 18'],['Kamera','48 MP Pro Fusion'],['Pil','~3.274 mAh'],['5G','Evet']] },
+
+  { id:3,  brand:'Apple', series:'iPhone 17 Pro', storage:1000, name:'Apple iPhone 17 Pro 1 TB Natural Titanyum', colorName:'Natural Titanyum', origPrice:143999, price:115199,
+    img: ai('iphone-16-pro-finish-select-202409-6-9inch-naturaltitanium'), sku:'IP17P1TBN', isNew:false,
+    colors:[{n:'Natural',img:ai2('iphone-16-pro-finish-select-202409-6-9inch-naturaltitanium')},{n:'Siyah',img:ai2('iphone-16-pro-finish-select-202409-6-9inch-blacktitanium')},{n:'Beyaz',img:ai2('iphone-16-pro-finish-select-202409-6-3inch-whitetitanium')}],
+    dots:['#d4bfa0','#1a1a1a','#e8e8e0'], dc:3, fallback:FB_APPLE,
+    specs:[['Depolama','1 TB'],['RAM','12 GB'],['Ekran','6.3" Super Retina XDR'],['İşlemci','A19 Pro'],['İşletim Sistemi','iOS 18'],['Kamera','48 MP Pro Fusion'],['Pil','~3.274 mAh'],['5G','Evet']] },
+
+  // ─ iPhone 17 Pro Max ─
+  { id:4,  brand:'Apple', series:'iPhone 17 Pro', storage:256,  name:'Apple iPhone 17 Pro Max 256 GB Deep Blue', colorName:'Deep Blue', origPrice:119999, price:95999,
+    img: ai('iphone-16-pro-finish-select-202409-6-9inch-blacktitanium'), sku:'IP17PM256DB', isNew:false,
+    colors:[{n:'Deep Blue',img:ai2('iphone-16-pro-finish-select-202409-6-9inch-blacktitanium')},{n:'Natural',img:ai2('iphone-16-pro-finish-select-202409-6-9inch-naturaltitanium')},{n:'Kozmik Turuncu',img:ai2('iphone-17-pro-finish-select-202509-6-3inch-cosmicorange')}],
+    dots:['#1a2a4a','#d4bfa0','#e3550f'], dc:3, fallback:FB_APPLE,
+    specs:[['Depolama','256 GB'],['RAM','12 GB'],['Ekran','6.9" Super Retina XDR'],['İşlemci','A19 Pro'],['İşletim Sistemi','iOS 18'],['Kamera','48 MP Pro Fusion + 5x Telefoto'],['Pil','~4.685 mAh'],['5G','Evet']] },
+
+  { id:5,  brand:'Apple', series:'iPhone 17 Pro', storage:512,  name:'Apple iPhone 17 Pro Max 512 GB Kozmik Turuncu', colorName:'Kozmik Turuncu', origPrice:137999, price:110399,
+    img: ai('iphone-17-pro-finish-select-202509-6-3inch-cosmicorange'), sku:'IP17PM512CO', isNew:false,
+    colors:[{n:'Kozmik Turuncu',img:ai2('iphone-17-pro-finish-select-202509-6-3inch-cosmicorange')},{n:'Deep Blue',img:ai2('iphone-16-pro-finish-select-202409-6-9inch-blacktitanium')},{n:'Beyaz',img:ai2('iphone-16-pro-finish-select-202409-6-3inch-whitetitanium')}],
+    dots:['#e3550f','#1a2a4a','#e8e8e0'], dc:3, fallback:FB_APPLE,
+    specs:[['Depolama','512 GB'],['RAM','12 GB'],['Ekran','6.9" Super Retina XDR'],['İşlemci','A19 Pro'],['İşletim Sistemi','iOS 18'],['Kamera','48 MP Pro Fusion + 5x Telefoto'],['Pil','~4.685 mAh'],['5G','Evet']] },
+
+  { id:6,  brand:'Apple', series:'iPhone 17 Pro', storage:1000, name:'Apple iPhone 17 Pro Max 1 TB Natural Titanyum', colorName:'Natural Titanyum', origPrice:155999, price:124799,
+    img: ai('iphone-16-pro-finish-select-202409-6-9inch-naturaltitanium'), sku:'IP17PM1TBN', isNew:false,
+    colors:[{n:'Natural',img:ai2('iphone-16-pro-finish-select-202409-6-9inch-naturaltitanium')},{n:'Siyah',img:ai2('iphone-16-pro-finish-select-202409-6-9inch-blacktitanium')},{n:'Kozmik Turuncu',img:ai2('iphone-17-pro-finish-select-202509-6-3inch-cosmicorange')}],
+    dots:['#d4bfa0','#1a1a1a','#e3550f'], dc:3, fallback:FB_APPLE,
+    specs:[['Depolama','1 TB'],['RAM','12 GB'],['Ekran','6.9" Super Retina XDR'],['İşlemci','A19 Pro'],['İşletim Sistemi','iOS 18'],['Kamera','48 MP Pro Fusion + 5x Telefoto'],['Pil','~4.685 mAh'],['5G','Evet']] },
+
+  { id:7,  brand:'Apple', series:'iPhone 17 Pro', storage:2000, name:'Apple iPhone 17 Pro Max 2 TB Siyah Titanyum', colorName:'Siyah Titanyum', origPrice:175999, price:140799,
+    img: ai('iphone-16-pro-finish-select-202409-6-3inch-blacktitanium'), sku:'IP17PM2TBK', isNew:false,
+    colors:[{n:'Siyah',img:ai2('iphone-16-pro-finish-select-202409-6-3inch-blacktitanium')},{n:'Natural',img:ai2('iphone-16-pro-finish-select-202409-6-9inch-naturaltitanium')}],
+    dots:['#1a1a1a','#d4bfa0'], dc:2, fallback:FB_APPLE,
+    specs:[['Depolama','2 TB'],['RAM','12 GB'],['Ekran','6.9" Super Retina XDR'],['İşlemci','A19 Pro'],['İşletim Sistemi','iOS 18'],['Kamera','48 MP Pro Fusion + 5x Telefoto'],['Pil','~4.685 mAh'],['5G','Evet']] },
+
+  // ─ iPhone Air ─
+  { id:8,  brand:'Apple', series:'iPhone Air', storage:128, name:'Apple iPhone Air 128 GB Gökyüzü Mavisi', colorName:'Gökyüzü Mavisi', origPrice:77999, price:62399,
+    img: ai('iphone-air-finish-select-202509-6-5inch-skyblue'), sku:'IPAIR128SB', isNew:true,
+    colors:[{n:'Gökyüzü Mavisi',img:ai2('iphone-air-finish-select-202509-6-5inch-skyblue')},{n:'Beyaz',img:ai2('iphone-16-finish-select-202409-6-1inch-starlight')},{n:'Siyah',img:ai2('iphone-16-finish-select-202409-6-1inch-black')}],
+    dots:['#87ceeb','#f5f5f5','#1a1a1a'], dc:3, fallback: ai('iphone-16-finish-select-202409-6-1inch-ultramarine'),
+    specs:[['Depolama','128 GB'],['RAM','8 GB'],['Ekran','6.5" OLED ProMotion'],['İşlemci','A19'],['Kalınlık','5.6 mm (En ince iPhone)'],['İşletim Sistemi','iOS 18'],['Pil','~3.600 mAh'],['5G','Evet']] },
+
+  { id:9,  brand:'Apple', series:'iPhone Air', storage:256, name:'Apple iPhone Air 256 GB Siyah', colorName:'Siyah', origPrice:89999, price:71999,
+    img: ai('iphone-16-finish-select-202409-6-1inch-black'), sku:'IPAIR256BK', isNew:true,
+    colors:[{n:'Siyah',img:ai2('iphone-16-finish-select-202409-6-1inch-black')},{n:'Gökyüzü Mavisi',img:ai2('iphone-air-finish-select-202509-6-5inch-skyblue')},{n:'Beyaz',img:ai2('iphone-16-finish-select-202409-6-1inch-starlight')}],
+    dots:['#1a1a1a','#87ceeb','#f5f5f5'], dc:3, fallback: ai('iphone-16-finish-select-202409-6-1inch-black'),
+    specs:[['Depolama','256 GB'],['RAM','8 GB'],['Ekran','6.5" OLED ProMotion'],['İşlemci','A19'],['Kalınlık','5.6 mm (En ince iPhone)'],['İşletim Sistemi','iOS 18'],['Pil','~3.600 mAh'],['5G','Evet']] },
+
+  // ─ iPhone 17 ─
+  { id:10, brand:'Apple', series:'iPhone 17', storage:128, name:'Apple iPhone 17 128 GB Gökyüzü Mavisi', colorName:'Gökyüzü Mavisi', origPrice:77999, price:62399,
+    img: ai('iphone-17-finish-select-202509-6-1inch-skyblue'), sku:'IP17128SB', isNew:false,
+    colors:[{n:'Gökyüzü Mavisi',img:ai2('iphone-17-finish-select-202509-6-1inch-skyblue')},{n:'Pembe',img:ai2('iphone-16-finish-select-202409-6-1inch-pink')},{n:'Siyah',img:ai2('iphone-16-finish-select-202409-6-1inch-black')}],
+    dots:['#87ceeb','#f4a0c0','#1a1a1a'], dc:4, fallback: ai('iphone-16-finish-select-202409-6-1inch-ultramarine'),
+    specs:[['Depolama','128 GB'],['RAM','8 GB'],['Ekran','6.1" Super Retina XDR'],['İşlemci','A19'],['İşletim Sistemi','iOS 18'],['Kamera','48 MP Fusion'],['Pil','~3.561 mAh'],['5G','Evet']] },
+
+  { id:11, brand:'Apple', series:'iPhone 17', storage:256, name:'Apple iPhone 17 256 GB Pembe', colorName:'Pembe', origPrice:89999, price:71999,
+    img: ai('iphone-16-finish-select-202409-6-1inch-pink'), sku:'IP17256PK', isNew:false,
+    colors:[{n:'Pembe',img:ai2('iphone-16-finish-select-202409-6-1inch-pink')},{n:'Gökyüzü Mavisi',img:ai2('iphone-17-finish-select-202509-6-1inch-skyblue')},{n:'Ada Çayı',img:ai2('iphone-16-finish-select-202409-6-1inch-teal')},{n:'Beyaz',img:ai2('iphone-16-finish-select-202409-6-1inch-starlight')}],
+    dots:['#f4a0c0','#87ceeb','#a8d5a2','#f5f5f5'], dc:4, fallback: ai('iphone-16-finish-select-202409-6-1inch-pink'),
+    specs:[['Depolama','256 GB'],['RAM','8 GB'],['Ekran','6.1" Super Retina XDR'],['İşlemci','A19'],['İşletim Sistemi','iOS 18'],['Kamera','48 MP Fusion'],['Pil','~3.561 mAh'],['5G','Evet']] },
+
+  { id:12, brand:'Apple', series:'iPhone 17', storage:512, name:'Apple iPhone 17 512 GB Ada Çayı', colorName:'Ada Çayı', origPrice:109999, price:87999,
+    img: ai('iphone-16-finish-select-202409-6-1inch-teal'), sku:'IP17512TC', isNew:false,
+    colors:[{n:'Ada Çayı',img:ai2('iphone-16-finish-select-202409-6-1inch-teal')},{n:'Pembe',img:ai2('iphone-16-finish-select-202409-6-1inch-pink')},{n:'Siyah',img:ai2('iphone-16-finish-select-202409-6-1inch-black')}],
+    dots:['#a8d5a2','#f4a0c0','#1a1a1a'], dc:4, fallback: ai('iphone-16-finish-select-202409-6-1inch-teal'),
+    specs:[['Depolama','512 GB'],['RAM','8 GB'],['Ekran','6.1" Super Retina XDR'],['İşlemci','A19'],['İşletim Sistemi','iOS 18'],['Kamera','48 MP Fusion'],['Pil','~3.561 mAh'],['5G','Evet']] },
+
+  // ─ iPhone 17e ─
+  { id:13, brand:'Apple', series:'iPhone 17e', storage:128, name:'Apple iPhone 17e 128 GB Siyah', colorName:'Siyah', origPrice:39999, price:31999,
+    img: ai('iphone-16e-finish-select-202502-6-1inch-black'), sku:'IP17E128BK', isNew:true,
+    colors:[{n:'Siyah',img:ai2('iphone-16e-finish-select-202502-6-1inch-black')},{n:'Beyaz',img:ai2('iphone-16e-finish-select-202502-6-1inch-white')},{n:'Ada Çayı',img:ai2('iphone-16-finish-select-202409-6-1inch-teal')}],
+    dots:['#1a1a1a','#f5f5f5','#a8d5a2'], dc:5, fallback: ai('iphone-16-finish-select-202409-6-1inch-black'),
+    specs:[['Depolama','128 GB'],['RAM','8 GB'],['Ekran','6.1" OLED'],['İşlemci','A18'],['İşletim Sistemi','iOS 18'],['Kamera','48 MP'],['Pil','~3.279 mAh'],['5G','Evet']] },
+
+  { id:14, brand:'Apple', series:'iPhone 17e', storage:256, name:'Apple iPhone 17e 256 GB Beyaz', colorName:'Beyaz', origPrice:49999, price:39999,
+    img: ai('iphone-16e-finish-select-202502-6-1inch-white'), sku:'IP17E256WH', isNew:true,
+    colors:[{n:'Beyaz',img:ai2('iphone-16e-finish-select-202502-6-1inch-white')},{n:'Siyah',img:ai2('iphone-16e-finish-select-202502-6-1inch-black')},{n:'Pembe',img:ai2('iphone-16-finish-select-202409-6-1inch-pink')}],
+    dots:['#f5f5f5','#1a1a1a','#f4a0c0'], dc:5, fallback: ai('iphone-16-finish-select-202409-6-1inch-starlight'),
+    specs:[['Depolama','256 GB'],['RAM','8 GB'],['Ekran','6.1" OLED'],['İşlemci','A18'],['İşletim Sistemi','iOS 18'],['Kamera','48 MP'],['Pil','~3.279 mAh'],['5G','Evet']] },
+
+  // ─ iPhone 16 ─
+  { id:15, brand:'Apple', series:'iPhone 16', storage:128, name:'Apple iPhone 16 128 GB Ultramarine', colorName:'Ultramarine', origPrice:44999, price:35999,
+    img: ai('iphone-16-finish-select-202409-6-1inch-ultramarine'), sku:'IP16128UM', isNew:false,
+    colors:[{n:'Ultramarine',img:ai2('iphone-16-finish-select-202409-6-1inch-ultramarine')},{n:'Pembe',img:ai2('iphone-16-finish-select-202409-6-1inch-pink')},{n:'Ada Çayı',img:ai2('iphone-16-finish-select-202409-6-1inch-teal')},{n:'Siyah',img:ai2('iphone-16-finish-select-202409-6-1inch-black')}],
+    dots:['#3a5bdb','#f4a0c0','#a8d5a2','#1a1a1a'], dc:4, fallback: ai('iphone-16-finish-select-202409-6-1inch-ultramarine'),
+    specs:[['Depolama','128 GB'],['RAM','8 GB'],['Ekran','6.1" Super Retina XDR'],['İşlemci','A18'],['İşletim Sistemi','iOS 18'],['Kamera','48 MP Fusion'],['Pil','~3.561 mAh'],['5G','Evet']] },
+
+  { id:16, brand:'Apple', series:'iPhone 16', storage:256, name:'Apple iPhone 16 256 GB Pembe', colorName:'Pembe', origPrice:52999, price:42399,
+    img: ai('iphone-16-finish-select-202409-6-1inch-pink'), sku:'IP16256PK', isNew:false,
+    colors:[{n:'Pembe',img:ai2('iphone-16-finish-select-202409-6-1inch-pink')},{n:'Ultramarine',img:ai2('iphone-16-finish-select-202409-6-1inch-ultramarine')},{n:'Ada Çayı',img:ai2('iphone-16-finish-select-202409-6-1inch-teal')}],
+    dots:['#f4a0c0','#3a5bdb','#a8d5a2'], dc:4, fallback: ai('iphone-16-finish-select-202409-6-1inch-pink'),
+    specs:[['Depolama','256 GB'],['RAM','8 GB'],['Ekran','6.1" Super Retina XDR'],['İşlemci','A18'],['İşletim Sistemi','iOS 18'],['Kamera','48 MP Fusion'],['Pil','~3.561 mAh'],['5G','Evet']] },
+
+  { id:17, brand:'Apple', series:'iPhone 16', storage:512, name:'Apple iPhone 16 512 GB Siyah', colorName:'Siyah', origPrice:69999, price:55999,
+    img: ai('iphone-16-finish-select-202409-6-1inch-black'), sku:'IP16512BK', isNew:false,
+    colors:[{n:'Siyah',img:ai2('iphone-16-finish-select-202409-6-1inch-black')},{n:'Ultramarine',img:ai2('iphone-16-finish-select-202409-6-1inch-ultramarine')},{n:'Beyaz',img:ai2('iphone-16-finish-select-202409-6-1inch-starlight')}],
+    dots:['#1a1a1a','#3a5bdb','#f5f5f5'], dc:4, fallback: ai('iphone-16-finish-select-202409-6-1inch-black'),
+    specs:[['Depolama','512 GB'],['RAM','8 GB'],['Ekran','6.1" Super Retina XDR'],['İşlemci','A18'],['İşletim Sistemi','iOS 18'],['Kamera','48 MP Fusion'],['Pil','~3.561 mAh'],['5G','Evet']] },
+
+  // ─ Galaxy S Series ─
+  { id:18, brand:'Samsung', series:'Galaxy S', storage:128, name:'Samsung Galaxy S25 128 GB Buz Mavisi', colorName:'Buz Mavisi', origPrice:60499, price:48399,
+    img: si('p6pim/tr/sm-s931bdbatur/gallery/tr-galaxy-s25-sm-s931b-sm-s931bdbatur-thumb-545063820'), sku:'SGS25128IB', isNew:false,
+    colors:[{n:'Buz Mavisi',img:si('p6pim/uk/sm-s931bdbaeub/gallery/uk-galaxy-s25-sm-s931b-sm-s931bdbaeub-thumb-545063820')},{n:'Lacivert',img:si('p6pim/uk/sm-s931bzadeub/gallery/uk-galaxy-s25-sm-s931b-sm-s931bzadeub-thumb-545067821')},{n:'Gümüş',img:si('p6pim/uk/sm-s931bsageub/gallery/uk-galaxy-s25-sm-s931b-sm-s931bsageub-thumb-545067821')}],
+    dots:['#a8d4e8','#1c2a4a','#c0c0c0'], dc:4, fallback:'https://news.samsung.com/global/wp-content/uploads/2025/01/Galaxy-S25-Ultra-back.jpg',
+    specs:[['Depolama','128 GB'],['RAM','12 GB'],['Ekran','6.2" Dynamic AMOLED 2X'],['İşlemci','Snapdragon 8 Elite'],['İşletim Sistemi','Android 15 / One UI 7'],['Kamera','50 MP Triple Camera'],['Pil','4.000 mAh'],['5G','Evet']] },
+
+  { id:19, brand:'Samsung', series:'Galaxy S', storage:256, name:'Samsung Galaxy S25 256 GB Lacivert', colorName:'Lacivert', origPrice:65499, price:52399,
+    img: si('p6pim/uk/sm-s931bzadeub/gallery/uk-galaxy-s25-sm-s931b-sm-s931bzadeub-thumb-545067821'), sku:'SGS25256NV', isNew:false,
+    colors:[{n:'Lacivert',img:si('p6pim/uk/sm-s931bzadeub/gallery/uk-galaxy-s25-sm-s931b-sm-s931bzadeub-thumb-545067821')},{n:'Buz Mavisi',img:si('p6pim/uk/sm-s931bdbaeub/gallery/uk-galaxy-s25-sm-s931b-sm-s931bdbaeub-thumb-545063820')},{n:'Gümüş',img:si('p6pim/uk/sm-s931bsageub/gallery/uk-galaxy-s25-sm-s931b-sm-s931bsageub-thumb-545067821')}],
+    dots:['#1c2a4a','#a8d4e8','#c0c0c0'], dc:4, fallback:'https://news.samsung.com/global/wp-content/uploads/2025/01/Galaxy-S25-Ultra-back.jpg',
+    specs:[['Depolama','256 GB'],['RAM','12 GB'],['Ekran','6.2" Dynamic AMOLED 2X'],['İşlemci','Snapdragon 8 Elite'],['İşletim Sistemi','Android 15 / One UI 7'],['Kamera','50 MP Triple Camera'],['Pil','4.000 mAh'],['5G','Evet']] },
+
+  { id:20, brand:'Samsung', series:'Galaxy S', storage:256, name:'Samsung Galaxy S25+ 256 GB Gümüş', colorName:'Gümüş', origPrice:71999, price:57599,
+    img: si('p6pim/uk/sm-s936bsageub/gallery/uk-galaxy-s25-plus-sm-s936b-sm-s936bsageub-thumb-545063820'), sku:'SGS25P256SV', isNew:false,
+    colors:[{n:'Gümüş',img:si('p6pim/uk/sm-s936bsageub/gallery/uk-galaxy-s25-plus-sm-s936b-sm-s936bsageub-thumb-545063820')},{n:'Lacivert',img:si('p6pim/uk/sm-s936bzadeub/gallery/uk-galaxy-s25-plus-sm-s936b-sm-s936bzadeub-thumb-545063820')}],
+    dots:['#c0c0c0','#1c2a4a'], dc:3, fallback:'https://news.samsung.com/global/wp-content/uploads/2025/01/Galaxy-S25-Ultra-back.jpg',
+    specs:[['Depolama','256 GB'],['RAM','12 GB'],['Ekran','6.7" Dynamic AMOLED 2X'],['İşlemci','Snapdragon 8 Elite'],['İşletim Sistemi','Android 15 / One UI 7'],['Kamera','50 MP Triple Camera'],['Pil','4.900 mAh'],['5G','Evet']] },
+
+  { id:21, brand:'Samsung', series:'Galaxy S', storage:512, name:'Samsung Galaxy S25+ 512 GB Lacivert', colorName:'Lacivert', origPrice:82999, price:66399,
+    img: si('p6pim/uk/sm-s936bzadeub/gallery/uk-galaxy-s25-plus-sm-s936b-sm-s936bzadeub-thumb-545063820'), sku:'SGS25P512NV', isNew:false,
+    colors:[{n:'Lacivert',img:si('p6pim/uk/sm-s936bzadeub/gallery/uk-galaxy-s25-plus-sm-s936b-sm-s936bzadeub-thumb-545063820')},{n:'Gümüş',img:si('p6pim/uk/sm-s936bsageub/gallery/uk-galaxy-s25-plus-sm-s936b-sm-s936bsageub-thumb-545063820')}],
+    dots:['#1c2a4a','#c0c0c0'], dc:3, fallback:'https://news.samsung.com/global/wp-content/uploads/2025/01/Galaxy-S25-Ultra-back.jpg',
+    specs:[['Depolama','512 GB'],['RAM','12 GB'],['Ekran','6.7" Dynamic AMOLED 2X'],['İşlemci','Snapdragon 8 Elite'],['İşletim Sistemi','Android 15 / One UI 7'],['Kamera','50 MP Triple Camera'],['Pil','4.900 mAh'],['5G','Evet']] },
+
+  { id:22, brand:'Samsung', series:'Galaxy S', storage:256, name:'Samsung Galaxy S25 Ultra 256 GB Titanium Siyah', colorName:'Titanium Siyah', origPrice:78999, price:63199,
+    img: si('p6pim/uk/sm-s938bzkaeub/gallery/uk-galaxy-s25-ultra-sm-s938b-sm-s938bzkaeub-thumb-545063820'), sku:'SGS25U256TK', isNew:false,
+    colors:[{n:'Titanium Siyah',img:si('p6pim/uk/sm-s938bzkaeub/gallery/uk-galaxy-s25-ultra-sm-s938b-sm-s938bzkaeub-thumb-545063820')},{n:'Titanium Mavi',img:si('p6pim/uk/sm-s938bbbreub/gallery/uk-galaxy-s25-ultra-sm-s938b-sm-s938bbbreub-thumb-545063820')},{n:'Titanium Gümüş',img:si('p6pim/uk/sm-s938bzsgeub/gallery/uk-galaxy-s25-ultra-sm-s938b-sm-s938bzsgeub-thumb-545063820')}],
+    dots:['#1a1a2e','#1e3a5f','#9e9e9e'], dc:3, fallback:'https://news.samsung.com/global/wp-content/uploads/2025/01/Galaxy-S25-Ultra-back.jpg',
+    specs:[['Depolama','256 GB'],['RAM','12 GB'],['Ekran','6.9" Dynamic AMOLED 2X (2600 nit)'],['İşlemci','Snapdragon 8 Elite'],['S Pen','Dahil'],['Kamera','200 MP Quad Camera'],['Pil','5.000 mAh'],['5G','Evet']] },
+
+  { id:23, brand:'Samsung', series:'Galaxy S', storage:512, name:'Samsung Galaxy S25 Ultra 512 GB Titanium Mavi', colorName:'Titanium Mavi', origPrice:89999, price:71999,
+    img: si('p6pim/uk/sm-s938bbbreub/gallery/uk-galaxy-s25-ultra-sm-s938b-sm-s938bbbreub-thumb-545063820'), sku:'SGS25U512TB', isNew:false,
+    colors:[{n:'Titanium Mavi',img:si('p6pim/uk/sm-s938bbbreub/gallery/uk-galaxy-s25-ultra-sm-s938b-sm-s938bbbreub-thumb-545063820')},{n:'Titanium Siyah',img:si('p6pim/uk/sm-s938bzkaeub/gallery/uk-galaxy-s25-ultra-sm-s938b-sm-s938bzkaeub-thumb-545063820')},{n:'Titanium Gümüş',img:si('p6pim/uk/sm-s938bzsgeub/gallery/uk-galaxy-s25-ultra-sm-s938b-sm-s938bzsgeub-thumb-545063820')}],
+    dots:['#1e3a5f','#1a1a2e','#9e9e9e'], dc:3, fallback:'https://news.samsung.com/global/wp-content/uploads/2025/01/Galaxy-S25-Ultra-back.jpg',
+    specs:[['Depolama','512 GB'],['RAM','12 GB'],['Ekran','6.9" Dynamic AMOLED 2X (2600 nit)'],['İşlemci','Snapdragon 8 Elite'],['S Pen','Dahil'],['Kamera','200 MP Quad Camera'],['Pil','5.000 mAh'],['5G','Evet']] },
+
+  { id:24, brand:'Samsung', series:'Galaxy S', storage:1000, name:'Samsung Galaxy S25 Ultra 1 TB Titanium Gümüş', colorName:'Titanium Gümüş', origPrice:109999, price:87999,
+    img: si('p6pim/uk/sm-s938bzsgeub/gallery/uk-galaxy-s25-ultra-sm-s938b-sm-s938bzsgeub-thumb-545063820'), sku:'SGS25U1TBSG', isNew:false,
+    colors:[{n:'Titanium Gümüş',img:si('p6pim/uk/sm-s938bzsgeub/gallery/uk-galaxy-s25-ultra-sm-s938b-sm-s938bzsgeub-thumb-545063820')},{n:'Titanium Siyah',img:si('p6pim/uk/sm-s938bzkaeub/gallery/uk-galaxy-s25-ultra-sm-s938b-sm-s938bzkaeub-thumb-545063820')}],
+    dots:['#9e9e9e','#1a1a2e'], dc:3, fallback:'https://news.samsung.com/global/wp-content/uploads/2025/01/Galaxy-S25-Ultra-back.jpg',
+    specs:[['Depolama','1 TB'],['RAM','12 GB'],['Ekran','6.9" Dynamic AMOLED 2X (2600 nit)'],['İşlemci','Snapdragon 8 Elite'],['S Pen','Dahil'],['Kamera','200 MP Quad Camera'],['Pil','5.000 mAh'],['5G','Evet']] },
+
+  // ─ Galaxy Z Series ─
+  { id:25, brand:'Samsung', series:'Galaxy Z', storage:256, name:'Samsung Galaxy Z Flip7 256 GB Gece Siyahı', colorName:'Gece Siyahı', origPrice:66999, price:53599,
+    img: si('p6pim/tr/sm-f766bzkgtur/gallery/tr-galaxy-z-flip7-sm-f766-sm-f766bzkgtur-thumb-545063820'), sku:'SGZF7256BK', isNew:false,
+    colors:[{n:'Gece Siyahı',img:si('p6pim/tr/sm-f766bzkgtur/gallery/tr-galaxy-z-flip7-sm-f766-sm-f766bzkgtur-thumb-545063820')},{n:'Gölge Mavisi',img:si('p6pim/tr/sm-f766bdbgtur/gallery/tr-galaxy-z-flip7-sm-f766-sm-f766bdbgtur-thumb-545063820')},{n:'Mint',img:si('p6pim/tr/sm-f766bmgetur/gallery/tr-galaxy-z-flip7-sm-f766-sm-f766bmgetur-thumb-545063820')}],
+    dots:['#1a1a1a','#1e3a5f','#a8d8c8'], dc:3, fallback:'https://images.samsung.com/is/image/samsung/assets/global/smartphones/galaxy-z-flip7/galaxy-z-flip7-highlights-design-night-black.jpg',
+    specs:[['Depolama','256 GB'],['RAM','12 GB'],['Ekran Ana','6.9" Dynamic AMOLED 2X'],['Ekran Kapak','4.1" FlexWindow'],['İşlemci','Snapdragon 8 Elite'],['İşletim Sistemi','Android 15 / One UI 7'],['Pil','4.300 mAh'],['5G','Evet']] },
+
+  { id:26, brand:'Samsung', series:'Galaxy Z', storage:512, name:'Samsung Galaxy Z Flip7 512 GB Gölge Mavisi', colorName:'Gölge Mavisi', origPrice:76999, price:61599,
+    img: si('p6pim/tr/sm-f766bdbgtur/gallery/tr-galaxy-z-flip7-sm-f766-sm-f766bdbgtur-thumb-545063820'), sku:'SGZF7512BL', isNew:false,
+    colors:[{n:'Gölge Mavisi',img:si('p6pim/tr/sm-f766bdbgtur/gallery/tr-galaxy-z-flip7-sm-f766-sm-f766bdbgtur-thumb-545063820')},{n:'Gece Siyahı',img:si('p6pim/tr/sm-f766bzkgtur/gallery/tr-galaxy-z-flip7-sm-f766-sm-f766bzkgtur-thumb-545063820')}],
+    dots:['#1e3a5f','#1a1a1a'], dc:2, fallback:'https://images.samsung.com/is/image/samsung/assets/global/smartphones/galaxy-z-flip7/galaxy-z-flip7-highlights-design-shadow-blue.jpg',
+    specs:[['Depolama','512 GB'],['RAM','12 GB'],['Ekran Ana','6.9" Dynamic AMOLED 2X'],['Ekran Kapak','4.1" FlexWindow'],['İşlemci','Snapdragon 8 Elite'],['İşletim Sistemi','Android 15 / One UI 7'],['Pil','4.300 mAh'],['5G','Evet']] },
+
+  { id:27, brand:'Samsung', series:'Galaxy Z', storage:256, name:'Samsung Galaxy Z Fold7 256 GB Gece Siyahı', colorName:'Gece Siyahı', origPrice:101999, price:81599,
+    img: si('p6pim/tr/sm-f966bzkbtur/gallery/tr-galaxy-z-fold7-sm-f966-sm-f966bzkbtur-thumb-545063820'), sku:'SGZFO7256BK', isNew:false,
+    colors:[{n:'Gece Siyahı',img:si('p6pim/tr/sm-f966bzkbtur/gallery/tr-galaxy-z-fold7-sm-f966-sm-f966bzkbtur-thumb-545063820')},{n:'Gölge Mavisi',img:si('p6pim/tr/sm-f966bdbctur/gallery/tr-galaxy-z-fold7-sm-f966-sm-f966bdbctur-thumb-545063820')},{n:'Gümüş',img:si('p6pim/tr/sm-f966bzsetur/gallery/tr-galaxy-z-fold7-sm-f966-sm-f966bzsetur-thumb-545063820')}],
+    dots:['#1a1a1a','#1e3a5f','#9e9e9e'], dc:3, fallback:'https://images.samsung.com/is/image/samsung/assets/global/smartphones/galaxy-z-fold7/galaxy-z-fold7-highlights-design-night-black.jpg',
+    specs:[['Depolama','256 GB'],['RAM','12 GB'],['Ekran İç','8.0" Dynamic AMOLED 2X'],['Ekran Dış','6.5" AMOLED'],['İşlemci','Snapdragon 8 Elite'],['Kamera','200 MP Ana'],['Pil','4.400 mAh'],['5G','Evet']] },
+
+  { id:28, brand:'Samsung', series:'Galaxy Z', storage:512, name:'Samsung Galaxy Z Fold7 512 GB Gölge Mavisi', colorName:'Gölge Mavisi', origPrice:121999, price:97599,
+    img: si('p6pim/tr/sm-f966bdbctur/gallery/tr-galaxy-z-fold7-sm-f966-sm-f966bdbctur-thumb-545063820'), sku:'SGZFO7512BL', isNew:false,
+    colors:[{n:'Gölge Mavisi',img:si('p6pim/tr/sm-f966bdbctur/gallery/tr-galaxy-z-fold7-sm-f966-sm-f966bdbctur-thumb-545063820')},{n:'Gece Siyahı',img:si('p6pim/tr/sm-f966bzkbtur/gallery/tr-galaxy-z-fold7-sm-f966-sm-f966bzkbtur-thumb-545063820')},{n:'Gümüş',img:si('p6pim/tr/sm-f966bzsetur/gallery/tr-galaxy-z-fold7-sm-f966-sm-f966bzsetur-thumb-545063820')}],
+    dots:['#1e3a5f','#1a1a1a','#9e9e9e'], dc:3, fallback:'https://images.samsung.com/is/image/samsung/assets/global/smartphones/galaxy-z-fold7/galaxy-z-fold7-highlights-design-shadow-blue.jpg',
+    specs:[['Depolama','512 GB'],['RAM','12 GB'],['Ekran İç','8.0" Dynamic AMOLED 2X'],['Ekran Dış','6.5" AMOLED'],['İşlemci','Snapdragon 8 Elite'],['Kamera','200 MP Ana'],['Pil','4.400 mAh'],['5G','Evet']] },
+
+  { id:29, brand:'Samsung', series:'Galaxy Z', storage:1000, name:'Samsung Galaxy Z Fold7 1 TB Gümüş', colorName:'Gümüş', origPrice:145999, price:116799,
+    img: si('p6pim/tr/sm-f966bzsetur/gallery/tr-galaxy-z-fold7-sm-f966-sm-f966bzsetur-thumb-545063820'), sku:'SGZFO71TBSV', isNew:false,
+    colors:[{n:'Gümüş',img:si('p6pim/tr/sm-f966bzsetur/gallery/tr-galaxy-z-fold7-sm-f966-sm-f966bzsetur-thumb-545063820')},{n:'Gece Siyahı',img:si('p6pim/tr/sm-f966bzkbtur/gallery/tr-galaxy-z-fold7-sm-f966-sm-f966bzkbtur-thumb-545063820')}],
+    dots:['#9e9e9e','#1a1a1a'], dc:2, fallback:'https://images.samsung.com/is/image/samsung/assets/global/smartphones/galaxy-z-fold7/galaxy-z-fold7-highlights-design-silver.jpg',
+    specs:[['Depolama','1 TB'],['RAM','12 GB'],['Ekran İç','8.0" Dynamic AMOLED 2X'],['Ekran Dış','6.5" AMOLED'],['İşlemci','Snapdragon 8 Elite'],['Kamera','200 MP Ana'],['Pil','4.400 mAh'],['5G','Evet']] }
+];
+
+// ── STATE ──
+const CART_STORAGE_KEY = 'magaza_cart_v1';
+const SERVICE_STORAGE_KEY = 'magaza_service_selections_v1';
+const cart = [];
+const favorites = new Set();
+const serviceSelections = new Map();
+let activeProduct = null;
+let activeBrand = 'all';
+let activeSortType = 'recommended';
+
+function persistCartState(){
+  try {
+    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
+    localStorage.setItem(SERVICE_STORAGE_KEY, JSON.stringify(Object.fromEntries(serviceSelections)));
+  } catch (err) {
+    console.warn('cart persistence warning', err);
+  }
+}
+
+function restoreCartState(){
+  try {
+    const savedCart = JSON.parse(localStorage.getItem(CART_STORAGE_KEY) || '[]');
+    const savedServices = JSON.parse(localStorage.getItem(SERVICE_STORAGE_KEY) || '{}');
+    if (Array.isArray(savedCart)) {
+      cart.length = 0;
+      savedCart.forEach(item => {
+        if (item && typeof item.id === 'number' && typeof item.qty === 'number' && item.qty > 0) cart.push(item);
+      });
+    }
+    serviceSelections.clear();
+    if (savedServices && typeof savedServices === 'object') {
+      Object.entries(savedServices).forEach(([key, value]) => {
+        const id = Number(key);
+        if (Array.isArray(value) && value.length) serviceSelections.set(id, value);
+      });
+    }
+  } catch (err) {
+    console.warn('cart restore warning', err);
+  }
+}
+
+const fmt = n => '₺' + n.toLocaleString('tr-TR', { minimumFractionDigits:2, maximumFractionDigits:2 });
+const fmtOrig = n => '₺' + n.toLocaleString('tr-TR', { minimumFractionDigits:2, maximumFractionDigits:2 });
+
+function getProductFallback(product){
+  return product.fallback || (product.colors && product.colors[0] ? product.colors[0].img : FB_APPLE);
+}
+
+function getBestImage(product){
+  const candidates = [product.img, ...(product.colors || []).map(c => c.img), getProductFallback(product)].filter(Boolean);
+  return candidates[0];
+}
+
+function normalizeProductImages(){
+  PRODUCTS.forEach(product => {
+    if (!product.fallback) product.fallback = getProductFallback(product);
+    product.img = getBestImage(product);
+    if (!Array.isArray(product.colors) || !product.colors.length) {
+      product.colors = [{ n: product.colorName || 'Varsayılan', img: product.img }];
+    }
+  });
+}
+
+function findCartItem(id){ return cart.find(item => item.id === id); }
+function getCartCount(){ return cart.reduce((sum, item) => sum + item.qty, 0); }
+function getCartSubtotal(){ return cart.reduce((sum, item) => sum + (item.price * item.qty), 0); }
+function getWarrantyPrice(price, years){ const ratios = {1:0.143, 2:0.194}; return Math.round(price * (ratios[years] || 0)); }
+function getBreakagePrice(price){ return Math.round(price * 0.096); }
+function getServiceOptions(item){ return [
+  { key:'warranty1', name:'+1 Yıl Ek Garanti', desc:'A+ Güvence Sigortası teminatları kapsamında korunur.', price:getWarrantyPrice(item.price, 1) },
+  { key:'warranty2', name:'+2 Yıl Ek Garanti', desc:'Daha uzun koruma ve cihaz kullanım süresi için önerilir.', price:getWarrantyPrice(item.price, 2) },
+  { key:'breakage', name:'Kırılma Sigortası', desc:'Ekran ve darbe kaynaklı hasarlar için ek koruma sunar.', price:getBreakagePrice(item.price) }
+]; }
+function getSelectedServices(productId){ return serviceSelections.get(productId) || []; }
+function getCartServicesTotal(){
+  return cart.reduce((sum, item) => {
+    const selectedKeys = getSelectedServices(item.id);
+    const serviceMap = new Map(getServiceOptions(item).map(s => [s.key, s]));
+    const itemTotal = selectedKeys.reduce((acc, key) => acc + ((serviceMap.get(key)?.price || 0) * item.qty), 0);
+    return sum + itemTotal;
+  }, 0);
+}
+
+function updateCartBadge(){
+  const count = getCartCount();
+  const b = document.getElementById('cartBadge');
+  b.textContent = count;
+  b.style.transform = 'scale(1.6)';
+  setTimeout(() => b.style.transform = '', 280);
+}
+
+function syncCartButtonState(){
+  const btn = document.querySelector('.btn-cart');
+  btn.classList.toggle('active', getCartCount() > 0);
+}
+
+function showCartView(){
+  document.getElementById('shopView').classList.add('hidden');
+  document.getElementById('checkoutView').classList.add('hidden');
+  document.getElementById('cartView').classList.remove('hidden');
+  closeDetail();
+  renderCartPage();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function showShopView(){
+  document.getElementById('checkoutView').classList.add('hidden');
+  document.getElementById('cartView').classList.add('hidden');
+  document.getElementById('shopView').classList.remove('hidden');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function showCheckoutView(){
+  if (!getCartCount()) { showToast('Ödeme için önce sepete ürün ekleyin.'); return; }
+  document.getElementById('shopView').classList.add('hidden');
+  document.getElementById('cartView').classList.add('hidden');
+  document.getElementById('checkoutView').classList.remove('hidden');
+  closeDetail();
+  renderCheckoutPage();
+  updateCheckoutButtonState();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function toggleService(productId, serviceKey){
+  const current = new Set(getSelectedServices(productId));
+  if (current.has(serviceKey)) current.delete(serviceKey);
+  else current.add(serviceKey);
+  if (current.size) serviceSelections.set(productId, [...current]);
+  else serviceSelections.delete(productId);
+  persistCartState();
+  renderCartPage();
+}
+
+// ── RENDER ──
+function getFilteredProducts() {
+  let list = [...PRODUCTS];
+  const q = document.getElementById('searchInput').value.toLowerCase();
+
+  // Brand filter
+  if (activeBrand !== 'all') list = list.filter(p => p.brand === activeBrand);
+
+  // Series filter checkboxes
+  const checkedSeries = [...document.querySelectorAll('[data-series]:checked')].map(c => c.dataset.series);
+  if (checkedSeries.length) list = list.filter(p => checkedSeries.includes(p.series));
+
+  // Storage filter
+  const checkedStorage = [...document.querySelectorAll('[data-storage]:checked')].map(c => parseInt(c.dataset.storage));
+  if (checkedStorage.length) list = list.filter(p => checkedStorage.includes(p.storage));
+
+  // Price filter
+  const checkedPrice = [...document.querySelectorAll('[data-price]:checked')].map(c => c.dataset.price);
+  if (checkedPrice.length) {
+    list = list.filter(p => checkedPrice.some(range => {
+      const [lo, hi] = range.split('-').map(Number);
+      return p.price >= lo && p.price <= hi;
+    }));
+  }
+
+  // Search
+  if (q) list = list.filter(p => p.name.toLowerCase().includes(q));
+
+  // Sort
+  if (activeSortType === 'priceHigh') list.sort((a,b) => b.price - a.price);
+  else if (activeSortType === 'priceLow') list.sort((a,b) => a.price - b.price);
+  else if (activeSortType === 'newest') list.sort((a,b) => b.id - a.id);
+  else if (activeSortType === 'popular') list.sort((a,b) => a.price - b.price);
+  else list.sort((a,b) => a.id - b.id);
+
+  return list;
+}
+
+function renderGrid(list) {
+  document.getElementById('resultCount').textContent = list.length + ' ürün';
+  const g = document.getElementById('productGrid');
+  if (!list.length) {
+    g.innerHTML = '<div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="22" y2="22"/></svg><p>Ürün bulunamadı</p></div>';
+    return;
+  }
+  g.innerHTML = list.map((p, i) => {
+    const fallback = p.fallback || FB_APPLE;
+    return `
+    <div class="product-card" style="animation-delay:${Math.min(i * 0.05, 0.5)}s" onclick="openDetail(${p.id})">
+      <div class="product-img-wrap">
+        <img src="${p.img}" alt="${p.name}" loading="lazy"
+          onerror="if(this.src!='${fallback}')this.src='${fallback}'">
+        <button class="fav-btn ${favorites.has(p.id)?'active':''}" onclick="toggleFav(event,${p.id})">
+          <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+        </button>
+        <div class="color-dots">
+          ${p.dots.slice(0,3).map(c=>`<div class="color-dot" style="background:${c}"></div>`).join('')}
+          <span>${p.dc}</span>
+        </div>
+        <div class="discount-badge">%20 İndirim</div>
+        ${p.isNew ? '<div class="new-badge-img" style="top:32px">Yeni</div>' : ''}
+      </div>
+      <div class="product-info">
+        <div class="product-series">${p.brand === 'Apple' ? p.series : p.brand + ' ' + p.series}</div>
+        <div class="product-name">${p.name}</div>
+        <div class="price-row">
+          <span class="product-price">${fmt(p.price)}</span>
+          <span class="product-price-old">${fmtOrig(p.origPrice)}</span>
+        </div>
+      </div>
+      <button class="btn-add-card" onclick="addToCart(event,${p.id})">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:middle;margin-right:4px"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+        Sepete Ekle
+      </button>
+    </div>`;
+  }).join('');
+}
+
+function applyFilters() { renderGrid(getFilteredProducts()); }
+
+// ── BRAND TABS ──
+function setBrand(brand, el) {
+  document.querySelectorAll('.brand-tab').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  activeBrand = brand;
+  applyFilters();
+}
+
+// ── SORT ──
+function toggleSort(e) {
+  e.stopPropagation();
+  const dd = document.getElementById('sortDropdown');
+  dd.classList.toggle('show');
+  document.getElementById('sortBtn').classList.toggle('open');
+  if (dd.classList.contains('show')) setTimeout(() => document.addEventListener('click', closeSortOnce), 0);
+}
+function closeSortOnce() {
+  document.getElementById('sortDropdown').classList.remove('show');
+  document.getElementById('sortBtn').classList.remove('open');
+  document.removeEventListener('click', closeSortOnce);
+}
+function applySort(type, label, el) {
+  document.querySelectorAll('.sort-option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('sortLabel').textContent = label;
+  document.getElementById('sortDropdown').classList.remove('show');
+  document.getElementById('sortBtn').classList.remove('open');
+  activeSortType = type;
+  applyFilters();
+}
+
+// ── FILTER ACCORDION ──
+function toggleFilter(h) {
+  h.classList.toggle('open');
+  h.nextElementSibling.classList.toggle('show');
+}
+
+// ── FAVORITES ──
+function toggleFav(e, id) {
+  e.stopPropagation();
+  favorites.has(id) ? favorites.delete(id) : favorites.add(id);
+  e.currentTarget.classList.toggle('active');
+}
+
+// ── CART ──
+function addProductToCart(product){
+  const existing = findCartItem(product.id);
+  if (existing) existing.qty += 1;
+  else cart.push({
+    id: product.id,
+    name: product.name,
+    brand: product.brand,
+    series: product.series,
+    storage: product.storage,
+    colorName: product.colorName,
+    price: product.price,
+    image: getBestImage(product),
+    fallback: getProductFallback(product),
+    qty: 1
+  });
+  updateCartBadge();
+  syncCartButtonState();
+  persistCartState();
+}
+
+function addToCart(e, id) {
+  e.stopPropagation();
+  const p = PRODUCTS.find(x => x.id === id);
+  if (!p) return;
+  addProductToCart(p);
+  showToast(`"${p.name.substring(0, 36)}..." sepete eklendi!`);
+}
+function addToCartDetail() {
+  if (!activeProduct) return;
+  addProductToCart(activeProduct);
+  const btn = document.getElementById('dAddBtn');
+  btn.textContent = '✓ Sepete Eklendi';
+  btn.classList.add('added');
+  setTimeout(() => { btn.textContent = 'Sepete Ekle'; btn.classList.remove('added'); }, 2000);
+  showToast(`"${activeProduct.name.substring(0,36)}..." sepete eklendi!`);
+}
+
+function changeCartQty(id, delta){
+  const item = findCartItem(id);
+  if (!item) return;
+  item.qty += delta;
+  if (item.qty <= 0) removeFromCart(id);
+  else {
+    updateCartBadge();
+    syncCartButtonState();
+    persistCartState();
+    renderCartPage();
+  }
+}
+
+function removeFromCart(id){
+  const index = cart.findIndex(item => item.id === id);
+  if (index === -1) return;
+  cart.splice(index, 1);
+  serviceSelections.delete(id);
+  updateCartBadge();
+  syncCartButtonState();
+  persistCartState();
+  renderCartPage();
+}
+
+function clearCart(){
+  cart.length = 0;
+  serviceSelections.clear();
+  updateCartBadge();
+  syncCartButtonState();
+  persistCartState();
+  renderCartPage();
+}
+
+function viewCart() {
+  showCartView();
+}
+
+function renderCheckoutPage(){
+  const count = getCartCount();
+  const subtotal = getCartSubtotal();
+  const servicesTotal = getCartServicesTotal();
+  const grandTotal = subtotal + servicesTotal;
+  document.getElementById('checkoutSubtotal').textContent = fmt(subtotal);
+  document.getElementById('checkoutServices').textContent = fmt(servicesTotal);
+  document.getElementById('checkoutTotal').textContent = fmt(grandTotal);
+  document.getElementById('checkoutShippingFull').textContent = count ? '₺99,00' : '₺0,00';
+  document.getElementById('checkoutShippingDiscount').textContent = count ? '- ₺99,00' : '₺0,00';
+}
+
+function updateCheckoutButtonState(){
+  const btn = document.getElementById('checkoutSubmitBtn');
+  const terms = document.getElementById('checkoutTerms');
+  if (!btn || !terms) return;
+  const enabled = terms.checked && getCartCount() > 0;
+  btn.classList.toggle('enabled', enabled);
+  btn.disabled = !enabled;
+}
+
+function submitPayment(){
+  const btn = document.getElementById('checkoutSubmitBtn');
+  if (!btn.classList.contains('enabled')) return;
+  showToast('Ödeme ekranı başarıyla hazırlandı. Buradan gerçek ödeme entegrasyonu bağlanabilir.');
+}
+
+function renderCartPage(){
+  const cartList = document.getElementById('cartList');
+  const count = getCartCount();
+  const subtotal = getCartSubtotal();
+  const servicesTotal = getCartServicesTotal();
+  const grandTotal = subtotal + servicesTotal;
+  document.getElementById('cartPageMeta').textContent = `${count} ürün eklendi`;
+  document.getElementById('cartHeaderCount').textContent = `${count} ürün eklendi`;
+  document.getElementById('cartSubtotal').textContent = fmt(subtotal);
+  document.getElementById('cartServicesTotal').textContent = fmt(servicesTotal);
+  document.getElementById('cartTotal').textContent = fmt(grandTotal);
+  document.getElementById('cartShippingFull').textContent = count ? '₺99,00' : '₺0,00';
+  document.getElementById('cartShippingDiscount').textContent = count ? '- ₺99,00' : '₺0,00';
+  renderCheckoutPage();
+  updateCheckoutButtonState();
+
+  if (!count) {
+    cartList.innerHTML = `<div class="cart-empty">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+      <h3>Sepetiniz şu anda boş</h3>
+      <p>Ürün eklediğinizde bu alan aynı sayfa içinde aktif olarak açılacaktır.</p>
+      <button onclick="showShopView()">Ürünlere Dön</button>
+    </div>`;
+    return;
+  }
+
+  cartList.innerHTML = cart.map(item => {
+    const selectedServices = getSelectedServices(item.id);
+    const serviceOptions = getServiceOptions(item);
+    return `<div class="cart-item">
+      <div class="cart-item-top">
+        <div class="cart-item-img"><img src="${item.image}" alt="${item.name}" loading="lazy" onerror="if(this.src!='${item.fallback}')this.src='${item.fallback}'"></div>
+        <div>
+          <div class="cart-item-name">${item.name}</div>
+          <div class="cart-item-meta">
+            <span>Renk: ${item.colorName}</span>
+            <span>${item.storage} GB</span>
+            <span>${item.brand}</span>
+          </div>
+          <div class="cart-item-price">${fmt(item.price)}</div>
+        </div>
+        <div class="cart-item-actions">
+          <button class="cart-remove-btn" onclick="removeFromCart(${item.id})">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg>
+            Sil
+          </button>
+          <div class="cart-qty">
+            <button type="button" onclick="changeCartQty(${item.id},-1)">−</button>
+            <span>${item.qty}</span>
+            <button type="button" onclick="changeCartQty(${item.id},1)">+</button>
+          </div>
+        </div>
+      </div>
+      <div class="cart-services">
+        <div class="cart-services-title">Ürün için ek hizmet seçebilirsin.</div>
+        <div class="cart-service-row">
+          ${serviceOptions.map(service => `
+            <div class="cart-service-card ${selectedServices.includes(service.key) ? 'active' : ''}" onclick="toggleService(${item.id},'${service.key}')">
+              <div class="cart-service-top"><div class="cart-service-plus">+</div><div class="cart-service-name">${service.name}</div></div>
+              <div class="cart-service-desc">${service.desc}</div>
+              <div class="cart-service-price">${fmt(service.price)}</div>
+            </div>`).join('')}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── DETAIL ──
+function openDetail(id) {
+  const p = PRODUCTS.find(x => x.id === id);
+  if (!p) return;
+  activeProduct = p;
+  const fallback = p.fallback || FB_APPLE;
+
+  document.getElementById('dCrumb').textContent = p.name.substring(0, 50) + (p.name.length > 50 ? '...' : '');
+  document.getElementById('dSeriesBadge').textContent = (p.brand === 'Apple' ? '🍎 ' : '📱 ') + (p.brand === 'Apple' ? p.series : p.brand + ' ' + p.series);
+  document.getElementById('dName').textContent = p.name;
+  document.getElementById('dSku').textContent = 'Ürün Kodu: ' + p.sku;
+  document.getElementById('dOrigPrice').textContent = 'Apple Türkiye / Samsung Türkiye Fiyatı: ' + fmtOrig(p.origPrice);
+  document.getElementById('dPrice').textContent = fmt(p.price);
+  document.getElementById('dBrand').textContent = p.brand;
+  document.getElementById('dColorName').textContent = p.colorName;
+
+  const mainImg = document.getElementById('dMainImg');
+  mainImg.src = p.img;
+  mainImg.alt = p.name;
+  mainImg.onerror = () => { if(mainImg.src !== fallback) mainImg.src = fallback; };
+
+  document.getElementById('dThumbs').innerHTML = p.colors.slice(0, 4).map((c, i) => `
+    <div class="detail-thumb ${i===0?'active':''}" onclick="switchImg(this,'${c.img}','${fallback}')">
+      <img src="${c.img}" alt="${c.n}" onerror="this.style.opacity=.25">
+    </div>`).join('');
+
+  document.getElementById('dSwatches').innerHTML = p.colors.map((c, i) => `
+    <div class="color-swatch ${i===0?'active':''}" onclick="pickColor(this,'${c.n}','${c.img}','${fallback}')">
+      <img src="${c.img}" alt="${c.n}" onerror="this.style.display='none'">
+      <span>${c.n}</span>
+    </div>`).join('');
+
+  document.getElementById('dInsurance').innerHTML = `
+    <div class="insurance-card" onclick="this.classList.toggle('sel')">
+      <div class="ic-title">+1 Yıl Ek Garanti</div>
+      <div class="ic-sub">A+ Güvence Sigortası tarafından sunulmaktadır.</div>
+      <div class="ic-price">₺18.004,81</div>
+    </div>
+    <div class="insurance-card" onclick="this.classList.toggle('sel')">
+      <div class="ic-title">+2 Yıl Ek Garanti</div>
+      <div class="ic-sub">A+ Güvence Sigortası tarafından sunulmaktadır.</div>
+      <div class="ic-price">₺24.466,35</div>
+    </div>
+    <div class="insurance-card" onclick="this.classList.toggle('sel')">
+      <div class="ic-title">Kırılma Sigortası</div>
+      <div class="ic-sub">Ekran hasarı ve kaza koruması.</div>
+      <div class="ic-price">₺9.850,00</div>
+    </div>`;
+
+  document.getElementById('dSpecs').innerHTML =
+    `<caption class="specs-caption">${p.name}</caption>` +
+    p.specs.map(([k, v]) => `<tr><td>${k}</td><td>${v}</td></tr>`).join('');
+
+  const btn = document.getElementById('dAddBtn');
+  btn.textContent = 'Sepete Ekle';
+  btn.classList.remove('added');
+
+  document.querySelectorAll('.detail-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.detail-tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelector('.detail-tab').classList.add('active');
+  document.getElementById('tabSpecs').classList.add('active');
+
+  document.getElementById('overlay').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeDetail() {
+  document.getElementById('overlay').classList.remove('show');
+  document.body.style.overflow = '';
+  activeProduct = null;
+}
+function overlayClick(e) {
+  if (e.target === document.getElementById('overlay')) closeDetail();
+}
+
+function switchImg(el, src, fb) {
+  document.querySelectorAll('.detail-thumb').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  const img = document.getElementById('dMainImg');
+  img.style.opacity = '0';
+  setTimeout(() => {
+    img.src = src;
+    img.onerror = () => { if(img.src!==fb) img.src=fb; };
+    img.style.opacity = '1';
+  }, 140);
+}
+document.getElementById('dMainImg').style.transition = 'opacity .15s';
+
+function pickColor(el, name, src, fb) {
+  document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('dColorName').textContent = name;
+  const img = document.getElementById('dMainImg');
+  img.style.opacity = '0';
+  setTimeout(() => {
+    img.src = src;
+    img.onerror = () => { if(img.src!==fb) img.src=fb; };
+    img.style.opacity = '1';
+  }, 140);
+}
+
+// ── TABS ──
+function switchTab(el, id) {
+  document.querySelectorAll('.detail-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.detail-tab-content').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById(id).classList.add('active');
+}
+
+// ── NAV ──
+function setActiveNav(el) {
+  document.querySelectorAll('.nav-cat-item').forEach(n => n.classList.remove('active'));
+  el.classList.add('active');
+}
+
+
+const SUPABASE_URL = 'https://mcvkfzsdgmfcishamjtp.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJteXZrZnpzZGdtZmNpc2hhbWp0cCIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNzc1NzMzNjM4LCJleHAiOjIwOTEzMDk2Mzh9.GiY_LuOKHUcPQ5x_HEGONLdpKTpLD_hla9oZkmltEuU';
+const supabaseClient = window.supabase && window.supabase.createClient
+  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+  : null;
+
+function openAuthModal(){
+  const modal = document.getElementById('authModal');
+  if (!modal) return;
+  showHomeView();
+  modal.classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+function forceCloseAuthModal(){
+  const modal = document.getElementById('authModal');
+  if (!modal) return;
+  modal.classList.remove('show');
+  document.body.style.overflow = '';
+}
+function handleAuthOverlay(e){ if (e.target && e.target.id === 'authModal') forceCloseAuthModal(); }
+function showHomeView(){
+  document.getElementById('authHomeView').style.display = 'block';
+  document.getElementById('authLoginView').style.display = 'none';
+  document.getElementById('authRegisterView').style.display = 'none';
+}
+function showLoginView(){
+  document.getElementById('authHomeView').style.display = 'none';
+  document.getElementById('authLoginView').style.display = 'block';
+  document.getElementById('authRegisterView').style.display = 'none';
+}
+function showRegisterView(){
+  document.getElementById('authHomeView').style.display = 'none';
+  document.getElementById('authLoginView').style.display = 'none';
+  document.getElementById('authRegisterView').style.display = 'block';
+}
+async function syncProfileRow(user, meta){
+  if (!supabaseClient || !user) return;
+  const payload = {
+    id: user.id,
+    first_name: meta.first_name || '',
+    last_name: meta.last_name || '',
+    phone: meta.phone || '',
+    email: user.email || meta.email || '',
+    birth_date: meta.birth_date || null,
+    gender: meta.gender || '',
+    address: meta.address || ''
+  };
+  try {
+    await supabaseClient.from('profiles').upsert(payload);
+  } catch (e) {
+    console.warn('profiles upsert warning', e);
+  }
+}
+async function handleRegister(event){
+  event.preventDefault();
+  if (!supabaseClient) { showToast('Supabase yüklenemedi.'); return; }
+  const first_name = document.getElementById('regFirstName').value.trim();
+  const last_name = document.getElementById('regLastName').value.trim();
+  const phone = document.getElementById('regPhone').value.trim();
+  const email = document.getElementById('regEmail').value.trim();
+  const password = document.getElementById('regPassword').value;
+  const birth_date = document.getElementById('regBirthDate').value;
+  const address = document.getElementById('regAddress').value.trim();
+  const gender = document.querySelector('input[name="gender"]:checked')?.value || '';
+  const meta = { first_name, last_name, phone, birth_date, gender, address };
+  const { data, error } = await supabaseClient.auth.signUp({ email, password, options: { data: meta } });
+  if (error) { showToast(error.message); return; }
+  if (data?.user) await syncProfileRow(data.user, meta);
+  showToast('Kayıt oluşturuldu. E-posta doğrulaması açıksa gelen maili onaylayın.');
+  await refreshAuthUi();
+  forceCloseAuthModal();
+}
+async function handleLogin(event){
+  event.preventDefault();
+  if (!supabaseClient) { showToast('Supabase yüklenemedi.'); return; }
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+  if (error) { showToast(error.message); return; }
+  showToast('Giriş başarılı.');
+  await refreshAuthUi();
+  forceCloseAuthModal();
+}
+async function handleAuthButton(){
+  if (!supabaseClient) { openAuthModal(); return; }
+  const { data } = await supabaseClient.auth.getSession();
+  if (data?.session) {
+    await supabaseClient.auth.signOut();
+    await refreshAuthUi();
+    showToast('Çıkış yapıldı.');
+  } else {
+    openAuthModal();
+  }
+}
+async function refreshAuthUi(){
+  const label = document.getElementById('authTriggerLabel');
+  if (!label) return;
+  if (!supabaseClient) { label.textContent = 'Giriş Yap'; return; }
+  const { data } = await supabaseClient.auth.getSession();
+  const session = data?.session;
+  if (session?.user) {
+    const fullName = [session.user.user_metadata?.first_name, session.user.user_metadata?.last_name].filter(Boolean).join(' ').trim();
+    label.textContent = fullName || 'Çıkış Yap';
+  } else {
+    label.textContent = 'Giriş Yap';
+  }
+}
+
+// ── TOAST ──
+let toastT;
+function showToast(msg) {
+  clearTimeout(toastT);
+  const t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  t.classList.add('show');
+  toastT = setTimeout(() => t.classList.remove('show'), 3200);
+}
+
+// ── SHARE ──
+function shareAction() {
+  if (navigator.share) {
+    navigator.share({ title: 'Cep Telefonu', url: window.location.href });
+  } else {
+    navigator.clipboard.writeText(window.location.href)
+      .then(() => showToast('Bağlantı panoya kopyalandı!'))
+      .catch(() => showToast('Paylaşım desteklenmiyor.'));
+  }
+}
+
+// ── ESC ──
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    closeDetail();
+    forceCloseAuthModal();
+  }
+});
+
+// ── INIT ──
+normalizeProductImages();
+restoreCartState();
+renderGrid(PRODUCTS);
+renderCartPage();
+updateCartBadge();
+syncCartButtonState();
+document.getElementById('cartTriggerBtn')?.addEventListener('click', viewCart);
+document.getElementById('authTriggerBtn')?.addEventListener('click', (e) => { e.preventDefault(); handleAuthButton(); });
+refreshAuthUi();
+if (supabaseClient) {
+  supabaseClient.auth.onAuthStateChange(async (event, session) => {
+    const label = document.getElementById('authTriggerLabel');
+    if (label) {
+      if (session?.user) {
+        const fullName = [session.user.user_metadata?.first_name, session.user.user_metadata?.last_name].filter(Boolean).join(' ').trim();
+        label.textContent = fullName || 'Çıkış Yap';
+      } else {
+        label.textContent = 'Giriş Yap';
+      }
+    }
+  });
+}
+</script>
+</body>
+</html>
