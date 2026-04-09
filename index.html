@@ -327,33 +327,42 @@ body{font-family:'Nunito',sans-serif;background:var(--gray-50);color:var(--gray-
 /* AUTH MODAL */
 .auth-overlay{position:fixed;inset:0;background:rgba(15,23,42,.42);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;z-index:1200;padding:20px}
 .auth-overlay.show{display:flex;animation:fadeIn .18s ease}
-.auth-modal{width:100%;max-width:660px;background:rgba(255,255,255,.96);border:1px solid rgba(255,255,255,.7);box-shadow:0 24px 80px rgba(15,23,42,.22);border-radius:28px;position:relative;overflow:hidden}
+.auth-modal{width:100%;max-width:720px;background:rgba(255,255,255,.94);border:1px solid rgba(255,255,255,.6);box-shadow:0 24px 80px rgba(15,23,42,.22);border-radius:24px;position:relative;overflow:hidden}
 .auth-close{position:absolute;top:14px;right:14px;width:38px;height:38px;border:none;border-radius:50%;background:rgba(255,255,255,.9);color:var(--gray-600);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(15,23,42,.12);z-index:2}
 .auth-close:hover{background:#fff;color:var(--gray-800)}
-.auth-shell{padding:30px 30px 26px}
-.auth-view{display:block}
-.auth-badge{display:inline-flex;align-items:center;gap:8px;width:max-content;padding:7px 12px;border-radius:999px;background:var(--teal-light);color:var(--teal-dark);font-weight:800;font-size:12px;margin-bottom:10px}
-.auth-title{font-size:28px;line-height:1.15;font-weight:900;color:var(--gray-800);margin-bottom:10px}
-.auth-subtitle{font-size:14px;line-height:1.75;color:var(--gray-600);margin-bottom:18px}
+.auth-shell{padding:34px}
+.auth-start{display:flex;flex-direction:column;gap:16px}
+.auth-kicker{display:inline-flex;align-items:center;gap:8px;width:max-content;padding:7px 12px;border-radius:999px;background:var(--teal-light);color:var(--teal-dark);font-weight:800;font-size:12px}
+.auth-title{font-size:28px;line-height:1.2;font-weight:900;color:var(--gray-800);max-width:520px}
+.auth-desc{font-size:14px;line-height:1.75;color:var(--gray-600);max-width:560px}
 .auth-switches{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:4px}
-.auth-form-stack{display:flex;flex-direction:column;gap:14px}
-.auth-form-grid.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.auth-form-group{display:flex;flex-direction:column;gap:8px}
-.auth-form-group label{font-size:13px;font-weight:800;color:var(--gray-700)}
-.auth-form-group input,.auth-form-group textarea{width:100%;border:1.5px solid var(--gray-200);border-radius:999px;padding:14px 16px;font:inherit;color:var(--gray-800);background:#fff;outline:none;transition:.2s}
-.auth-form-group textarea{border-radius:22px;resize:vertical;min-height:88px}
-.auth-form-group input:focus,.auth-form-group textarea:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(0,188,212,.12)}
-.auth-form-actions{display:flex;align-items:center;gap:12px;justify-content:space-between;margin-top:10px}
-.auth-primary-btn,.auth-secondary-btn,.auth-link-btn{border:none;border-radius:999px;padding:14px 18px;font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;cursor:pointer;transition:.2s}
-.auth-primary-btn{background:var(--teal);color:#fff;flex:1}
-.auth-primary-btn:hover{background:var(--teal-dark)}
-.auth-secondary-btn{background:var(--gray-100);color:var(--gray-800);flex:1}
-.auth-secondary-btn:hover{background:var(--gray-200)}
-.auth-link-btn{background:transparent;color:var(--gray-500);padding-left:8px;padding-right:8px}
-.auth-link-btn:hover{color:var(--teal-dark)}
-.auth-radio-row{display:flex;gap:24px;align-items:center;padding:6px 0}
-.auth-radio{display:flex;align-items:center;gap:8px;font-weight:700;color:var(--gray-700)}
+.auth-big-btn{height:54px;border-radius:16px;font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;cursor:pointer;border:1.5px solid transparent;transition:.2s}
+.auth-big-btn.primary{background:var(--teal);color:#fff}
+.auth-big-btn.primary:hover{background:var(--teal-dark)}
+.auth-big-btn.secondary{background:#fff;color:var(--gray-800);border-color:var(--gray-200)}
+.auth-big-btn.secondary:hover{border-color:var(--teal);color:var(--teal-dark)}
+.auth-back-link{display:inline-flex;align-items:center;gap:6px;background:none;border:none;color:var(--gray-500);font-weight:800;font-family:'Nunito',sans-serif;cursor:pointer;margin-bottom:14px}
+.auth-back-link:hover{color:var(--teal-dark)}
+.auth-form-title{font-size:26px;font-weight:900;color:var(--gray-800);margin-bottom:4px}
+.auth-form-sub{font-size:13px;line-height:1.7;color:var(--gray-500);margin-bottom:16px}
+.auth-status{display:none;padding:11px 14px;border-radius:12px;font-size:13px;font-weight:700;margin-bottom:14px}
+.auth-status.show{display:block}
+.auth-status.error{background:#fef2f2;color:#b91c1c;border:1px solid #fecaca}
+.auth-status.success{background:#ecfdf5;color:#166534;border:1px solid #bbf7d0}
+.auth-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.auth-field{display:flex;flex-direction:column;gap:7px}
+.auth-field.full{grid-column:1/-1}
+.auth-field label{font-size:12px;font-weight:800;color:var(--gray-600)}
+.auth-field input,.auth-field textarea,.auth-field select{width:100%;border:1.5px solid var(--gray-200);background:#fff;border-radius:18px;padding:14px 16px;font-family:'Nunito',sans-serif;font-size:14px;color:var(--gray-800);outline:none;transition:.2s}
+.auth-field textarea{min-height:90px;resize:vertical}
+.auth-field input:focus,.auth-field textarea:focus,.auth-field select:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(0,188,212,.12)}
+.auth-gender{display:flex;gap:24px;align-items:center;min-height:46px;padding:6px 2px}
+.auth-radio{display:inline-flex;align-items:center;gap:8px;font-size:15px;font-weight:700;color:var(--gray-700);cursor:pointer}
 .auth-radio input{accent-color:var(--teal);width:18px;height:18px}
+.auth-submit{margin-top:14px;width:100%;height:56px;border:none;border-radius:18px;background:#8e97a3;color:#fff;font-family:'Nunito',sans-serif;font-size:16px;font-weight:900;cursor:pointer;transition:.2s}
+.auth-submit:hover{background:#7d8794}
+.auth-submit:disabled{opacity:.7;cursor:not-allowed}
+.auth-footnote{font-size:12.5px;color:var(--gray-500);line-height:1.7;margin-top:12px}
 
 @media(max-width:900px){
   .sidebar{display:none}
@@ -372,9 +381,31 @@ body{font-family:'Nunito',sans-serif;background:var(--gray-50);color:var(--gray-
   .card-input-grid .card-input:first-child{border-right:none;border-bottom:1px solid var(--gray-200)}
   .checkout-top{flex-direction:column;align-items:flex-start}
   .auth-shell{padding:24px 18px}
-  .auth-switches,.auth-form-grid.two,.auth-form-actions{grid-template-columns:1fr;flex-direction:column;align-items:stretch}
+  .auth-switches,.auth-form-grid{grid-template-columns:1fr}
+  
+.auth-view{display:block}
+.auth-form-stack{display:flex;flex-direction:column;gap:14px}
+.auth-form-grid.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.auth-form-group{display:flex;flex-direction:column;gap:8px}
+.auth-form-group label{font-size:13px;font-weight:800;color:var(--gray-700)}
+.auth-form-group input,.auth-form-group textarea{width:100%;border:1.5px solid var(--gray-200);border-radius:999px;padding:14px 16px;font:inherit;color:var(--gray-800);background:#fff;outline:none;transition:.2s}
+.auth-form-group textarea{border-radius:22px;resize:vertical;min-height:88px}
+.auth-form-group input:focus,.auth-form-group textarea:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(0,188,212,.12)}
+.auth-form-actions{display:flex;align-items:center;gap:12px;justify-content:space-between;margin-top:8px}
+.auth-primary-btn,.auth-secondary-btn,.auth-link-btn{border:none;border-radius:999px;padding:14px 18px;font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;cursor:pointer;transition:.2s}
+.auth-primary-btn{background:var(--teal);color:#fff;flex:1}
+.auth-primary-btn:hover{background:var(--teal-dark)}
+.auth-secondary-btn{background:var(--gray-100);color:var(--gray-800);flex:1}
+.auth-secondary-btn:hover{background:var(--gray-200)}
+.auth-link-btn{background:transparent;color:var(--gray-500);padding-left:8px;padding-right:8px}
+.auth-link-btn:hover{color:var(--teal-dark)}
+.auth-radio-row{display:flex;gap:24px;align-items:center;padding:6px 0}
+.auth-radio{display:flex;align-items:center;gap:8px;font-weight:700;color:var(--gray-700)}
+.auth-radio input{accent-color:var(--teal);width:18px;height:18px}
+
   .auth-title{font-size:22px}
 }
+
 </style>
 </head>
 <body>
@@ -755,7 +786,7 @@ body{font-family:'Nunito',sans-serif;background:var(--gray-50);color:var(--gray-
 
 <!-- AUTH MODAL -->
 <div class="auth-overlay" id="authModal" onclick="handleAuthOverlay(event)">
-  <div class="auth-shell auth-modal">
+  <div class="auth-shell">
     <button class="auth-close" type="button" onclick="forceCloseAuthModal()">✕</button>
 
     <div class="auth-view" id="authHomeView">
@@ -1044,8 +1075,6 @@ const PRODUCTS = [
 ];
 
 // ── STATE ──
-const CART_STORAGE_KEY = 'shop_cart_v1';
-const SERVICE_STORAGE_KEY = 'shop_services_v1';
 const cart = [];
 const favorites = new Set();
 const serviceSelections = new Map();
@@ -1060,63 +1089,19 @@ function getProductFallback(product){
   return product.fallback || (product.colors && product.colors[0] ? product.colors[0].img : FB_APPLE);
 }
 
-function sanitizeRemoteImage(url, fallback){
-  if (!url) return fallback;
-  const risky = ['iphone-17','iphone-air','p6pim/'];
-  return risky.some(token => String(url).includes(token)) ? fallback : url;
-}
-
 function getBestImage(product){
-  const fallback = getProductFallback(product);
-  const candidates = [product.img, ...(product.colors || []).map(c => c.img), fallback].filter(Boolean);
-  for (const candidate of candidates) {
-    const clean = sanitizeRemoteImage(candidate, fallback);
-    if (clean) return clean;
-  }
-  return fallback;
+  const candidates = [product.img, ...(product.colors || []).map(c => c.img), getProductFallback(product)].filter(Boolean);
+  return candidates[0];
 }
 
 function normalizeProductImages(){
   PRODUCTS.forEach(product => {
     if (!product.fallback) product.fallback = getProductFallback(product);
-    product.fallback = sanitizeRemoteImage(product.fallback, FB_APPLE) || FB_APPLE;
     product.img = getBestImage(product);
     if (!Array.isArray(product.colors) || !product.colors.length) {
       product.colors = [{ n: product.colorName || 'Varsayılan', img: product.img }];
-    } else {
-      product.colors = product.colors.map(c => ({...c, img: sanitizeRemoteImage(c.img, product.fallback)}));
     }
   });
-}
-
-function saveCartState(){
-  try {
-    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
-    localStorage.setItem(SERVICE_STORAGE_KEY, JSON.stringify(Object.fromEntries(serviceSelections)));
-  } catch (e) {
-    console.warn('Cart state could not be saved', e);
-  }
-}
-
-function loadCartState(){
-  try {
-    const storedCart = JSON.parse(localStorage.getItem(CART_STORAGE_KEY) || '[]');
-    const storedServices = JSON.parse(localStorage.getItem(SERVICE_STORAGE_KEY) || '{}');
-    if (Array.isArray(storedCart)) {
-      cart.length = 0;
-      storedCart.forEach(item => {
-        if (item && typeof item.id === 'number' && typeof item.qty === 'number') cart.push(item);
-      });
-    }
-    serviceSelections.clear();
-    if (storedServices && typeof storedServices === 'object') {
-      Object.entries(storedServices).forEach(([key, value]) => {
-        if (Array.isArray(value) && value.length) serviceSelections.set(Number(key), value);
-      });
-    }
-  } catch (e) {
-    console.warn('Cart state could not be loaded', e);
-  }
 }
 
 function findCartItem(id){ return cart.find(item => item.id === id); }
@@ -1185,7 +1170,6 @@ function toggleService(productId, serviceKey){
   else current.add(serviceKey);
   if (current.size) serviceSelections.set(productId, [...current]);
   else serviceSelections.delete(productId);
-  saveCartState();
   renderCartPage();
 }
 
@@ -1329,7 +1313,6 @@ function addProductToCart(product){
     fallback: getProductFallback(product),
     qty: 1
   });
-  saveCartState();
   updateCartBadge();
   syncCartButtonState();
 }
@@ -1357,7 +1340,6 @@ function changeCartQty(id, delta){
   item.qty += delta;
   if (item.qty <= 0) removeFromCart(id);
   else {
-    saveCartState();
     updateCartBadge();
     syncCartButtonState();
     renderCartPage();
@@ -1369,8 +1351,6 @@ function removeFromCart(id){
   if (index === -1) return;
   cart.splice(index, 1);
   serviceSelections.delete(id);
-  saveCartState();
-  saveCartState();
   updateCartBadge();
   syncCartButtonState();
   renderCartPage();
@@ -1379,7 +1359,6 @@ function removeFromCart(id){
 function clearCart(){
   cart.length = 0;
   serviceSelections.clear();
-  saveCartState();
   updateCartBadge();
   syncCartButtonState();
   renderCartPage();
@@ -1601,9 +1580,9 @@ function setActiveNav(el) {
 
 
 const SUPABASE_URL = 'https://mcvkfzsdgmfcishamjtp.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1jdmtmenNkZ21mY2lzaGFtanRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU3MzM2MzgsImV4cCI6MjA5MTMwOTYzOH0.GiY_LuOKHUcPQ5x_HEGONLdpKTpLD_hla9oZkmltEuU';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJtY3ZrZnpzZGdtZmNpc2hhbWp0cCIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNzc1NzMzNjM4LCJleHAiOjIwOTEzMDk2Mzh9.GiY_LuOKHUcPQ5x_HEGONLdpKTpLD_hla9oZkmltEuU';
 const supabaseClient = window.supabase && window.supabase.createClient
-  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { auth:{ persistSession:true, autoRefreshToken:true } })
+  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
   : null;
 
 function openAuthModal(){
@@ -1637,21 +1616,20 @@ function showRegisterView(){
 }
 async function syncProfileRow(user, meta){
   if (!supabaseClient || !user) return;
+  const { data: sessionData } = await supabaseClient.auth.getSession();
+  if (!sessionData?.session) return;
   const payload = {
     id: user.id,
     first_name: meta.first_name || '',
     last_name: meta.last_name || '',
     phone: meta.phone || '',
     email: user.email || meta.email || '',
-    birth_date: meta.birth_date || null,
+    birth_date: meta.birth_date || '',
     gender: meta.gender || '',
     address: meta.address || ''
   };
-  try {
-    await supabaseClient.from('profiles').upsert(payload);
-  } catch (e) {
-    console.warn('profiles upsert warning', e);
-  }
+  const { error } = await supabaseClient.from('profiles').upsert(payload);
+  if (error) console.warn('profiles upsert warning', error.message || error);
 }
 async function handleRegister(event){
   event.preventDefault();
@@ -1666,8 +1644,8 @@ async function handleRegister(event){
   const gender = document.querySelector('input[name="gender"]:checked')?.value || '';
   const meta = { first_name, last_name, phone, birth_date, gender, address };
   const { data, error } = await supabaseClient.auth.signUp({ email, password, options: { data: meta } });
-  if (error) { showToast(error.message === 'Invalid API key' ? 'Supabase anahtarı geçersiz. HTML içindeki anon key düzeltildi; sayfayı cache temizleyip yeniden açın.' : error.message); return; }
-  if (data?.user) await syncProfileRow(data.user, meta);
+  if (error) { showToast(error.message); return; }
+  if (data?.session?.user) await syncProfileRow(data.session.user, meta);
   showToast('Kayıt oluşturuldu. E-posta doğrulaması açıksa gelen maili onaylayın.');
   await refreshAuthUi();
   forceCloseAuthModal();
@@ -1678,7 +1656,7 @@ async function handleLogin(event){
   const email = document.getElementById('loginEmail').value.trim();
   const password = document.getElementById('loginPassword').value;
   const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
-  if (error) { showToast(error.message === 'Invalid API key' ? 'Supabase anahtarı geçersiz. HTML içindeki anon key düzeltildi; sayfayı cache temizleyip yeniden açın.' : error.message); return; }
+  if (error) { showToast(error.message); return; }
   showToast('Giriş başarılı.');
   await refreshAuthUi();
   forceCloseAuthModal();
@@ -1739,7 +1717,6 @@ document.addEventListener('keydown', e => {
 
 // ── INIT ──
 normalizeProductImages();
-loadCartState();
 renderGrid(PRODUCTS);
 renderCartPage();
 updateCartBadge();
