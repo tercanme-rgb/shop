@@ -324,58 +324,133 @@ body{font-family:'Nunito',sans-serif;background:var(--gray-50);color:var(--gray-
 
 
 
-/* AUTH MODAL */
-.auth-overlay{position:fixed;inset:0;background:rgba(15,23,42,.45);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;z-index:1200;padding:20px;overflow-y:auto}
-.auth-overlay.show{display:flex;animation:fadeIn .18s ease}
-.auth-shell{width:100%;max-width:520px;background:#fff;border-radius:28px;box-shadow:0 28px 80px rgba(15,23,42,.18);position:relative;padding:36px 36px 32px;margin:auto}
-.auth-close{position:absolute;top:16px;right:16px;width:36px;height:36px;border:none;border-radius:50%;background:var(--gray-100);color:var(--gray-500);font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s;z-index:2}
-.auth-close:hover{background:var(--gray-200);color:var(--gray-800)}
-.auth-badge{display:inline-block;font-size:12px;font-weight:800;color:var(--teal-dark);background:var(--teal-light);border-radius:999px;padding:4px 14px;margin-bottom:12px;letter-spacing:.3px}
+/* ═══════════════════════════════════════════════
+   AUTH MODAL — Premium Glassmorphism v2
+═══════════════════════════════════════════════ */
+.auth-overlay{
+  position:fixed;inset:0;
+  background:rgba(8,14,30,.55);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  display:none;align-items:center;justify-content:center;
+  z-index:1200;padding:20px 16px;overflow-y:auto;
+}
+.auth-overlay.show{display:flex;animation:authFadeIn .24s cubic-bezier(.4,0,.2,1)}
+@keyframes authFadeIn{from{opacity:0}to{opacity:1}}
+@keyframes authSlideUp{from{opacity:0;transform:translateY(28px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+
+.auth-shell{
+  width:100%;max-width:520px;background:#ffffff;border-radius:28px;
+  border:1px solid rgba(255,255,255,.85);
+  box-shadow:0 40px 100px rgba(8,14,30,.24),0 12px 32px rgba(0,188,212,.08),0 1px 0 rgba(255,255,255,.7) inset;
+  position:relative;margin:auto;overflow:hidden;
+  animation:authSlideUp .3s cubic-bezier(.4,0,.2,1);
+}
+.auth-shell::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,#00d4e8 0%,#00bcd4 30%,#6c3ce1 70%,#00d4e8 100%);
+  background-size:200% 100%;animation:authGradShift 3s linear infinite;z-index:3;
+}
+@keyframes authGradShift{0%{background-position:0% 0%}100%{background-position:200% 0%}}
+.auth-shell::after{
+  content:'';position:absolute;top:-80px;right:-80px;width:200px;height:200px;
+  border-radius:50%;background:radial-gradient(circle,rgba(0,188,212,.07) 0%,transparent 70%);
+  pointer-events:none;z-index:0;
+}
+.auth-shell-inner{padding:36px 36px 32px;position:relative;z-index:1}
+
+.auth-close{
+  position:absolute;top:16px;right:16px;width:34px;height:34px;border:none;border-radius:50%;
+  background:rgba(148,163,184,.1);color:var(--gray-400);font-size:14px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;transition:.22s;z-index:10;line-height:1;
+}
+.auth-close:hover{background:rgba(148,163,184,.22);color:var(--gray-800);transform:rotate(90deg) scale(1.08)}
+
+.auth-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:11px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;
+  color:var(--teal-dark);background:linear-gradient(135deg,#e0f7fa,#b2ebf2);
+  border:1px solid rgba(0,188,212,.22);border-radius:999px;padding:5px 15px;margin-bottom:14px;
+}
+.auth-home-icon{
+  width:68px;height:68px;border-radius:20px;
+  background:linear-gradient(135deg,#00c5d8,#6c3ce1);
+  display:flex;align-items:center;justify-content:center;margin:0 auto 22px;
+  box-shadow:0 10px 28px rgba(0,188,212,.35),0 2px 8px rgba(108,60,225,.2);
+}
+.auth-home-icon svg{width:30px;height:30px;stroke:#fff;fill:none;stroke-width:2.2}
+
 .auth-title{font-size:22px;font-weight:900;color:var(--gray-800);margin-bottom:6px;line-height:1.3}
-.auth-subtitle{font-size:13px;color:var(--gray-500);margin-bottom:22px;line-height:1.65}
+.auth-subtitle{font-size:13px;color:var(--gray-500);margin-bottom:24px;line-height:1.72}
 .auth-view{display:block}
-.auth-switches{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}
+.auth-switches{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:4px}
 
 /* Form alanları */
-.auth-form-stack{display:flex;flex-direction:column;gap:16px}
-.auth-form-grid.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.auth-form-group{display:flex;flex-direction:column;gap:7px}
-.auth-form-group label{font-size:12.5px;font-weight:800;color:var(--gray-600);padding-left:4px}
+.auth-form-stack{display:flex;flex-direction:column;gap:15px}
+.auth-form-grid.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.auth-form-group{display:flex;flex-direction:column;gap:6px}
+.auth-form-group label{font-size:11px;font-weight:900;color:var(--gray-500);padding-left:2px;letter-spacing:.6px;text-transform:uppercase}
 .auth-form-group input,
 .auth-form-group textarea,
 .auth-form-group select{
-  width:100%;border:1.5px solid #e8edf2;border-radius:999px;
-  padding:13px 18px;font-family:'Nunito',sans-serif;font-size:14px;
-  font-weight:600;color:var(--gray-800);background:#fff;outline:none;
-  transition:.2s;box-shadow:0 2px 8px rgba(0,0,0,.04);
-  -webkit-appearance:none;appearance:none
+  width:100%;border:1.5px solid #e8edf2;border-radius:13px;
+  padding:12px 17px;font-family:'Nunito',sans-serif;font-size:14px;
+  font-weight:600;color:var(--gray-800);background:#f9fafc;outline:none;
+  transition:border-color .18s,box-shadow .18s,background .18s;
+  -webkit-appearance:none;appearance:none;
 }
-.auth-form-group textarea{border-radius:18px;resize:vertical;min-height:88px}
-.auth-form-group select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 16px center;padding-right:40px;cursor:pointer}
-.auth-form-group input:focus,
-.auth-form-group textarea:focus,
-.auth-form-group select:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(0,188,212,.12)}
+.auth-form-group input:hover,.auth-form-group textarea:hover,.auth-form-group select:hover{border-color:rgba(0,188,212,.38);background:#fff}
+.auth-form-group input:focus,.auth-form-group textarea:focus,.auth-form-group select:focus{border-color:var(--teal);background:#fff;box-shadow:0 0 0 4px rgba(0,188,212,.1)}
+.auth-form-group textarea{border-radius:16px;resize:vertical;min-height:85px}
+.auth-form-group select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:38px;cursor:pointer}
 
-/* E-posta + Doğrula butonu */
+/* E-posta + Doğrula */
 .auth-email-wrap{position:relative;display:flex;align-items:center}
-.auth-email-wrap input{padding-right:100px}
-.auth-verify-btn{position:absolute;right:6px;top:50%;transform:translateY(-50%);background:var(--teal);color:#fff;border:none;border-radius:999px;padding:8px 18px;font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;cursor:pointer;transition:.2s;white-space:nowrap}
-.auth-verify-btn:hover{background:var(--teal-dark)}
+.auth-email-wrap input{padding-right:106px}
+.auth-verify-btn{
+  position:absolute;right:6px;top:50%;transform:translateY(-50%);
+  background:linear-gradient(135deg,var(--teal),#0097a7);color:#fff;border:none;border-radius:999px;
+  padding:7px 16px;font-family:'Nunito',sans-serif;font-weight:800;font-size:12px;cursor:pointer;
+  transition:.2s;white-space:nowrap;box-shadow:0 3px 10px rgba(0,188,212,.32);
+}
+.auth-verify-btn:hover{transform:translateY(-50%) scale(1.05);box-shadow:0 5px 16px rgba(0,188,212,.42)}
 
-/* Cinsiyet radyo */
-.auth-radio-row{display:flex;gap:28px;align-items:center;padding:8px 4px}
-.auth-radio{display:flex;align-items:center;gap:9px;font-size:14px;font-weight:700;color:var(--gray-700);cursor:pointer}
-.auth-radio input[type="radio"]{accent-color:var(--teal);width:18px;height:18px;cursor:pointer}
+/* Cinsiyet — kart seçimi */
+.auth-radio-row{display:flex;gap:10px;padding:2px 0}
+.auth-radio{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  font-size:13.5px;font-weight:700;color:var(--gray-600);cursor:pointer;
+  flex:1;padding:10px 12px;border-radius:12px;border:1.5px solid #e8edf2;
+  background:#f9fafc;transition:all .18s;user-select:none;
+}
+.auth-radio:has(input:checked){border-color:var(--teal);background:linear-gradient(135deg,#e0f7fa,#ccf2f8);color:var(--teal-dark);box-shadow:0 0 0 3px rgba(0,188,212,.1)}
+.auth-radio input[type="radio"]{accent-color:var(--teal);width:15px;height:15px;cursor:pointer;flex-shrink:0}
+
+/* Kayıt formu scroll */
+.auth-register-scroll{max-height:68vh;overflow-y:auto;padding-right:6px;margin-right:-6px}
+.auth-register-scroll::-webkit-scrollbar{width:4px}
+.auth-register-scroll::-webkit-scrollbar-thumb{background:var(--gray-200);border-radius:4px}
 
 /* Butonlar */
-.auth-form-actions{display:flex;align-items:center;gap:12px;margin-top:6px}
-.auth-primary-btn{background:var(--teal);color:#fff;border:none;border-radius:999px;padding:14px 0;font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;cursor:pointer;transition:.2s;flex:1}
-.auth-primary-btn:hover{background:var(--teal-dark)}
-.auth-secondary-btn{background:var(--gray-100);color:var(--gray-800);border:none;border-radius:999px;padding:14px 0;font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;cursor:pointer;transition:.2s;flex:1}
-.auth-secondary-btn:hover{background:var(--gray-200)}
-.auth-link-btn{background:transparent;color:var(--gray-500);border:none;border-radius:999px;padding:14px 16px;font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;cursor:pointer;transition:.2s}
-.auth-link-btn:hover{color:var(--teal-dark)}
-.auth-register-form{display:flex;flex-direction:column;gap:16px}
+.auth-form-actions{display:flex;align-items:center;gap:12px;margin-top:8px}
+.auth-primary-btn{
+  background:linear-gradient(135deg,#00c8dc,#0097a7);color:#fff;border:none;border-radius:13px;
+  padding:14px 0;font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;cursor:pointer;
+  transition:transform .2s,box-shadow .2s;flex:1;
+  box-shadow:0 5px 18px rgba(0,188,212,.38);position:relative;overflow:hidden;
+}
+.auth-primary-btn::after{content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.18),transparent);transition:left .45s}
+.auth-primary-btn:hover{transform:translateY(-2px);box-shadow:0 9px 26px rgba(0,188,212,.48)}
+.auth-primary-btn:hover::after{left:160%}
+.auth-primary-btn:active{transform:translateY(0)}
+.auth-secondary-btn{
+  background:#fff;color:var(--gray-700);border:1.5px solid #e2e8f0;border-radius:13px;
+  padding:14px 0;font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;cursor:pointer;
+  transition:.2s;flex:1;box-shadow:0 2px 8px rgba(0,0,0,.05);
+}
+.auth-secondary-btn:hover{border-color:var(--teal);color:var(--teal-dark);transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.1)}
+.auth-link-btn{background:transparent;color:var(--gray-400);border:none;border-radius:10px;padding:14px 16px;font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;cursor:pointer;transition:.18s}
+.auth-link-btn:hover{color:var(--teal-dark);background:rgba(0,188,212,.05)}
+.auth-register-form{display:flex;flex-direction:column;gap:15px}
 
 @media(max-width:900px){
   .sidebar{display:none}
@@ -393,9 +468,11 @@ body{font-family:'Nunito',sans-serif;background:var(--gray-50);color:var(--gray-
   .card-input-grid{grid-template-columns:1fr}
   .card-input-grid .card-input:first-child{border-right:none;border-bottom:1px solid var(--gray-200)}
   .checkout-top{flex-direction:column;align-items:flex-start}
-  .auth-shell{padding:24px 18px}
+  .auth-shell-inner{padding:26px 18px 22px}
   .auth-switches,.auth-form-grid.two{grid-template-columns:1fr}
   .auth-title{font-size:20px}
+  .auth-radio-row{flex-direction:column}
+  .auth-radio{width:100%}
 }
 
 </style>
@@ -780,12 +857,16 @@ body{font-family:'Nunito',sans-serif;background:var(--gray-50);color:var(--gray-
 <div class="auth-overlay" id="authModal" onclick="handleAuthOverlay(event)">
   <div class="auth-shell">
     <button class="auth-close" type="button" onclick="forceCloseAuthModal()">✕</button>
+    <div class="auth-shell-inner">
 
     <!-- Ana ekran -->
     <div class="auth-view" id="authHomeView">
+      <div class="auth-home-icon">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      </div>
       <div class="auth-badge">Hesabım</div>
       <h2 class="auth-title">Hoş geldiniz</h2>
-      <p class="auth-subtitle">Giriş yapın veya yeni bir hesap oluşturun.</p>
+      <p class="auth-subtitle">Giriş yapın veya yeni bir hesap oluşturun ve avantajlı alışverişin keyfini çıkarın.</p>
       <div class="auth-switches">
         <button class="auth-primary-btn" type="button" onclick="showLoginView()">Giriş Yap</button>
         <button class="auth-secondary-btn" type="button" onclick="showRegisterView()">Üye Ol</button>
@@ -818,84 +899,87 @@ body{font-family:'Nunito',sans-serif;background:var(--gray-50);color:var(--gray-
       <div class="auth-badge">Üye Ol</div>
       <h2 class="auth-title">Kişisel Bilgilerim</h2>
       <form class="auth-register-form" onsubmit="handleRegister(event)">
+        <div class="auth-register-scroll">
 
-        <!-- Ad & Soyad -->
-        <div class="auth-form-grid two">
+          <!-- Ad & Soyad -->
+          <div class="auth-form-grid two">
+            <div class="auth-form-group">
+              <label>Ad</label>
+              <input id="regFirstName" type="text" placeholder="Adınız" required>
+            </div>
+            <div class="auth-form-group">
+              <label>Soyad</label>
+              <input id="regLastName" type="text" placeholder="Soyadınız" required>
+            </div>
+          </div>
+
+          <!-- Telefon -->
           <div class="auth-form-group">
-            <label>Ad</label>
-            <input id="regFirstName" type="text" placeholder="Adınız" required>
+            <label>Telefon Numarası</label>
+            <input id="regPhone" type="tel" placeholder="+90 5__ ___ __ __" required>
           </div>
+
+          <!-- E-Posta + Doğrula -->
           <div class="auth-form-group">
-            <label>Soyad</label>
-            <input id="regLastName" type="text" placeholder="Soyadınız" required>
+            <label>E-Posta</label>
+            <div class="auth-email-wrap">
+              <input id="regEmail" type="email" placeholder="ornek@email.com" required>
+              <button type="button" class="auth-verify-btn">Doğrula</button>
+            </div>
           </div>
-        </div>
 
-        <!-- Telefon -->
-        <div class="auth-form-group">
-          <label>Telefon Numarası</label>
-          <input id="regPhone" type="tel" placeholder="+90 5__ ___ __ __" required>
-        </div>
-
-        <!-- E-Posta + Doğrula butonu -->
-        <div class="auth-form-group">
-          <label>E-Posta</label>
-          <div class="auth-email-wrap">
-            <input id="regEmail" type="email" placeholder="ornek@email.com" required>
-            <button type="button" class="auth-verify-btn">Doğrula</button>
+          <!-- Şifre -->
+          <div class="auth-form-group">
+            <label>Şifre</label>
+            <input id="regPassword" type="password" placeholder="En az 6 karakter" minlength="6" required>
           </div>
-        </div>
 
-        <!-- Şifre -->
-        <div class="auth-form-group">
-          <label>Şifre</label>
-          <input id="regPassword" type="password" placeholder="En az 6 karakter" minlength="6" required>
-        </div>
-
-        <!-- Doğum Tarihi — gün/ay/yıl seçimi -->
-        <div class="auth-form-group">
-          <label>Doğum Tarihi</label>
-          <div class="auth-form-grid two" style="gap:10px">
-            <select id="regBirthDay">
-              <option value="">Gün</option>
-              <script>for(let d=1;d<=31;d++) document.write('<option>'+String(d).padStart(2,'0')+'</option>')</script>
-            </select>
-            <select id="regBirthMonth">
-              <option value="">Ay</option>
-              <option value="01">Ocak</option><option value="02">Şubat</option>
-              <option value="03">Mart</option><option value="04">Nisan</option>
-              <option value="05">Mayıs</option><option value="06">Haziran</option>
-              <option value="07">Temmuz</option><option value="08">Ağustos</option>
-              <option value="09">Eylül</option><option value="10">Ekim</option>
-              <option value="11">Kasım</option><option value="12">Aralık</option>
-            </select>
-            <select id="regBirthYear" style="grid-column:1/-1">
-              <option value="">Yıl</option>
-              <script>for(let y=new Date().getFullYear()-10;y>=1940;y--) document.write('<option>'+y+'</option>')</script>
-            </select>
+          <!-- Doğum Tarihi -->
+          <div class="auth-form-group">
+            <label>Doğum Tarihi</label>
+            <div class="auth-form-grid two" style="gap:10px">
+              <select id="regBirthDay">
+                <option value="">Gün</option>
+                <script>for(let d=1;d<=31;d++) document.write('<option>'+String(d).padStart(2,'0')+'</option>')</script>
+              </select>
+              <select id="regBirthMonth">
+                <option value="">Ay</option>
+                <option value="01">Ocak</option><option value="02">Şubat</option>
+                <option value="03">Mart</option><option value="04">Nisan</option>
+                <option value="05">Mayıs</option><option value="06">Haziran</option>
+                <option value="07">Temmuz</option><option value="08">Ağustos</option>
+                <option value="09">Eylül</option><option value="10">Ekim</option>
+                <option value="11">Kasım</option><option value="12">Aralık</option>
+              </select>
+              <select id="regBirthYear" style="grid-column:1/-1">
+                <option value="">Yıl</option>
+                <script>for(let y=new Date().getFullYear()-10;y>=1940;y--) document.write('<option>'+y+'</option>')</script>
+              </select>
+            </div>
           </div>
-        </div>
 
-        <!-- Cinsiyet -->
-        <div class="auth-form-group">
-          <label>Cinsiyet</label>
-          <div class="auth-radio-row">
-            <label class="auth-radio">
-              <input type="radio" name="gender" value="Kadın">
-              <span>Kadın</span>
-            </label>
-            <label class="auth-radio">
-              <input type="radio" name="gender" value="Erkek" checked>
-              <span>Erkek</span>
-            </label>
+          <!-- Cinsiyet -->
+          <div class="auth-form-group">
+            <label>Cinsiyet</label>
+            <div class="auth-radio-row">
+              <label class="auth-radio">
+                <input type="radio" name="gender" value="Kadın">
+                <span>Kadın</span>
+              </label>
+              <label class="auth-radio">
+                <input type="radio" name="gender" value="Erkek" checked>
+                <span>Erkek</span>
+              </label>
+            </div>
           </div>
-        </div>
 
-        <!-- Adres -->
-        <div class="auth-form-group">
-          <label>Adres</label>
-          <textarea id="regAddress" rows="3" placeholder="Açık adresinizi yazın..." required></textarea>
-        </div>
+          <!-- Adres -->
+          <div class="auth-form-group">
+            <label>Adres</label>
+            <textarea id="regAddress" rows="3" placeholder="Açık adresinizi yazın..." required></textarea>
+          </div>
+
+        </div><!-- /auth-register-scroll -->
 
         <div class="auth-form-actions">
           <button class="auth-primary-btn" type="submit">Kayıt Ol</button>
@@ -904,6 +988,7 @@ body{font-family:'Nunito',sans-serif;background:var(--gray-50);color:var(--gray-
       </form>
     </div>
 
+    </div><!-- /auth-shell-inner -->
   </div>
 </div>
 
