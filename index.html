@@ -1274,14 +1274,37 @@ function showShopView(){
   window.scrollTo({top:0, behavior:'smooth'});
 }
 
-function showCheckoutView(){
+// Ödeme sayfasına geç — önce oturum kontrolü yap
+async function showCheckoutView(){
   if (!getCartCount()) { showToast('Ödeme için önce sepete ürün ekleyin.'); return; }
+
+  // ── Oturum kontrolü ──
+  let loggedIn = false;
+  if (sb) {
+    const { data } = await sb.auth.getSession();
+    loggedIn = !!data?.session?.user;
+  }
+
+  if (!loggedIn) {
+    // Kullanıcı giriş yapmamış → auth modalı aç, ödeme beklet
+    window._pendingCheckout = true;
+    openAuthModal();
+    showToast('Ödeme yapmak için lütfen giriş yapın veya üye olun.');
+    return;
+  }
+
+  _doShowCheckout();
+}
+
+// Gerçek checkout geçişini yapan iç fonksiyon
+function _doShowCheckout(){
   document.getElementById('shopView').classList.add('hidden');
   document.getElementById('cartView').classList.add('hidden');
   document.getElementById('checkoutView').classList.remove('hidden');
   closeDetail();
   renderCheckoutPage();
   updateCheckoutButtonState();
+  if (typeof loadUserAddress === 'function') loadUserAddress();
   window.scrollTo({top:0, behavior:'smooth'});
 }
 
@@ -1855,6 +1878,13 @@ if (sb) {
   sb.auth.onAuthStateChange(async (event, session) => {
     if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session?.user) {
       await upsertProfile(session.user);
+
+      // Kullanıcı giriş yaptı ve bekleyen bir ödeme isteği varsa → checkout'a geç
+      if (window._pendingCheckout && getCartCount()) {
+        window._pendingCheckout = false;
+        forceCloseAuthModal();
+        setTimeout(() => _doShowCheckout(), 180); // modal kapanma animasyonu bekleniyor
+      }
     }
     await refreshAuthUi();
   });
