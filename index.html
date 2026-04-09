@@ -1620,14 +1620,13 @@ function showRegisterView(){
   document.getElementById('authRegisterView').style.display = 'block';
 }
 function buildProfilePayload(user, meta = {}){
-  const rawBirthDate = meta.birth_date || user.user_metadata?.birth_date || '';
   return {
     id: user.id,
     first_name: meta.first_name || user.user_metadata?.first_name || '',
     last_name: meta.last_name || user.user_metadata?.last_name || '',
     phone: meta.phone || user.user_metadata?.phone || '',
     email: user.email || meta.email || '',
-    birth_date: rawBirthDate || null,   // FIX: boş string DATE sütununda 500'e yol açar
+    birth_date: meta.birth_date || user.user_metadata?.birth_date || null,
     gender: meta.gender || user.user_metadata?.gender || '',
     address: meta.address || user.user_metadata?.address || ''
   };
@@ -1665,7 +1664,7 @@ async function syncProfileRow(user, meta = {}){
     first_name: meta.first_name || '',
     last_name: meta.last_name || '',
     phone: meta.phone || '',
-    birth_date: meta.birth_date || null,   // FIX: boş string → null
+    birth_date: meta.birth_date || null,
     gender: meta.gender || '',
     address: meta.address || '',
     email: user.email || meta.email || ''
@@ -1696,27 +1695,16 @@ async function handleRegister(event){
   const phone = document.getElementById('regPhone').value.trim();
   const email = document.getElementById('regEmail').value.trim();
   const password = document.getElementById('regPassword').value;
-  const birth_date = document.getElementById('regBirthDate').value || null; // FIX: boş string → null
+  const birth_date = document.getElementById('regBirthDate').value || null;
   const address = document.getElementById('regAddress').value.trim();
   const gender = document.querySelector('input[name="gender"]:checked')?.value || '';
   const meta = { first_name, last_name, phone, birth_date, gender, address, email };
   savePendingProfile(email, meta);
-
-  // FIX: Kullanıcı verilerini signUp sırasında user_metadata olarak gönder.
-  // Bu olmadan: (a) DB trigger'ı boş metadata ile çalışır ve 500 verir,
-  // (b) oturum açılmadan syncProfileRow atlansa bile veriler kaybolur.
   const { data, error } = await supabaseClient.auth.signUp({
     email,
     password,
     options: {
-      data: {
-        first_name,
-        last_name,
-        phone,
-        birth_date,   // null ise sorun yok, boş string olmasın
-        gender,
-        address
-      }
+      data: { first_name, last_name, phone, birth_date, gender, address }
     }
   });
   if (error) {
