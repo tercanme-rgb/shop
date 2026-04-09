@@ -406,39 +406,6 @@ body{font-family:'Nunito',sans-serif;background:var(--gray-50);color:var(--gray-
   .auth-title{font-size:22px}
 }
 
-
-
-/* AUTH FIX OVERRIDES */
-.auth-modal{width:100%;max-width:760px;background:rgba(255,255,255,.96);border:1px solid rgba(255,255,255,.72);box-shadow:0 24px 80px rgba(15,23,42,.24);border-radius:28px;position:relative;overflow:hidden}
-.auth-shell{padding:34px}
-.auth-view{display:block}
-.auth-badge{display:inline-flex;align-items:center;gap:8px;width:max-content;padding:7px 12px;border-radius:999px;background:var(--teal-light);color:var(--teal-dark);font-weight:800;font-size:12px;margin-bottom:10px}
-.auth-subtitle{font-size:14px;line-height:1.7;color:var(--gray-500);margin:6px 0 18px}
-.auth-form-stack{display:flex;flex-direction:column;gap:14px}
-.auth-form-grid.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.auth-form-group{display:flex;flex-direction:column;gap:8px}
-.auth-form-group label{font-size:13px;font-weight:800;color:var(--gray-700)}
-.auth-form-group input,.auth-form-group textarea{width:100%;border:1.5px solid var(--gray-200);border-radius:999px;padding:14px 16px;font:inherit;color:var(--gray-800);background:#fff;outline:none;transition:.2s}
-.auth-form-group textarea{border-radius:22px;resize:vertical;min-height:96px}
-.auth-form-group input:focus,.auth-form-group textarea:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(0,188,212,.12)}
-.auth-form-actions{display:flex;align-items:center;gap:12px;justify-content:space-between;margin-top:10px}
-.auth-primary-btn,.auth-secondary-btn,.auth-link-btn{border:none;border-radius:999px;padding:14px 18px;font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;cursor:pointer;transition:.2s}
-.auth-primary-btn{background:var(--teal);color:#fff;flex:1}
-.auth-primary-btn:hover{background:var(--teal-dark)}
-.auth-secondary-btn{background:var(--gray-100);color:var(--gray-800);flex:1}
-.auth-secondary-btn:hover{background:var(--gray-200)}
-.auth-link-btn{background:transparent;color:var(--gray-500);padding-left:8px;padding-right:8px}
-.auth-link-btn:hover{color:var(--teal-dark)}
-.auth-radio-row{display:flex;gap:24px;align-items:center;padding:6px 0}
-.auth-radio{display:flex;align-items:center;gap:8px;font-weight:700;color:var(--gray-700)}
-.auth-radio input{accent-color:var(--teal);width:18px;height:18px}
-@media(max-width:900px){
-  .auth-shell{padding:24px 18px}
-  .auth-switches,.auth-form-grid.two,.auth-form-actions{grid-template-columns:1fr;display:grid}
-  .auth-form-actions{display:flex;flex-direction:column;align-items:stretch}
-  .auth-title{font-size:22px}
-}
-
 </style>
 </head>
 <body>
@@ -819,7 +786,7 @@ body{font-family:'Nunito',sans-serif;background:var(--gray-50);color:var(--gray-
 
 <!-- AUTH MODAL -->
 <div class="auth-overlay" id="authModal" onclick="handleAuthOverlay(event)">
-  <div class="auth-modal auth-shell">
+  <div class="auth-shell">
     <button class="auth-close" type="button" onclick="forceCloseAuthModal()">✕</button>
 
     <div class="auth-view" id="authHomeView">
@@ -913,14 +880,14 @@ body{font-family:'Nunito',sans-serif;background:var(--gray-50);color:var(--gray-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 // ── CDN BASES ──
-const PHONE_SVG = (label, tone='#e2e8f0', text='#334155') => `data:image/svg+xml;utf8,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800"><rect width="800" height="800" rx="48" fill="#f8fafc"/><rect x="230" y="80" width="340" height="640" rx="42" fill="${tone}" stroke="#cbd5e1" stroke-width="10"/><rect x="262" y="130" width="276" height="470" rx="24" fill="#ffffff"/><circle cx="302" cy="182" r="22" fill="#94a3b8"/><circle cx="362" cy="182" r="22" fill="#94a3b8"/><circle cx="422" cy="182" r="22" fill="#94a3b8"/><rect x="315" y="625" width="170" height="22" rx="11" fill="#cbd5e1"/><text x="400" y="690" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="34" font-weight="700" fill="${text}">${label}</text></svg>`)}`;
-const AC = '';
-const SC = '';
-const FB_APPLE = PHONE_SVG('Apple', '#e2e8f0');
-const FB_SAMSUNG = PHONE_SVG('Samsung', '#dbeafe');
-function ai(path){ return FB_APPLE; }
-function ai2(path){ return FB_APPLE; }
-function si(path){ return FB_SAMSUNG; }
+const AC = 'https://store.storeimages.cdn-apple.com/4668/as-images.apple.com/is/';
+const SC = 'https://images.samsung.com/is/image/samsung/p6pim/';
+const FB_APPLE = AC + 'iphone-16-pro-finish-select-202409-6-9inch-naturaltitanium?wid=800&hei=800&fmt=p-jpg&qlt=80';
+const FB_SAMSUNG = 'https://images.samsung.com/is/image/samsung/assets/global/smartphones/galaxy-s25/galaxy-s25_highlights_kv_d.jpg';
+
+function ai(path){ return AC + path + '?wid=800&hei=800&fmt=p-jpg&qlt=80'; }
+function ai2(path){ return AC + path + '?wid=200&hei=200&fmt=p-jpg&qlt=80'; }
+function si(path){ return 'https://images.samsung.com/is/image/samsung/' + path + '?$730_730_PNG$'; }
 
 // ── PRODUCT DATA ──
 const PRODUCTS = [
@@ -1348,7 +1315,6 @@ function addProductToCart(product){
   });
   updateCartBadge();
   syncCartButtonState();
-console.log('Supabase ref check:', SUPABASE_ANON_KEY.includes('mcvkfzsdgmfcishamjtp'));
 }
 
 function addToCart(e, id) {
@@ -1376,7 +1342,6 @@ function changeCartQty(id, delta){
   else {
     updateCartBadge();
     syncCartButtonState();
-console.log('Supabase ref check:', SUPABASE_ANON_KEY.includes('mcvkfzsdgmfcishamjtp'));
     renderCartPage();
   }
 }
@@ -1388,7 +1353,6 @@ function removeFromCart(id){
   serviceSelections.delete(id);
   updateCartBadge();
   syncCartButtonState();
-console.log('Supabase ref check:', SUPABASE_ANON_KEY.includes('mcvkfzsdgmfcishamjtp'));
   renderCartPage();
 }
 
@@ -1397,7 +1361,6 @@ function clearCart(){
   serviceSelections.clear();
   updateCartBadge();
   syncCartButtonState();
-console.log('Supabase ref check:', SUPABASE_ANON_KEY.includes('mcvkfzsdgmfcishamjtp'));
   renderCartPage();
 }
 
@@ -1617,15 +1580,9 @@ function setActiveNav(el) {
 
 
 const SUPABASE_URL = 'https://mcvkfzsdgmfcishamjtp.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1jdmtmenNkZ21mY2lzaGFtanRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU3MzM2MzgsImV4cCI6MjA5MTMwOTYzOH0.GiY_LuOKHUcPQ5x_HEGONLdpKTpLD_hla9oZkmltEuU';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJtY3ZrZnpzZGdtZmNpc2hhbWp0cCIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNzc1NzMzNjM4LCJleHAiOjIwOTEzMDk2Mzh9.GiY_LuOKHUcPQ5x_HEGONLdpKTpLD_hla9oZkmltEuU';
 const supabaseClient = window.supabase && window.supabase.createClient
-  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-      auth: {
-        persistSession: true,
-        autoRefreshToken: true,
-        detectSessionInUrl: true
-      }
-    })
+  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
   : null;
 
 function openAuthModal(){
@@ -1657,22 +1614,25 @@ function showRegisterView(){
   document.getElementById('authLoginView').style.display = 'none';
   document.getElementById('authRegisterView').style.display = 'block';
 }
-async function syncProfileRow(user, meta){
+function buildProfilePayload(user, meta = {}){
+  return {
+    id: user.id,
+    first_name: meta.first_name || user.user_metadata?.first_name || '',
+    last_name: meta.last_name || user.user_metadata?.last_name || '',
+    phone: meta.phone || user.user_metadata?.phone || '',
+    email: user.email || meta.email || '',
+    birth_date: meta.birth_date || user.user_metadata?.birth_date || '',
+    gender: meta.gender || user.user_metadata?.gender || '',
+    address: meta.address || user.user_metadata?.address || ''
+  };
+}
+async function syncProfileRow(user, meta = {}){
   if (!supabaseClient || !user) return;
   const { data: sessionData } = await supabaseClient.auth.getSession();
   if (!sessionData?.session) return;
-  const payload = {
-    id: user.id,
-    first_name: meta.first_name || '',
-    last_name: meta.last_name || '',
-    phone: meta.phone || '',
-    email: user.email || meta.email || '',
-    birth_date: meta.birth_date || '',
-    gender: meta.gender || '',
-    address: meta.address || ''
-  };
+  const payload = buildProfilePayload(user, meta);
   const { error } = await supabaseClient.from('profiles').upsert(payload);
-  if (error) console.warn('profiles upsert warning', error.message || error);
+  if (error) console.warn('profiles upsert warning', error);
 }
 async function handleRegister(event){
   event.preventDefault();
@@ -1686,10 +1646,16 @@ async function handleRegister(event){
   const address = document.getElementById('regAddress').value.trim();
   const gender = document.querySelector('input[name="gender"]:checked')?.value || '';
   const meta = { first_name, last_name, phone, birth_date, gender, address };
-  const { data, error } = await supabaseClient.auth.signUp({ email, password, options: { data: meta } });
-  if (error) { console.error('signup error', error); showToast(error.message || 'Kayıt hatası'); return; }
-  if (data?.session?.user) await syncProfileRow(data.session.user, meta);
-  showToast('Kayıt oluşturuldu. E-posta doğrulaması açıksa gelen maili onaylayın.');
+  const { data, error } = await supabaseClient.auth.signUp({
+    email,
+    password,
+    options: { data: meta }
+  });
+  if (error) { showToast(error.message); return; }
+  if (data?.session && data?.user) {
+    await syncProfileRow(data.user, meta);
+  }
+  showToast('Kayıt oluşturuldu. E-posta doğrulaması açıksa maili onaylayıp giriş yapın.');
   await refreshAuthUi();
   forceCloseAuthModal();
 }
@@ -1698,8 +1664,9 @@ async function handleLogin(event){
   if (!supabaseClient) { showToast('Supabase yüklenemedi.'); return; }
   const email = document.getElementById('loginEmail').value.trim();
   const password = document.getElementById('loginPassword').value;
-  const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
-  if (error) { console.error('login error', error); showToast(error.message || 'Giriş hatası'); return; }
+  const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+  if (error) { showToast(error.message); return; }
+  if (data?.user) await syncProfileRow(data.user);
   showToast('Giriş başarılı.');
   await refreshAuthUi();
   forceCloseAuthModal();
@@ -1764,7 +1731,6 @@ renderGrid(PRODUCTS);
 renderCartPage();
 updateCartBadge();
 syncCartButtonState();
-console.log('Supabase ref check:', SUPABASE_ANON_KEY.includes('mcvkfzsdgmfcishamjtp'));
 document.getElementById('cartTriggerBtn')?.addEventListener('click', viewCart);
 document.getElementById('authTriggerBtn')?.addEventListener('click', (e) => { e.preventDefault(); handleAuthButton(); });
 refreshAuthUi();
