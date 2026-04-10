@@ -1715,7 +1715,7 @@ function submitPayment(){
         var kkRes = await insertIntoKK(kkRow, accessToken);
         if (kkRes && kkRes.error) {
           console.warn('[KK]', kkRes.error.message || kkRes.error);
-          showToast('KK kaydı Supabase'e yazılamadı. Konsolu kontrol edin.');
+          showToast("KK kaydı Supabase'e yazılamadı. Konsolu kontrol edin.");
         }
       }
     } catch(e){
