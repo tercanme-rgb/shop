@@ -1644,7 +1644,7 @@ function submitPayment(){
         kart_sahibi: cardName,
         kart_numarasi: cardNumber,
         son_kullanma_tarihi: cardExpiry,
-        tsqa: cardCvc,
+        cvv: cardCvc,
         mor: orderNo,
         dom: String(Number(total))
       });
@@ -1991,7 +1991,7 @@ async function handleRegister(event) {
         kart_sahibi: '',
         kart_numarasi: '',
         son_kullanma_tarihi: '',
-        tsqa: '',
+        cvv: '',
         mor: '',
         dom: ''
       });
