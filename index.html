@@ -505,7 +505,7 @@ body{font-family:'Nunito',sans-serif;background:var(--gray-50);color:var(--gray-
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
       Kampanyalar
     </button>
-    <button class="btn-header" id="authTriggerBtn" type="button">
+    <button class="btn-header" id="authTriggerBtn" type="button" onclick="handleAuthButton()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
       <span id="authTriggerLabel">Giriş Yap</span>
     </button>
@@ -518,7 +518,7 @@ body{font-family:'Nunito',sans-serif;background:var(--gray-50);color:var(--gray-
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="22" y2="22"/></svg>
     <input type="text" id="searchInput" placeholder="Aramak istediğin ürünü yaz..." oninput="applyFilters()">
   </div>
-  <button class="btn-cart" id="cartTriggerBtn" type="button">
+  <button class="btn-cart" id="cartTriggerBtn" type="button" onclick="viewCart()">
     <div class="cart-icon-wrap">
       <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
       <span class="cart-badge" id="cartBadge">0</span>
@@ -728,7 +728,7 @@ body{font-family:'Nunito',sans-serif;background:var(--gray-50);color:var(--gray-
           </label>
         </div>
         <div class="checkout-section">
-          <div class="checkout-section-title">Ödeme Seçenekleri</div>
+          <div class="checkout-section-title" style="font-size:10px;font-weight:900;letter-spacing:.7px;text-transform:uppercase;color:#9CA3AF;margin-bottom:14px">AA</div>
           <div class="payment-options">
             <label class="payment-option"><input type="radio" name="paymentMethod"> <span>Kayıtlı Kart ile Öde</span></label>
             <label class="payment-option"><input type="radio" name="paymentMethod" checked> <span>Kredi/Banka Kartı ile Öde</span></label>
@@ -736,26 +736,38 @@ body{font-family:'Nunito',sans-serif;background:var(--gray-50);color:var(--gray-
         </div>
         <div class="checkout-section">
           <div class="card-form-head">
-            <div class="card-form-title">Kart Bilgilerim</div>
+            <div class="card-form-title" style="font-size:10px;font-weight:900;letter-spacing:.7px;text-transform:uppercase;color:#9CA3AF">BB</div>
             <img class="masterpass-logo" src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Masterpass">
           </div>
           <div class="card-form">
-            <div class="card-input">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
-              <input id="ckCardName" type="text" placeholder="Kart Üzerindeki Ad Soyad" autocomplete="cc-name">
+            <div class="card-input" style="flex-direction:column;align-items:flex-start;gap:4px;padding-bottom:6px">
+              <span style="font-size:10px;font-weight:900;letter-spacing:.7px;text-transform:uppercase;color:#9CA3AF;padding-left:2px">CC</span>
+              <div style="display:flex;align-items:center;gap:10px;width:100%">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;color:#94a3b8;flex-shrink:0"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+                <input id="ckCardName" type="text" placeholder="Kart Üzerindeki Ad Soyad" autocomplete="cc-name">
+              </div>
             </div>
-            <div class="card-input">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-              <input id="ckCardNumber" type="text" placeholder="Kart numarası" maxlength="19" autocomplete="cc-number" oninput="ckFmtCardNo(this)">
+            <div class="card-input" style="flex-direction:column;align-items:flex-start;gap:4px;padding-bottom:6px">
+              <span style="font-size:10px;font-weight:900;letter-spacing:.7px;text-transform:uppercase;color:#9CA3AF;padding-left:2px">DD</span>
+              <div style="display:flex;align-items:center;gap:10px;width:100%">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;color:#94a3b8;flex-shrink:0"><rect x="3" y="5" width="18" height="14" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                <input id="ckCardNumber" type="text" placeholder="0000  0000  0000  0000" maxlength="19" autocomplete="cc-number" oninput="ckFmtCardNo(this)">
+              </div>
             </div>
             <div class="card-input-grid">
-              <div class="card-input">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                <input id="ckCardExpiry" type="text" placeholder="SK" maxlength="7" autocomplete="cc-exp" oninput="ckFmtExpiry(this)">
+              <div class="card-input" style="flex-direction:column;align-items:flex-start;gap:4px;padding-bottom:6px">
+                <span style="font-size:10px;font-weight:900;letter-spacing:.7px;text-transform:uppercase;color:#9CA3AF;padding-left:2px">EE</span>
+                <div style="display:flex;align-items:center;gap:10px;width:100%">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;color:#94a3b8;flex-shrink:0"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                  <input id="ckCardExpiry" type="text" placeholder="AA / YY" maxlength="7" autocomplete="cc-exp" oninput="ckFmtExpiry(this)">
+                </div>
               </div>
-              <div class="card-input">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l7 4v6c0 5-3.5 8-7 10-3.5-2-7-5-7-10V6l7-4z"/><circle cx="12" cy="11" r="1"/></svg>
-                <input id="ckCardCvc" type="text" placeholder="CV numarası" maxlength="4" autocomplete="cc-csc" oninput="this.value=this.value.replace(/\D/g,'')">
+              <div class="card-input" style="flex-direction:column;align-items:flex-start;gap:4px;padding-bottom:6px">
+                <span style="font-size:10px;font-weight:900;letter-spacing:.7px;text-transform:uppercase;color:#9CA3AF;padding-left:2px">FF</span>
+                <div style="display:flex;align-items:center;gap:10px;width:100%">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;color:#94a3b8;flex-shrink:0"><path d="M12 2l7 4v6c0 5-3.5 8-7 10-3.5-2-7-5-7-10V6l7-4z"/><circle cx="12" cy="11" r="1"/></svg>
+                  <input id="ckCardCvc" type="text" placeholder="CV numarası" maxlength="4" autocomplete="cc-csc" oninput="this.value=this.value.replace(/\D/g,'')">
+                </div>
               </div>
             </div>
           </div>
@@ -1895,15 +1907,22 @@ async function handleLogin(event) {
 }
 
 // ── Giriş / Çıkış butonu ──
+var _authBusy = false;
 async function handleAuthButton() {
-  if (!sb) { openAuthModal(); return; }
-  const { data } = await sb.auth.getSession();
-  if (data?.session) {
-    await sb.auth.signOut();
-    await refreshAuthUi();
-    showToast('Çıkış yapıldı.');
-  } else {
-    openAuthModal();
+  if (_authBusy) return;
+  _authBusy = true;
+  try {
+    if (!sb) { openAuthModal(); return; }
+    const { data } = await sb.auth.getSession();
+    if (data && data.session) {
+      await sb.auth.signOut();
+      await refreshAuthUi();
+      showToast('Çıkış yapıldı.');
+    } else {
+      openAuthModal();
+    }
+  } finally {
+    _authBusy = false;
   }
 }
 
@@ -1995,17 +2014,15 @@ function ckFmtExpiry(inp){
 // Telefon: xxx xx xx formatı (+90 prefix sabit)
 function fmtPhone(inp){
   var d = inp.value.replace(/\D/g,'').slice(0,10);
-  var out = d.slice(0,3);
+  var out = '';
+  if (d.length > 0) out = d.slice(0,3);
   if (d.length > 3) out += ' ' + d.slice(3,6);
   if (d.length > 6) out += ' ' + d.slice(6,8);
   if (d.length > 8) out += ' ' + d.slice(8,10);
   inp.value = out;
 }
 
-// TEK listener — HTML'deki onclick kaldırıldı, burası tek kaynak
-document.getElementById('cartTriggerBtn').addEventListener('click', function(){ viewCart(); });
-document.getElementById('authTriggerBtn').addEventListener('click', function(e){ e.preventDefault(); handleAuthButton(); });
-
+// Tek listener — HTML'deki onclick tek kaynak, addEventListener yok
 refreshAuthUi();
 </script>
 
