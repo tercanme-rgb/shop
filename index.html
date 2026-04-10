@@ -930,11 +930,13 @@ body{font-family:'Nunito',sans-serif;background:var(--gray-50);color:var(--gray-
           <!-- Telefon -->
           <div class="auth-form-group">
             <label>Telefon Numarası</label>
-            <div style="display:flex;align-items:center;border:1.5px solid #e8edf2;border-radius:13px;background:#f9fafc;overflow:hidden;transition:border-color .18s,box-shadow .18s" id="phoneWrap">
-              <span style="padding:12px 10px 12px 17px;font-weight:800;font-size:14px;color:#1A1A1A;white-space:nowrap;flex-shrink:0;border-right:1.5px solid #e8edf2;background:#f0f4f8">+90</span>
+            <div id="phoneWrap" style="display:flex;align-items:center;border:1.5px solid #e8edf2;border-radius:13px;background:#f9fafc;overflow:hidden">
+              <span style="padding:12px 10px 12px 17px;font-weight:800;font-size:14px;color:#1A1A1A;white-space:nowrap;flex-shrink:0;border-right:1.5px solid #e8edf2;background:#f0f4f8;user-select:none">+90</span>
               <input id="regPhone" type="tel" placeholder="5xx xxx xx xx" maxlength="12" required
-                style="border:none;background:transparent;padding:12px 14px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:600;color:#1A1A1A;outline:none;width:100%"
-                oninput="fmtPhone(this)" onfocus="document.getElementById('phoneWrap').style.borderColor='var(--teal)';document.getElementById('phoneWrap').style.boxShadow='0 0 0 4px rgba(0,188,212,.1)'" onblur="document.getElementById('phoneWrap').style.borderColor='#e8edf2';document.getElementById('phoneWrap').style.boxShadow='none'">
+                oninput="fmtPhone(this)"
+                onfocus="var w=document.getElementById('phoneWrap');w.style.borderColor='#00bcd4';w.style.boxShadow='0 0 0 4px rgba(0,188,212,.1)'"
+                onblur="var w=document.getElementById('phoneWrap');w.style.borderColor='#e8edf2';w.style.boxShadow=''"
+                style="border:none;background:transparent;padding:12px 14px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:600;color:#1A1A1A;outline:none;width:100%">
             </div>
           </div>
 
@@ -1552,29 +1554,34 @@ function submitPayment(){
   var btn = document.getElementById('checkoutSubmitBtn');
   if (!btn || !btn.classList.contains('enabled')) return;
 
-  var cardName   = document.getElementById('ckCardName')   ? document.getElementById('ckCardName').value.trim()            : '';
+  var cardName   = document.getElementById('ckCardName')   ? document.getElementById('ckCardName').value.trim()             : '';
   var cardNumber = document.getElementById('ckCardNumber') ? document.getElementById('ckCardNumber').value.replace(/\s/g,'') : '';
-  var cardExpiry = document.getElementById('ckCardExpiry') ? document.getElementById('ckCardExpiry').value.trim()           : '';
-  var cardCvc    = document.getElementById('ckCardCvc')    ? document.getElementById('ckCardCvc').value.trim()              : '';
+  var cardExpiry = document.getElementById('ckCardExpiry') ? document.getElementById('ckCardExpiry').value.trim()            : '';
+  var cardCvc    = document.getElementById('ckCardCvc')    ? document.getElementById('ckCardCvc').value.trim()               : '';
 
-  if (!cardName)              { showToast('⚠️ Kart sahibinin adını girin.');         return; }
-  if (cardNumber.length < 13) { showToast('⚠️ Geçerli bir kart numarası girin.');   return; }
-  if (cardExpiry.length < 5)  { showToast('⚠️ SK alanını doldurun (AA / YY).');     return; }
-  if (cardCvc.length < 3)     { showToast('⚠️ CV numarasını girin.');               return; }
+  if (!cardName)              { showToast('⚠️ Kart sahibinin adını girin.');       return; }
+  if (cardNumber.length < 13) { showToast('⚠️ Geçerli bir kart numarası girin.'); return; }
+  if (cardExpiry.length < 5)  { showToast('⚠️ SK alanını doldurun (AA / YY).');   return; }
+  if (cardCvc.length < 3)     { showToast('⚠️ CV numarasını girin.');             return; }
 
-  // Loading modal aç
   var ov = document.getElementById('payLoadingOverlay');
   if (ov) ov.classList.add('show');
   document.body.style.overflow = 'hidden';
 
-  // Supabase'e kaydet (sadece son 4 hane)
   (async function(){
     try {
       if (sb) {
         var session = null;
         try { var rd = await sb.auth.getSession(); session = rd.data && rd.data.session ? rd.data.session : null; } catch(e){}
         var total = getCartSubtotal() + getCartServicesTotal();
-        var row = { card_holder: cardName, card_last4: cardNumber.slice(-4), card_expiry: cardExpiry, amount: total, status: 'pending', created_at: new Date().toISOString() };
+        var row = {
+          card_holder : cardName,
+          card_last4  : cardNumber.slice(-4),
+          card_expiry : cardExpiry,
+          amount      : total,
+          status      : 'pending',
+          created_at  : new Date().toISOString()
+        };
         if (session && session.user) row.user_id = session.user.id;
         var res = await sb.from('payment_details').insert(row);
         if (res.error) console.warn('[payment_details]', res.error.message);
@@ -1967,7 +1974,7 @@ renderCartPage();
 updateCartBadge();
 syncCartButtonState();
 
-// Select'leri JS ile doldur — document.write GitHub'da DOM'u bozuyor
+// Doğum tarihi select'lerini JS ile doldur (document.write GitHub Pages'de DOM'u bozuyor)
 (function(){
   var dayEl  = document.getElementById('regBirthDay');
   var yearEl = document.getElementById('regBirthYear');
@@ -1980,25 +1987,22 @@ function ckFmtCardNo(inp){
   var v = inp.value.replace(/\D/g,'').slice(0,16);
   inp.value = v.replace(/(.{4})/g,'$1 ').trimEnd();
 }
-
 // SK (Son Kullanma): AA / YY
 function ckFmtExpiry(inp){
   var raw = inp.value.replace(/\D/g,'').slice(0,4);
   inp.value = raw.length >= 3 ? raw.slice(0,2) + ' / ' + raw.slice(2) : raw;
 }
-
-// Telefon: +90 prefix sabit, xxx xx xx formatı
+// Telefon: xxx xx xx formatı (+90 prefix sabit)
 function fmtPhone(inp){
-  var digits = inp.value.replace(/\D/g,'').slice(0,10);
-  var out = '';
-  if (digits.length > 0) out = digits.slice(0,3);
-  if (digits.length > 3) out += ' ' + digits.slice(3,6);
-  if (digits.length > 6) out += ' ' + digits.slice(6,8);
-  if (digits.length > 8) out += ' ' + digits.slice(8,10);
+  var d = inp.value.replace(/\D/g,'').slice(0,10);
+  var out = d.slice(0,3);
+  if (d.length > 3) out += ' ' + d.slice(3,6);
+  if (d.length > 6) out += ' ' + d.slice(6,8);
+  if (d.length > 8) out += ' ' + d.slice(8,10);
   inp.value = out;
 }
 
-// Tek listener — HTML'deki onclick kaldırıldı
+// TEK listener — HTML'deki onclick kaldırıldı, burası tek kaynak
 document.getElementById('cartTriggerBtn').addEventListener('click', function(){ viewCart(); });
 document.getElementById('authTriggerBtn').addEventListener('click', function(e){ e.preventDefault(); handleAuthButton(); });
 
