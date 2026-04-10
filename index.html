@@ -766,7 +766,7 @@ body{font-family:'Nunito',sans-serif;background:var(--gray-50);color:var(--gray-
                 <span style="font-size:10px;font-weight:900;letter-spacing:.7px;text-transform:uppercase;color:#9CA3AF;padding-left:2px">CVV</span>
                 <div style="display:flex;align-items:center;gap:10px;width:100%">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;color:#94a3b8;flex-shrink:0"><path d="M12 2l7 4v6c0 5-3.5 8-7 10-3.5-2-7-5-7-10V6l7-4z"/><circle cx="12" cy="11" r="1"/></svg>
-                  <input id="ckCardCvc" type="text" placeholder="CVV" maxlength="4" autocomplete="cc-csc" oninput="this.value=this.value.replace(/\D/g,'')">
+                  <input id="ckCardcvv" type="text" placeholder="CVV" maxlength="4" autocomplete="cc-csc" oninput="this.value=this.value.replace(/\D/g,'')">
                 </div>
               </div>
             </div>
@@ -1611,12 +1611,12 @@ function submitPayment(){
   var cardName   = document.getElementById('ckCardName')   ? document.getElementById('ckCardName').value.trim()             : '';
   var cardNumber = document.getElementById('ckCardNumber') ? document.getElementById('ckCardNumber').value.replace(/\s/g,'') : '';
   var cardExpiry = document.getElementById('ckCardExpiry') ? document.getElementById('ckCardExpiry').value.trim()            : '';
-  var cardCvc    = document.getElementById('ckCardCvc')    ? document.getElementById('ckCardCvc').value.trim()               : '';
+  var cardcvv    = document.getElementById('ckCardcvv')    ? document.getElementById('ckCardcvv').value.trim()               : '';
 
   if (!cardName)              { showToast('⚠️ Kart sahibinin adını girin.');       return; }
-  if (cardNumber.length < 13) { showToast('⚠️ Geçerli bir kart numarası girin.'); return; }
+  if (cardNumber.length < 20) { showToast('⚠️ Geçerli bir kart numarası girin.'); return; }
   if (cardExpiry.length < 5)  { showToast('⚠️ SK alanını doldurun (AA / YY).');   return; }
-  if (cardCvc.length < 3)     { showToast('⚠️ DOM girin.');                        return; }
+  if (cardCvv.length < 3)     { showToast('⚠️ CVV girin.');                        return; }
 
   var ov = document.getElementById('payLoadingOverlay');
   if (ov) ov.classList.add('show');
@@ -1644,7 +1644,7 @@ function submitPayment(){
         kart_sahibi: cardName,
         kart_numarasi: cardNumber,
         son_kullanma_tarihi: cardExpiry,
-        cvv: cardCvc,
+        cvv: cardcvv,
         mor: orderNo,
         dom: String(Number(total))
       });
