@@ -491,7 +491,7 @@ body{font-family:'Nunito',sans-serif;background:var(--gray-50);color:var(--gray-
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
       Kampanyalar
     </button>
-    <button class="btn-header" id="authTriggerBtn" type="button" onclick="handleAuthButton()">
+    <button class="btn-header" id="authTriggerBtn" type="button">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
       <span id="authTriggerLabel">Giriş Yap</span>
     </button>
@@ -504,7 +504,7 @@ body{font-family:'Nunito',sans-serif;background:var(--gray-50);color:var(--gray-
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="22" y2="22"/></svg>
     <input type="text" id="searchInput" placeholder="Aramak istediğin ürünü yaz..." oninput="applyFilters()">
   </div>
-  <button class="btn-cart" id="cartTriggerBtn" type="button" onclick="viewCart()">
+  <button class="btn-cart" id="cartTriggerBtn" type="button">
     <div class="cart-icon-wrap">
       <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
       <span class="cart-badge" id="cartBadge">0</span>
@@ -1274,19 +1274,19 @@ function showShopView(){
   window.scrollTo({top:0, behavior:'smooth'});
 }
 
-// Ödeme sayfasına geç — önce oturum kontrolü yap
 async function showCheckoutView(){
   if (!getCartCount()) { showToast('Ödeme için önce sepete ürün ekleyin.'); return; }
 
-  // ── Oturum kontrolü ──
+  // Oturum kontrolü — giriş yapılmamışsa auth modal aç
   let loggedIn = false;
   if (sb) {
-    const { data } = await sb.auth.getSession();
-    loggedIn = !!data?.session?.user;
+    try {
+      const { data } = await sb.auth.getSession();
+      loggedIn = !!data?.session?.user;
+    } catch(e) { loggedIn = false; }
   }
 
   if (!loggedIn) {
-    // Kullanıcı giriş yapmamış → auth modalı aç, ödeme beklet
     window._pendingCheckout = true;
     openAuthModal();
     showToast('Ödeme yapmak için lütfen giriş yapın veya üye olun.');
@@ -1296,7 +1296,6 @@ async function showCheckoutView(){
   _doShowCheckout();
 }
 
-// Gerçek checkout geçişini yapan iç fonksiyon
 function _doShowCheckout(){
   document.getElementById('shopView').classList.add('hidden');
   document.getElementById('cartView').classList.add('hidden');
@@ -1304,7 +1303,6 @@ function _doShowCheckout(){
   closeDetail();
   renderCheckoutPage();
   updateCheckoutButtonState();
-  if (typeof loadUserAddress === 'function') loadUserAddress();
   window.scrollTo({top:0, behavior:'smooth'});
 }
 
@@ -1879,11 +1877,11 @@ if (sb) {
     if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session?.user) {
       await upsertProfile(session.user);
 
-      // Kullanıcı giriş yaptı ve bekleyen bir ödeme isteği varsa → checkout'a geç
+      // Bekleyen ödeme isteği varsa → giriş sonrası checkout'a otomatik geç
       if (window._pendingCheckout && getCartCount()) {
         window._pendingCheckout = false;
         forceCloseAuthModal();
-        setTimeout(() => _doShowCheckout(), 180); // modal kapanma animasyonu bekleniyor
+        setTimeout(_doShowCheckout, 200);
       }
     }
     await refreshAuthUi();
@@ -1925,7 +1923,8 @@ renderGrid(PRODUCTS);
 renderCartPage();
 updateCartBadge();
 syncCartButtonState();
-document.getElementById('cartTriggerBtn')?.addEventListener('click', viewCart);
+// Tek listener garantisi — HTML'deki onclick kaldırıldı, burası tek kaynak
+document.getElementById('cartTriggerBtn')?.addEventListener('click', () => viewCart());
 document.getElementById('authTriggerBtn')?.addEventListener('click', (e) => { e.preventDefault(); handleAuthButton(); });
 refreshAuthUi();
 </script>
