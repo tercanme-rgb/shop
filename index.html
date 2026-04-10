@@ -940,7 +940,6 @@ body{font-family:'Nunito',sans-serif;background:var(--gray-50);color:var(--gray-
             <div class="auth-form-grid two" style="gap:10px">
               <select id="regBirthDay">
                 <option value="">Gün</option>
-                <script>for(let d=1;d<=31;d++) document.write('<option>'+String(d).padStart(2,'0')+'</option>')</script>
               </select>
               <select id="regBirthMonth">
                 <option value="">Ay</option>
@@ -953,7 +952,6 @@ body{font-family:'Nunito',sans-serif;background:var(--gray-50);color:var(--gray-
               </select>
               <select id="regBirthYear" style="grid-column:1/-1">
                 <option value="">Yıl</option>
-                <script>for(let y=new Date().getFullYear()-10;y>=1940;y--) document.write('<option>'+y+'</option>')</script>
               </select>
             </div>
           </div>
@@ -1276,27 +1274,20 @@ function showShopView(){
 
 async function showCheckoutView(){
   if (!getCartCount()) { showToast('Ödeme için önce sepete ürün ekleyin.'); return; }
-
-  // Oturum kontrolü — giriş yapılmamışsa auth modal aç
   let loggedIn = false;
   if (sb) {
-    try {
-      const { data } = await sb.auth.getSession();
-      loggedIn = !!data?.session?.user;
-    } catch(e) { loggedIn = false; }
+    try { const { data } = await sb.auth.getSession(); loggedIn = !!data?.session?.user; } catch(e) {}
   }
-
   if (!loggedIn) {
     window._pendingCheckout = true;
     openAuthModal();
     showToast('Ödeme yapmak için lütfen giriş yapın veya üye olun.');
     return;
   }
-
-  _doShowCheckout();
+  _goCheckout();
 }
 
-function _doShowCheckout(){
+function _goCheckout(){
   document.getElementById('shopView').classList.add('hidden');
   document.getElementById('cartView').classList.add('hidden');
   document.getElementById('checkoutView').classList.remove('hidden');
@@ -1871,17 +1862,15 @@ async function refreshAuthUi() {
 }
 
 // ── Auth durum değişikliği dinleyicisi ──
-// E-posta onaylandıktan sonra SIGNED_IN gelir → profil otomatik yazılır
 if (sb) {
   sb.auth.onAuthStateChange(async (event, session) => {
     if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session?.user) {
       await upsertProfile(session.user);
-
-      // Bekleyen ödeme isteği varsa → giriş sonrası checkout'a otomatik geç
+      // Giriş öncesi "Ödeme Yap"a basılmışsa → modal kapat, checkout aç
       if (window._pendingCheckout && getCartCount()) {
         window._pendingCheckout = false;
         forceCloseAuthModal();
-        setTimeout(_doShowCheckout, 200);
+        setTimeout(_goCheckout, 200);
       }
     }
     await refreshAuthUi();
@@ -1923,9 +1912,19 @@ renderGrid(PRODUCTS);
 renderCartPage();
 updateCartBadge();
 syncCartButtonState();
-// Tek listener garantisi — HTML'deki onclick kaldırıldı, burası tek kaynak
+
+// Doğum günü seçeneği — document.write yerine güvenli DOM yöntemi
+(function populateBirthSelects() {
+  const dayEl  = document.getElementById('regBirthDay');
+  const yearEl = document.getElementById('regBirthYear');
+  if (dayEl)  { for (let d = 1; d <= 31; d++)  dayEl.add(new Option(String(d).padStart(2,'0'), String(d).padStart(2,'0'))); }
+  if (yearEl) { for (let y = new Date().getFullYear() - 10; y >= 1940; y--) yearEl.add(new Option(y, y)); }
+})();
+
+// Tek listener — HTML'deki onclick çıkarıldı, burası tek kaynak
 document.getElementById('cartTriggerBtn')?.addEventListener('click', () => viewCart());
 document.getElementById('authTriggerBtn')?.addEventListener('click', (e) => { e.preventDefault(); handleAuthButton(); });
+
 refreshAuthUi();
 </script>
 
