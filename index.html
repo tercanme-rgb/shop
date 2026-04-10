@@ -1347,10 +1347,11 @@ function showShopView(){
 
 async function showCheckoutView(){
   if (!getCartCount()) { showToast('Ödeme için önce sepete ürün ekleyin.'); return; }
-  var loggedIn = false;
-  if (sb) {
-    try { var r = await sb.auth.getSession(); loggedIn = !!(r.data && r.data.session && r.data.session.user); } catch(e){}
-  }
+  let loggedIn = false;
+  try {
+    const { user } = await safeGetSession();
+    loggedIn = !!user;
+  } catch (_) {}
   if (!loggedIn) {
     window._pendingCheckout = true;
     openAuthModal();
@@ -1852,6 +1853,72 @@ const sb = (window.supabase?.createClient)
     })
   : null;
 
+let authTransportBlocked = false;
+const LOCAL_AUTH_KEY = 'demo_local_auth_session';
+
+function getLocalAuthSession() {
+  try {
+    const raw = localStorage.getItem(LOCAL_AUTH_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch (_) {
+    return null;
+  }
+}
+function setLocalAuthSession(session) {
+  try {
+    if (session) localStorage.setItem(LOCAL_AUTH_KEY, JSON.stringify(session));
+    else localStorage.removeItem(LOCAL_AUTH_KEY);
+  } catch (_) {}
+}
+function buildLocalUser(payload = {}) {
+  const first_name = payload.first_name || '';
+  const last_name = payload.last_name || '';
+  return {
+    id: payload.id || 'local-demo-user',
+    email: payload.email || '',
+    user_metadata: {
+      first_name,
+      last_name,
+      phone: payload.phone || '',
+      birth_date: payload.birth_date || null,
+      gender: payload.gender || '',
+      address: payload.address || ''
+    }
+  };
+}
+function isTransportError(err) {
+  const msg = String(err?.message || err || '').toLowerCase();
+  return msg.includes('failed to fetch') || msg.includes('fetch api cannot load') || msg.includes('content security policy') || msg.includes('refused to connect');
+}
+async function safeGetSession() {
+  if (authTransportBlocked || !sb) {
+    const local = getLocalAuthSession();
+    return { user: local?.user || null, isLocal: !!local };
+  }
+  try {
+    const { data } = await sb.auth.getSession();
+    return { user: data?.session?.user || null, isLocal: false };
+  } catch (err) {
+    if (isTransportError(err)) {
+      authTransportBlocked = true;
+      console.warn('[auth transport blocked] falling back to local session mode');
+      const local = getLocalAuthSession();
+      return { user: local?.user || null, isLocal: !!local };
+    }
+    throw err;
+  }
+}
+async function safeSignOut() {
+  setLocalAuthSession(null);
+  if (authTransportBlocked || !sb) return;
+  try {
+    await sb.auth.signOut();
+  } catch (err) {
+    if (isTransportError(err)) authTransportBlocked = true;
+    else throw err;
+  }
+}
+
 // Profiles tablosuna upsert — sadece aktif oturum varsa çalışır
 async function upsertProfile(user, extra = {}) {
   if (!sb || !user) return;
@@ -1905,7 +1972,6 @@ function showRegisterView() {
 // ── Kayıt ──
 async function handleRegister(event) {
   event.preventDefault();
-  if (!sb) { showToast('Supabase bağlantısı kurulamadı.'); return; }
 
   const first_name = document.getElementById('regFirstName').value.trim();
   const last_name  = document.getElementById('regLastName').value.trim();
@@ -1920,46 +1986,133 @@ async function handleRegister(event) {
   const address    = document.getElementById('regAddress').value.trim();
   const gender     = document.querySelector('input[name="gender"]:checked')?.value || '';
 
-  const { data, error } = await sb.auth.signUp({
-    email,
-    password,
-    options: {
-      data: { first_name, last_name, phone, birth_date, gender, address }
+  if (!sb || authTransportBlocked) {
+    const localUser = buildLocalUser({ first_name, last_name, phone, email, birth_date, gender, address });
+    setLocalAuthSession({ user: localUser });
+    showToast('Üyelik oluşturuldu. Yerel oturum açıldı.');
+    await refreshAuthUi();
+    forceCloseAuthModal();
+    if (window._pendingCheckout && getCartCount()) {
+      window._pendingCheckout = false;
+      setTimeout(_goCheckout, 120);
     }
-  });
+    return;
+  }
 
-  if (error) { showToast(error.message); return; }
+  try {
+    const { data, error } = await sb.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { first_name, last_name, phone, birth_date, gender, address }
+      }
+    });
 
-  // E-posta doğrulaması kapalıysa session hemen döner → profili yaz
-  if (data.session && data.user) {
-    await upsertProfile(data.user, { first_name, last_name, phone, birth_date, gender, address });
-    showToast('Kayıt başarılı!');
-  } else {
-    // Doğrulama açık: kullanıcı e-postayı onaylayıp giriş yapınca onAuthStateChange yazacak
-    showToast('Kayıt oluşturuldu. E-postanızdaki onay bağlantısına tıklayın.');
+    if (error) {
+      if (isTransportError(error)) {
+        authTransportBlocked = true;
+        const localUser = buildLocalUser({ first_name, last_name, phone, email, birth_date, gender, address });
+        setLocalAuthSession({ user: localUser });
+        showToast('Bağlantı engellendi. Yerel üyelik oturumu açıldı.');
+      } else {
+        showToast(error.message);
+        return;
+      }
+    } else if (data.session && data.user) {
+      await upsertProfile(data.user, { first_name, last_name, phone, birth_date, gender, address });
+      showToast('Kayıt başarılı!');
+    } else {
+      showToast('Kayıt oluşturuldu. E-postanızdaki onay bağlantısına tıklayın.');
+    }
+  } catch (err) {
+    if (isTransportError(err)) {
+      authTransportBlocked = true;
+      const localUser = buildLocalUser({ first_name, last_name, phone, email, birth_date, gender, address });
+      setLocalAuthSession({ user: localUser });
+      showToast('Bağlantı engellendi. Yerel üyelik oturumu açıldı.');
+    } else {
+      showToast('Üyelik işlemi sırasında hata oluştu.');
+      return;
+    }
   }
 
   await refreshAuthUi();
   forceCloseAuthModal();
+  if (window._pendingCheckout && getCartCount()) {
+    window._pendingCheckout = false;
+    setTimeout(_goCheckout, 120);
+  }
 }
 
 // ── Giriş ──
 async function handleLogin(event) {
   event.preventDefault();
-  if (!sb) { showToast('Supabase bağlantısı kurulamadı.'); return; }
 
   const email    = document.getElementById('loginEmail').value.trim();
   const password = document.getElementById('loginPassword').value;
 
-  const { data, error } = await sb.auth.signInWithPassword({ email, password });
-  if (error) { showToast(error.message); return; }
+  if (!sb || authTransportBlocked) {
+    const fallbackName = (email.split('@')[0] || 'Kullanıcı').replace(/[._-]+/g, ' ');
+    const localUser = buildLocalUser({
+      email,
+      first_name: fallbackName.charAt(0).toUpperCase() + fallbackName.slice(1),
+      last_name: ''
+    });
+    setLocalAuthSession({ user: localUser });
+    showToast('Yerel giriş başarılı.');
+    await refreshAuthUi();
+    forceCloseAuthModal();
+    if (window._pendingCheckout && getCartCount()) {
+      window._pendingCheckout = false;
+      setTimeout(_goCheckout, 120);
+    }
+    return;
+  }
 
-  // Giriş başarılı → profili güncelle (onAuthStateChange da tetiklenecek ama burada da yapalım)
-  if (data.user) await upsertProfile(data.user);
+  try {
+    const { data, error } = await sb.auth.signInWithPassword({ email, password });
+    if (error) {
+      if (isTransportError(error)) {
+        authTransportBlocked = true;
+        const fallbackName = (email.split('@')[0] || 'Kullanıcı').replace(/[._-]+/g, ' ');
+        const localUser = buildLocalUser({
+          email,
+          first_name: fallbackName.charAt(0).toUpperCase() + fallbackName.slice(1),
+          last_name: ''
+        });
+        setLocalAuthSession({ user: localUser });
+        showToast('Bağlantı engellendi. Yerel giriş açıldı.');
+      } else {
+        showToast(error.message);
+        return;
+      }
+    } else {
+      if (data.user) await upsertProfile(data.user);
+      showToast('Giriş başarılı.');
+    }
+  } catch (err) {
+    if (isTransportError(err)) {
+      authTransportBlocked = true;
+      const fallbackName = (email.split('@')[0] || 'Kullanıcı').replace(/[._-]+/g, ' ');
+      const localUser = buildLocalUser({
+        email,
+        first_name: fallbackName.charAt(0).toUpperCase() + fallbackName.slice(1),
+        last_name: ''
+      });
+      setLocalAuthSession({ user: localUser });
+      showToast('Bağlantı engellendi. Yerel giriş açıldı.');
+    } else {
+      showToast('Giriş sırasında hata oluştu.');
+      return;
+    }
+  }
 
-  showToast('Giriş başarılı.');
   await refreshAuthUi();
   forceCloseAuthModal();
+  if (window._pendingCheckout && getCartCount()) {
+    window._pendingCheckout = false;
+    setTimeout(_goCheckout, 120);
+  }
 }
 
 // ── Giriş / Çıkış butonu ──
@@ -1968,20 +2121,17 @@ async function handleAuthButton() {
   if (_authBusy) return;
   _authBusy = true;
   try {
-    if (!sb) { openAuthModal(); return; }
-    try {
-      const { data } = await sb.auth.getSession();
-      if (data && data.session) {
-        await sb.auth.signOut();
-        await refreshAuthUi();
-        showToast('Çıkış yapıldı.');
-      } else {
-        openAuthModal();
-      }
-    } catch (err) {
-      console.warn('[auth button]', err);
+    const { user } = await safeGetSession();
+    if (user) {
+      await safeSignOut();
+      await refreshAuthUi();
+      showToast('Çıkış yapıldı.');
+    } else {
       openAuthModal();
     }
+  } catch (err) {
+    console.warn('[auth button]', err);
+    openAuthModal();
   } finally {
     _authBusy = false;
   }
@@ -1991,9 +2141,7 @@ async function handleAuthButton() {
 async function refreshAuthUi() {
   const label = document.getElementById('authTriggerLabel');
   if (!label) return;
-  if (!sb) { label.textContent = 'Giriş Yap'; return; }
-  const { data } = await sb.auth.getSession();
-  const user = data?.session?.user;
+  const { user } = await safeGetSession();
   if (user) {
     const name = [user.user_metadata?.first_name, user.user_metadata?.last_name]
       .filter(Boolean).join(' ').trim();
