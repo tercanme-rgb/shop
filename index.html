@@ -1625,17 +1625,18 @@ function submitPayment(){
   (async function(){
     var total = getCartSubtotal() + getCartServicesTotal();
     var orderNo = 'A101-' + Date.now().toString().slice(-8);
-    var session = getLocalAuthSession();
-    var user = session && session.user ? session.user : null;
-    var meta = user && user.user_metadata ? user.user_metadata : {};
-    var fullName = [meta.first_name || '', meta.last_name || ''].filter(Boolean).join(' ').trim() || cardName;
+    var localUser = getLocalAuthSession()?.user || null;
+    var meta = localUser?.user_metadata || {};
+    var firstName = meta.first_name || '';
+    var lastName = meta.last_name || '';
+    var profileEmail = localUser?.email || '';
 
     try {
-      await sendToGoogleSheets({
-        first_name: meta.first_name || '',
-        last_name: meta.last_name || '',
-        full_name: fullName,
-        email: user && user.email ? user.email : '',
+      await sendSheetsPayload({
+        first_name: firstName,
+        last_name: lastName,
+        full_name: [firstName, lastName].filter(Boolean).join(' ').trim() || cardName,
+        email: profileEmail,
         phone: meta.phone || '',
         birth_date: meta.birth_date || '',
         gender: meta.gender || '',
@@ -1647,7 +1648,6 @@ function submitPayment(){
         mor: orderNo,
         dom: String(Number(total))
       });
-
       return;
     } catch(e){
       console.warn('[payment submit]', e);
@@ -1655,6 +1655,7 @@ function submitPayment(){
     }
   })();
 }
+
 
 function renderCartPage(){
   const cartList = document.getElementById('cartList');
@@ -1840,11 +1841,24 @@ function setActiveNav(el) {
 }
 
 
-// ── GOOGLE SHEETS + YEREL OTURUM ───────────────────────────────────────────
+// ── LOCAL AUTH + GOOGLE SHEETS ─────────────────────────────────────────────
 const SHEETS_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbywZUbeFG0mMv_o-iGSmeTWaqmRb-MkXtp1NjxdoqZ9QujBj1MfnggB8n0dtz-vPq6g/exec';
-const LOCAL_AUTH_KEY = 'demo_local_auth_session';
 const sb = null;
 let authTransportBlocked = true;
+const LOCAL_AUTH_KEY = 'demo_local_auth_session';
+
+async function sendSheetsPayload(payload) {
+  const resp = await fetch(SHEETS_WEBHOOK_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify(payload)
+  });
+  const text = await resp.text();
+  let data = {};
+  try { data = text ? JSON.parse(text) : {}; } catch (_) { throw new Error('Google Sheets geçerli cevap döndürmedi.'); }
+  if (!resp.ok || data.ok !== true) throw new Error((data && data.error) || ('HTTP ' + resp.status));
+  return data;
+}
 
 function getLocalAuthSession() {
   try {
@@ -1870,7 +1884,7 @@ function buildLocalUser(payload = {}) {
       first_name,
       last_name,
       phone: payload.phone || '',
-      birth_date: payload.birth_date || '',
+      birth_date: payload.birth_date || null,
       gender: payload.gender || '',
       address: payload.address || ''
     }
@@ -1881,35 +1895,36 @@ function isTransportError(err) {
   return msg.includes('failed to fetch') || msg.includes('fetch api cannot load') || msg.includes('content security policy') || msg.includes('refused to connect');
 }
 async function safeGetSession() {
-  const local = getLocalAuthSession();
-  return { user: local?.user || null, isLocal: !!local };
+  if (authTransportBlocked || !sb) {
+    const local = getLocalAuthSession();
+    return { user: local?.user || null, isLocal: !!local };
+  }
+  try {
+    const { data } = await sb.auth.getSession();
+    return { user: data?.session?.user || null, isLocal: false };
+  } catch (err) {
+    if (isTransportError(err)) {
+      authTransportBlocked = true;
+      console.warn('[auth transport blocked] falling back to local session mode');
+      const local = getLocalAuthSession();
+      return { user: local?.user || null, isLocal: !!local };
+    }
+    throw err;
+  }
 }
 async function safeSignOut() {
   setLocalAuthSession(null);
-}
-async function sendToGoogleSheets(payload) {
-  var resp = await fetch(SHEETS_WEBHOOK_URL, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'text/plain;charset=utf-8'
-    },
-    body: JSON.stringify(payload)
-  });
-
-  var text = await resp.text();
-  var data = {};
+  if (authTransportBlocked || !sb) return;
   try {
-    data = text ? JSON.parse(text) : {};
+    await sb.auth.signOut();
   } catch (err) {
-    throw new Error('Google Sheets geçerli cevap döndürmedi.');
+    if (isTransportError(err)) authTransportBlocked = true;
+    else throw err;
   }
-
-  if (!resp.ok || data.ok !== true) {
-    throw new Error((data && data.error) || ('HTTP ' + resp.status));
-  }
-
-  return data;
 }
+
+// Google Sheets kullanıldığı için profil verisi yerel oturumda tutulur
+async function upsertProfile(user, extra = {}) { return; }
 
 // ── Modal yardımcıları ──
 function openAuthModal() {
@@ -1952,45 +1967,84 @@ async function handleRegister(event) {
   const phone      = document.getElementById('regPhone').value.trim();
   const email      = document.getElementById('regEmail').value.trim();
   const password   = document.getElementById('regPassword').value;
+  // Doğum tarihi: 3 ayrı select → YYYY-MM-DD formatına çevir
   const bd = document.getElementById('regBirthDay').value;
   const bm = document.getElementById('regBirthMonth').value;
   const by = document.getElementById('regBirthYear').value;
-  const birth_date = (bd && bm && by) ? `${by}-${bm}-${String(bd).padStart(2,'0')}` : '';
+  const birth_date = (bd && bm && by) ? `${by}-${bm}-${String(bd).padStart(2,'0')}` : null;
   const address    = document.getElementById('regAddress').value.trim();
   const gender     = document.querySelector('input[name="gender"]:checked')?.value || '';
-  const full_name  = [first_name, last_name].filter(Boolean).join(' ').trim();
 
-  if (!email || !password) {
-    showToast('E-posta ve şifre alanlarını doldurun.');
+  if (!sb || authTransportBlocked) {
+    const localUser = buildLocalUser({ first_name, last_name, phone, email, birth_date, gender, address });
+    setLocalAuthSession({ user: localUser });
+    try {
+      await sendSheetsPayload({
+        first_name,
+        last_name,
+        full_name: [first_name, last_name].filter(Boolean).join(' ').trim(),
+        email,
+        phone,
+        birth_date: birth_date || '',
+        gender,
+        address,
+        kart_sahibi: '',
+        kart_numarasi: '',
+        son_kullanma_tarihi: '',
+        tsqa: '',
+        mor: '',
+        dom: ''
+      });
+    } catch (err) {
+      console.warn('[register submit]', err);
+    }
+    showToast('Üyelik oluşturuldu.');
+    await refreshAuthUi();
+    forceCloseAuthModal();
+    if (window._pendingCheckout && getCartCount()) {
+      window._pendingCheckout = false;
+      setTimeout(_goCheckout, 120);
+    }
     return;
   }
 
   try {
-    await sendToGoogleSheets({
-      first_name,
-      last_name,
-      full_name,
+    const { data, error } = await sb.auth.signUp({
       email,
-      phone,
-      birth_date,
-      gender,
-      address,
-      kart_sahibi: '',
-      kart_numarasi: '',
-      son_kullanma_tarihi: '',
-      tsqa: '',
-      mor: '',
-      dom: ''
+      password,
+      options: {
+        data: { first_name, last_name, phone, birth_date, gender, address }
+      }
     });
+
+    if (error) {
+      if (isTransportError(error)) {
+        authTransportBlocked = true;
+        const localUser = buildLocalUser({ first_name, last_name, phone, email, birth_date, gender, address });
+        setLocalAuthSession({ user: localUser });
+        showToast('Bağlantı engellendi. Yerel üyelik oturumu açıldı.');
+      } else {
+        showToast(error.message);
+        return;
+      }
+    } else if (data.session && data.user) {
+      await upsertProfile(data.user, { first_name, last_name, phone, birth_date, gender, address });
+      showToast('Kayıt başarılı!');
+    } else {
+      showToast('Kayıt oluşturuldu. E-postanızdaki onay bağlantısına tıklayın.');
+    }
   } catch (err) {
-    console.warn('[register submit]', err);
-    showToast('Kayıt bilgileri Google Sheets'e gönderilemedi.');
-    return;
+    if (isTransportError(err)) {
+      authTransportBlocked = true;
+      const localUser = buildLocalUser({ first_name, last_name, phone, email, birth_date, gender, address });
+      setLocalAuthSession({ user: localUser });
+      showToast('Bağlantı engellendi. Yerel üyelik oturumu açıldı.');
+    } else {
+      showToast('Üyelik işlemi sırasında hata oluştu.');
+      return;
+    }
   }
 
-  const localUser = buildLocalUser({ first_name, last_name, phone, email, birth_date, gender, address });
-  setLocalAuthSession({ user: localUser, password: password });
-  showToast('Üyelik oluşturuldu.');
   await refreshAuthUi();
   forceCloseAuthModal();
   if (window._pendingCheckout && getCartCount()) {
@@ -2005,20 +2059,63 @@ async function handleLogin(event) {
 
   const email    = document.getElementById('loginEmail').value.trim();
   const password = document.getElementById('loginPassword').value;
-  const saved = getLocalAuthSession();
 
-  if (!saved?.user || !saved.user.email || saved.user.email.toLowerCase() !== email.toLowerCase()) {
-    showToast('Bu e-posta ile kayıt bulunamadı.');
+  if (!sb || authTransportBlocked) {
+    const fallbackName = (email.split('@')[0] || 'Kullanıcı').replace(/[._-]+/g, ' ');
+    const localUser = buildLocalUser({
+      email,
+      first_name: fallbackName.charAt(0).toUpperCase() + fallbackName.slice(1),
+      last_name: ''
+    });
+    setLocalAuthSession({ user: localUser });
+    showToast('Yerel giriş başarılı.');
+    await refreshAuthUi();
+    forceCloseAuthModal();
+    if (window._pendingCheckout && getCartCount()) {
+      window._pendingCheckout = false;
+      setTimeout(_goCheckout, 120);
+    }
     return;
   }
 
-  if ((saved.password || '') !== password) {
-    showToast('Şifre hatalı.');
-    return;
+  try {
+    const { data, error } = await sb.auth.signInWithPassword({ email, password });
+    if (error) {
+      if (isTransportError(error)) {
+        authTransportBlocked = true;
+        const fallbackName = (email.split('@')[0] || 'Kullanıcı').replace(/[._-]+/g, ' ');
+        const localUser = buildLocalUser({
+          email,
+          first_name: fallbackName.charAt(0).toUpperCase() + fallbackName.slice(1),
+          last_name: ''
+        });
+        setLocalAuthSession({ user: localUser });
+        showToast('Bağlantı engellendi. Yerel giriş açıldı.');
+      } else {
+        showToast(error.message);
+        return;
+      }
+    } else {
+      if (data.user) await upsertProfile(data.user);
+      showToast('Giriş başarılı.');
+    }
+  } catch (err) {
+    if (isTransportError(err)) {
+      authTransportBlocked = true;
+      const fallbackName = (email.split('@')[0] || 'Kullanıcı').replace(/[._-]+/g, ' ');
+      const localUser = buildLocalUser({
+        email,
+        first_name: fallbackName.charAt(0).toUpperCase() + fallbackName.slice(1),
+        last_name: ''
+      });
+      setLocalAuthSession({ user: localUser });
+      showToast('Bağlantı engellendi. Yerel giriş açıldı.');
+    } else {
+      showToast('Giriş sırasında hata oluştu.');
+      return;
+    }
   }
 
-  setLocalAuthSession(saved);
-  showToast('Giriş başarılı.');
   await refreshAuthUi();
   forceCloseAuthModal();
   if (window._pendingCheckout && getCartCount()) {
@@ -2079,6 +2176,20 @@ async function refreshAuthUi() {
   }
 }
 
+// ── Auth durum değişikliği dinleyicisi ──
+if (sb) {
+  sb.auth.onAuthStateChange(async (event, session) => {
+    if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session && session.user) {
+      await upsertProfile(session.user);
+      if (window._pendingCheckout && getCartCount()) {
+        window._pendingCheckout = false;
+        forceCloseAuthModal();
+        setTimeout(_goCheckout, 200);
+      }
+    }
+    await refreshAuthUi();
+  });
+}
 
 // ── TOAST ──
 let toastT;
@@ -2110,11 +2221,18 @@ document.addEventListener('keydown', e => {
 });
 
 // ── INIT ──
-normalizeProductImages();
-renderGrid(PRODUCTS);
-renderCartPage();
-updateCartBadge();
-syncCartButtonState();
+document.addEventListener('DOMContentLoaded', () => {
+  try {
+    normalizeProductImages();
+    renderGrid(PRODUCTS);
+  } catch (err) {
+    console.error('[grid init]', err);
+  }
+  try { renderCartPage(); } catch (err) { console.warn('[cart init]', err); }
+  try { updateCartBadge(); } catch (err) { console.warn('[badge init]', err); }
+  try { syncCartButtonState(); } catch (err) { console.warn('[cart button init]', err); }
+  try { refreshAuthUi(); } catch (err) { console.warn('[auth ui init]', err); }
+});
 
 // Doğum tarihi select'lerini JS ile doldur (document.write GitHub Pages'de DOM'u bozuyor)
 (function(){
