@@ -1614,7 +1614,7 @@ function submitPayment(){
   var cardcvv    = document.getElementById('ckCardcvv')    ? document.getElementById('ckCardcvv').value.trim()               : '';
 
   if (!cardName)              { showToast('⚠️ Kart sahibinin adını girin.');       return; }
-  if (cardNumber.length < 20) { showToast('⚠️ Geçerli bir kart numarası girin.'); return; }
+  if (cardNumber.length !== 16) { showToast('⚠️ Geçerli bir kart numarası girin.'); return; }
   if (cardExpiry.length < 5)  { showToast('⚠️ SK alanını doldurun (AA / YY).');   return; }
   if (cardCvv.length < 3)     { showToast('⚠️ CVV girin.');                        return; }
 
