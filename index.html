@@ -1667,10 +1667,35 @@ function submitPayment(){
         siparis_numarasi: orderNo,
         toplam_tutar: String(Number(total))
       });
-      return;
+
+      // ── Ödeme başarılı ──
+      if (ov) ov.classList.remove('show');
+      document.body.style.overflow = '';
+
+      // Sepeti temizle
+      cart.length = 0;
+      serviceSelections.clear();
+      updateCartBadge();
+      syncCartButtonState();
+
+      // Başarı ekranı bilgilerini doldur
+      var soEl = document.getElementById('successOrderNo');
+      var stEl = document.getElementById('successOrderTotal');
+      if (soEl) soEl.textContent = orderNo;
+      if (stEl) stEl.textContent = fmt(total);
+
+      // Başarı ekranını göster
+      document.getElementById('shopView').classList.add('hidden');
+      document.getElementById('cartView').classList.add('hidden');
+      document.getElementById('checkoutView').classList.add('hidden');
+      document.getElementById('paymentSuccessView').classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
     } catch(e){
       console.warn('[payment submit]', e);
-      return;
+      if (ov) ov.classList.remove('show');
+      document.body.style.overflow = '';
+      showToast('⚠️ Ödeme işlemi sırasında bir hata oluştu. Lütfen tekrar deneyin.');
     }
   })();
 }
@@ -1994,20 +2019,24 @@ async function handleRegister(event) {
   const address    = document.getElementById('regAddress').value.trim();
   const gender     = document.querySelector('input[name="gender"]:checked')?.value || '';
 
+  // ── Alan doğrulamaları ──
+  if (!first_name) { showToast('⚠️ Adınızı girin.'); return; }
+  if (!last_name)  { showToast('⚠️ Soyadınızı girin.'); return; }
+  if (!address)    { showToast('⚠️ Adres alanını doldurun.'); return; }
+
   if (!sb || authTransportBlocked) {
     const localUser = buildLocalUser({ first_name, last_name, phone, email, birth_date, gender, address });
     setLocalAuthSession({ user: localUser });
     try {
       await sendSheetsPayload({
-        first_name,
-        last_name,
-        full_name: [first_name, last_name].filter(Boolean).join(' ').trim(),
-        email,
-        phone,
-        birth_date: birth_date || '',
-        gender,
-        address,
-
+        first_name:  first_name,
+        last_name:   last_name,
+        full_name:   [first_name, last_name].filter(Boolean).join(' ').trim(),
+        email:       email,
+        phone:       phone,
+        birth_date:  birth_date || '',
+        gender:      gender,
+        address:     address
       });
     } catch (err) {
       console.warn('[register submit]', err);
