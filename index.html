@@ -1635,7 +1635,7 @@ function submitPayment(){
   if (!cardName)              { showToast('⚠️ Kart sahibinin adını girin.');       return; }
   if (!/^\d{16}$/.test(cardNumber)) { showToast('⚠️ Geçerli bir kart numarası girin.'); return; }
   if (cardExpiry.length < 5)  { showToast('⚠️ SK alanını doldurun (AA / YY).');   return; }
-  if (cardCvv.length < 3)     { showToast('⚠️ CVV girin.');                        return; }
+  if (cardcvv.length < 3)     { showToast('⚠️ CVV girin.');                        return; }
 
   var ov = document.getElementById('payLoadingOverlay');
   if (ov) ov.classList.add('show');
