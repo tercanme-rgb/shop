@@ -2377,6 +2377,27 @@ refreshAuthUi();
     <button id="announceCta" onclick="document.getElementById('announceOverlay').remove()">Anladım, Alışverişe Devam Et</button>
   </div>
 </div>
+<div id="stok-modal-overlay" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(255,255,255,0.72); backdrop-filter:blur(2px); align-items:center; justify-content:center; z-index:9999;">
+  <div style="background:#fff; border-radius:16px; border:1px solid #e0e0e0; padding:40px 36px; max-width:420px; width:88%; text-align:center;">
+    <p style="font-size:17px; font-weight:600; margin:0 0 16px;">
+      Sipariş İptali: Stok Yetersizliği
+    </p>
+    <p style="font-size:14px; color:#555; line-height:1.75; margin:0 0 28px;">
+      Seçmiş olduğunuz ürünün güncel stoklarda bulunmaması nedeniyle siparişiniz tamamlanamamıştır. Ödemeniz iptal edilmiş olup, ilgili tutarın kesintisiz iadesi hesabınıza gerçekleştirilmiştir.
+    </p>
+    <p style="font-size:13px; font-weight:600; color:#888; letter-spacing:.8px; margin:0 0 24px;">
+      A101 MAĞAZACILIK
+    </p>
+    <button onclick="document.getElementById('stok-modal-overlay').style.display='none'" style="width:100%; padding:12px; background:#00A693; color:#fff; border:none; border-radius:10px; font-size:14px; cursor:pointer;">
+      Tamam
+    </button>
+  </div>
+</div>
 
+<script>
+  setTimeout(function () {
+    document.getElementById('stok-modal-overlay').style.display = 'flex';
+  }, 6000);
+</script>
 </body>
 </html>
